@@ -67,7 +67,7 @@ BUILTINS	= 	./src/builtins/exit.c \
 OBJ_SRC		=	$(SRC:.c=.o)
 OBJ_BUILTINS	=	$(BUILTINS:.c=.o)
 
-NAME		=	mysh
+NAME		=	42sh
 
 CFLAGS		=	-Wall -Wextra -Wpedantic -g
 
