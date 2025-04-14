@@ -5,7 +5,7 @@
 ** Str cat functions
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Add the src in the dest at the end. The dest needs to be malloc at the right

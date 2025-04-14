@@ -6,7 +6,7 @@
 ** Can be useful
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Add a string in the linked list called head.

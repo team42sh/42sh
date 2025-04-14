@@ -1,10 +1,14 @@
 *.o
+*.json
 *.a
 *.log
-
-mysh
-
-msyh.dSYM
+.cache
 .DS_Store
 
+*.gcda
+*.gcno
+
 autotester/
+
+42sh
+42sh.dSYM

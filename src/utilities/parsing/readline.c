@@ -5,7 +5,7 @@
 ** This function can read line
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Read the fd until a \n, and conserve it.

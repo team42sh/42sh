@@ -6,7 +6,7 @@
 ** depending on syntax errors in the token list.
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 static syntax_ast_error_t analyse_token(token_t *token)
 {

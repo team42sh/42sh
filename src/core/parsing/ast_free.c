@@ -5,7 +5,7 @@
 ** This file contains functions for freeing AST
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 void free_ast(ast_node_t *ast)
 {

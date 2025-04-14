@@ -5,7 +5,7 @@
 ** This file contains the same implementation of strtok but in reverse
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Count the number of character before the until_char.

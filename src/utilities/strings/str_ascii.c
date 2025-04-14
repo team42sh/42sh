@@ -6,7 +6,7 @@
 ** the ascii of a character or string
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Return true or false if the char c passed in parameter in a letter or not.

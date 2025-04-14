@@ -6,7 +6,7 @@
 ** Basically removing every '"' without '\' before
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Count the number of " if it it's not preceded by a \.

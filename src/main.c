@@ -5,7 +5,7 @@
 ** Main file for the minishell project
 */
 
-#include "../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Declaration of all BUILT IN commands.

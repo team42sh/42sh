@@ -5,7 +5,7 @@
 ** This file contains the functions for managing the shell structure
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Setup every informations for the shell.

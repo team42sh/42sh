@@ -5,7 +5,7 @@
 ** This file contains functions for helping with github features
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 bool is_in_github_repository(void)
 {

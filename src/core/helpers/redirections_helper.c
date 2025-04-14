@@ -5,7 +5,7 @@
 ** This file contains functions for handling the redirections
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 #include <stdbool.h>
 
 /**

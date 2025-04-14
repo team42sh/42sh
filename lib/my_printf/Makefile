@@ -5,43 +5,48 @@
 ## Makefile for my_printf
 ##
 
-SRC	=	my_printf.c \
-		my_putchar.c \
-		my_strlen.c \
-		my_put_nbr.c \
-		my_put_double.c \
-		my_put_double_no_trailing.c \
-		my_put_exp_no_trailing.c \
-		my_putstr.c \
-		print_str.c \
-		print_int.c \
-		print_char.c \
-		print_unsigned_int.c \
-		print_double.c \
-		print_double_exp.c \
-		print_double_no_trailing.c \
-		print_misc.c \
-		print_address.c \
-		print_float_hex.c \
-		format_parser.c \
-		format_utils.c \
-		my_strstr.c \
-		print_result.c
+# Settings
+CC = gcc
+CFLAGS = -I./include -Wall -Wextra -Werror -g
+TARGET = libmy_printf.a
 
-OBJ	=	$(SRC:.c=.o)
+SRCS := $(shell find src -name "*.c")
+OBJS = $(SRCS:.c=.o)
 
-NAME	=	libmy_printf.a
+# Colors
+RED=\033[0;31m
+GREEN=\033[0;32m
+YELLOW=\033[0;33m
+BLUE=\033[0;34m
+PURPLE=\033[0;35m
+CYAN=\033[0;36m
+WHITE=\033[0;37m
+RESET=\033[0m
 
-all:	$(NAME)
+PREIX=[$(PURPLE)my_printf$(RESET)]
 
-$(NAME):	$(OBJ)
-	ar rc $(NAME) $(OBJ)
-	mv $(NAME) ../
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	@echo "$(PREIX)$(BLUE)Linking $(PURPLE)$(TARGET)$(RESET)"
+	@ar rc ../$(TARGET) $(OBJS) 1>/dev/null
+	@echo "$(PREIX)$(GREEN)Build successful!$(RESET)"
+
+%.o: %.c
+	@echo "$(PREIX)$(YELLOW)Compiling $(RESET)$(CYAN)$(dir $<)\
+	$(GREEN)$(notdir $<)$(RESET)"
+	@$(CC) $(CFLAGS) -c $< -o $@ 1>/dev/null
+
+dev: all
 
 clean:
-	rm -f $(OBJ)
+	@echo "$(PREIX)$(CYAN)Cleaning objects$(RESET)"
+	@rm -f $(OBJS)
 
 fclean: clean
-	cd ../ && rm -f $(NAME)
+	@echo "$(PREIX)$(CYAN)Cleaning complied libraries$(RESET)"
+	@rm -f ../$(TARGET)
 
 re: fclean all
+
+.PHONY: all clean

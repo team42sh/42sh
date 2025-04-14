@@ -6,7 +6,7 @@
 ** a string by another one
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Check if to_replace occurs at a specific index in the string.

@@ -6,7 +6,7 @@
 ** the pointer passed in parameter is NULL or not
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * This version of free check if the pointer passed in parameter is NULL or not

@@ -5,7 +5,7 @@
 ** Implementation of atoi function
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Will count the number of '-' in the string.

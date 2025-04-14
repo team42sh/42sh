@@ -5,7 +5,7 @@
 ** This file contains functions to get the string until a operator
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief The character is an operator or no?

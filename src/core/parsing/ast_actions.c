@@ -5,7 +5,7 @@
 ** This file contains some functions for action in AST
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Create a AST node for piping.

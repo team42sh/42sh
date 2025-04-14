@@ -5,7 +5,7 @@
 ** Unsetenv COMMAND
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * UNSETENV COMMAND - BUILT-IN

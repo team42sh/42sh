@@ -5,7 +5,7 @@
 ** This file contains all the logic for shell variables
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Create the structure variables and init all usefull variables.
