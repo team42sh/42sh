@@ -1,0 +1,10 @@
+*.o
+*.a
+*.log
+
+mysh
+
+msyh.dSYM
+.DS_Store
+
+autotester/
