@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** main_loop.c
 ** File description:
-** 
+** main loop function
 */
 
 #include "core/minishell.h"
