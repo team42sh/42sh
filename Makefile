@@ -33,7 +33,9 @@ PREIX=[$(BLUE)${TARGET}$(RESET)]
 # Test related variables
 TEST_DIR = tests
 TEST_SRCS := $(shell find $(TEST_DIR) -name "*.c")
+SRCS_NO_MAIN := $(shell find src -name "*.c" ! -name "main.c")
 TEST_OBJS = $(TEST_SRCS:.c=.o)
+OBJS_NO_MAIN = $(SRCS_NO_MAIN:.c=.o)
 TEST_TARGET = unit_tests
 COV_CFLAGS = --coverage
 
@@ -65,4 +67,14 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean
+unit_tests:	$(TEST_OBJS)	$(OBJS_NO_MAIN)
+	@make -C lib/my_printf --no-print-directory
+	@echo "$(PREIX)$(BLUE)Linking $(PURPLE)$(TEST_TARGET)$(RESET)"
+	@${CC} $(CFLAGS) -o ${TEST_TARGET} $(OBJS_NO_MAIN) \
+	${TEST_OBJS} $(UNIT_FLAGS) ${COV_CFLAGS} ${LDFLAGS} 1>/dev/null
+	@echo "$(PREIX)$(GREEN)Build successful!$(RESET)"
+
+tests_run: unit_tests
+	./unit_tests
+
+.PHONY: all clean fclean
