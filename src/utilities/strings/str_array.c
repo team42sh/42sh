@@ -5,7 +5,7 @@
 ** This file contains implementation of a str to word array
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Intermediate function for counting the words final array.

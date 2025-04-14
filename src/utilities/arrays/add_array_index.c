@@ -6,7 +6,7 @@
 ** given index in a array
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 #include <unistd.h>
 
 /*

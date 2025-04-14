@@ -5,7 +5,7 @@
 ** This file contains all the logic for couting elements in array
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Count the number of elements in a array of char *

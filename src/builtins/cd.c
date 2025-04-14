@@ -5,7 +5,7 @@
 ** CD COMMAND
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Get the current working dir using getcwd function, and add it to env var.

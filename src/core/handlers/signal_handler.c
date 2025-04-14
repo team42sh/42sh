@@ -5,7 +5,7 @@
 ** This file will do some actions dependant of the signal received
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Declaration of all SIGNALS data.

@@ -5,7 +5,7 @@
 ** ALIAS COMMAND
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * This function is when you execute alias command without argument.

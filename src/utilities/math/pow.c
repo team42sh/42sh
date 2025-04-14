@@ -5,7 +5,7 @@
 ** This file contains function for pow functions
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Base function for power function using long type.

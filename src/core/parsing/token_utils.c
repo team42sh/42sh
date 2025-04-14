@@ -5,7 +5,7 @@
 ** This file contains functions for getting some help for using tokens
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 bool is_token_redirection_append(token_t *token)
 {

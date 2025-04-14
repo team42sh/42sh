@@ -5,7 +5,7 @@
 ** This file contains functions for pipes
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Regroup of small instructions to dup the right FD.

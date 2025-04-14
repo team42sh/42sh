@@ -5,7 +5,7 @@
 ** This file will contains function for getting any environment variable
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Create a node using key, value for the environment variable.

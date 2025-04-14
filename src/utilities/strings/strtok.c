@@ -5,7 +5,7 @@
 ** Implementation of the strtok function
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Count the number of character before the until_char.

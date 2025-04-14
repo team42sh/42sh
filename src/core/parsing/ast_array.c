@@ -5,7 +5,7 @@
 ** This file contains functions for handling AST arrays
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Create an empty AST array wiht 1 element allocated but NULL.

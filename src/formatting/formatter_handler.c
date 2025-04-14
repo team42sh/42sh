@@ -7,7 +7,7 @@
 ** removing them or asking to fisnish the string if needed
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Format a ast with command formatter.

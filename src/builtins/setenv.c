@@ -5,7 +5,7 @@
 ** Setenv COMMAND
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 static exitcode_t modify_shell_vars(char *key, char *value)
 {

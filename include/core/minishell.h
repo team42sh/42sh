@@ -22,11 +22,11 @@
     #include <fcntl.h>
 
     #include "builtins.h"
-    #include "../macros/math_macros.h"
-    #include "../core/types.h"
-    #include "../core/signals.h"
-    #include "../core/parser.h"
-    #include "../../lib/my_printf/my_printf.h"
+    #include "macros/math_macros.h"
+    #include "core/types.h"
+    #include "core/signals.h"
+    #include "core/parser.h"
+    #include "my_printf.h"
 
 /*
  * Environment structure used in a linked list.

@@ -5,7 +5,7 @@
 ** This file contains functions for adding string between with an arg list
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * This function do a strcat char with multiples args with arg list.

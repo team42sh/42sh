@@ -5,7 +5,7 @@
 ** This file contains some functions used to get informations for files
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * With a path and type which is the bit mask in man 2 stat.

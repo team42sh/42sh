@@ -5,7 +5,7 @@
 ** This files contains the main core of env command
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * ENV COMMAND - BUILT-IN

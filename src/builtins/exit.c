@@ -5,7 +5,7 @@
 ** Exit COMMAND
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * EXIT COMMAND - BUILT-IN

@@ -5,7 +5,7 @@
 ** Functions for handling the Abstract Syntax Tree
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Parse every possible tokens and create the appropriate node.

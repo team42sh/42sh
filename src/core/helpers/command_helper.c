@@ -6,7 +6,7 @@
 ** all command typed in the SHELL
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Get the return value of the wait pit.

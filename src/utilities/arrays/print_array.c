@@ -5,7 +5,7 @@
 ** This file contains some functions for printing some types of arrays
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Print the content of a char ** array.

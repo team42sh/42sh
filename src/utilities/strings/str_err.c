@@ -5,7 +5,7 @@
 ** This file contains some functions for printing message in the stderr fd
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Handing of %s in stderr output.

@@ -5,7 +5,7 @@
 ** This file contains functions for freeing tokens
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 void free_token(token_t *token)
 {

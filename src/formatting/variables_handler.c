@@ -5,7 +5,7 @@
 ** This file contains functions for extracting environment variables
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Extract the content after the $

@@ -5,7 +5,7 @@
 ** This file contains function for handling the myshrc file
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 #include <sys/fcntl.h>
 
 /*

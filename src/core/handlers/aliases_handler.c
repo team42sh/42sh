@@ -5,7 +5,7 @@
 ** This file contains some functions for handling aliases
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Create a node using original string, alias string for the alias.

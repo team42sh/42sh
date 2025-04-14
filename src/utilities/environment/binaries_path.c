@@ -5,7 +5,7 @@
 ** This file contains some function for searching binaries in the PATH env
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Check if the binary with a path is existing or not. If not return false

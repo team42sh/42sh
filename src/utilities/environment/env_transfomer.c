@@ -6,7 +6,7 @@
 ** Linked list (env) to char **env
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * This function count the number of environment variables in the linked list.

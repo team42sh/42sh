@@ -5,7 +5,7 @@
 ** This file contains some functions for string utils
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Remove the \n for the last character and put it as \0.

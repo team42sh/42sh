@@ -5,7 +5,7 @@
 ** This file contains functions for helping the management of history
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Get the home env path and return the path of the mysh_history.

@@ -5,7 +5,7 @@
 ** This file contains function related for copy stuff into another string
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Copy the content of a string into another one.

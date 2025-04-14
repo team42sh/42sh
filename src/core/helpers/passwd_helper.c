@@ -5,7 +5,7 @@
 ** This file contains function for managing with the passwd file
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Init a structure called passwd which contains every informations of a user.

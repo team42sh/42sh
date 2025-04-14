@@ -5,7 +5,7 @@
 ** UNALIAS COMMAND
 */
 
-#include "../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * UNALIAS COMMAND - BUILT-IN

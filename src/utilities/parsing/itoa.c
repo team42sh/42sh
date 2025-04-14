@@ -5,7 +5,7 @@
 ** Reverse of ATOI function. Integer to string.
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /*
  * Get the number of digit of the number.

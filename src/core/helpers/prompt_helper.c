@@ -5,7 +5,7 @@
 ** This file contains functions for displaying a prompt on the screen
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 void print_github_repository(void)
 {

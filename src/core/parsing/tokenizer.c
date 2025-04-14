@@ -5,7 +5,7 @@
 ** This file will create a list of every tokens in order
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 
 const char *tokens_name[] = {"COMMAND", "PIPE", "LEFT_REDIRECTION",

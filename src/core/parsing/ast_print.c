@@ -5,7 +5,7 @@
 ** This file contains functions for printting AST
 */
 
-#include "../../../include/core/minishell.h"
+#include "core/minishell.h"
 
 /**
  * @brief Print the depth to see the right indentation of elements.
