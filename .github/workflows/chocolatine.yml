@@ -1,0 +1,141 @@
+name: chocolatine
+
+on:
+  push:
+    branches-ignore:
+    - "ga-ignore-*"
+  pull_request:
+    branches-ignore:
+    - "ga-ignore-*"
+
+env:
+  MIRROR_REPO: "Neptnium/Choco2"
+  MIRROR_URL: "git@github.com:Neptnium/Choco2.git"
+  EXECUTABLES: "test"
+
+# Block concurent runs (Example, quick pushes)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check_coding_style:
+    if: ${{ !contains(github.repository, 'Neptnium/Choco2') }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run coding style checker
+        run: |
+          check.sh $(pwd) $(pwd)
+
+      - name: Display coding style report
+        run: |
+          if [ -s coding-style-reports.log ]; then
+            while IFS=': ' read -r file line severity rule; do
+              echo "::error file=${file},line=${line},title=${severity} coding style error::${rule}"
+            done < coding-style-reports.log
+            exit 1
+          fi
+
+  check_program_compilation:
+    if: ${{ !contains(github.repository, 'Neptnium/Choco2') }}
+    needs: [check_coding_style]
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Make project
+        timeout-minutes: 2
+        run: |
+          make -j
+
+      - name: Clean project contents
+        run: |
+          make clean
+
+      - name: Check executables
+        run: |
+          IFS=','
+          for EXE in $EXECUTABLES
+            do
+              if [ ! -f "$EXE" ]; then
+                echo "::error title=Missing executable::$EXE not found."
+                exit 1
+              fi
+              if [ ! -x "$EXE" ]; then
+                echo "::error title=Not executable::$EXE is not executable."
+                exit 1
+              fi
+              ./$EXE
+            done
+
+  run_tests:
+    if: ${{ !contains(github.repository, 'Neptnium/Choco2') }}
+    needs: [check_program_compilation]
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Detect tests presence
+        run: |
+          if grep -q '^tests_run:' Makefile
+          then
+            echo "has_tests=true" >> $GITHUB_ENV
+          else
+            echo "has_tests=false" >> $GITHUB_ENV
+          fi
+
+      - name: Run unit tests
+        if: env.has_tests == 'true'
+        timeout-minutes: 2
+        run: |
+          make tests_run
+
+      - name: Line coverage
+        if: env.has_tests == 'true'
+        run: |
+          LINE_COV=$(gcovr -e tests/ --exclude-throw-branches -r . | grep -E "TOTAL.*[0-9]+%" | grep -o '[0-9]\+%' | grep -o '[0-9]\+')
+          if [ "$LINE_COV" -lt 75 ]; then
+            echo "::warning title=Low Coverage::Line coverage is below 75% (Current: ${LINE_COV}%)"
+          else
+            echo "::notice title=Good Coverage::Line coverage is ${LINE_COV}%"
+          fi
+
+      - name: Branch coverage
+        if: env.has_tests == 'true'
+        run: |
+          BRANCH_COV=$(gcovr -e tests/ --exclude-throw-branches -r . --branches | grep -E "TOTAL.*[0-9]+%" | grep -o '[0-9]\+%' | grep -o '[0-9]\+')
+          if [ "$BRANCH_COV" -lt 75 ]; then
+            echo "::warning title=Low Coverage::Branch coverage is below 75% (Current: ${BRANCH_COV}%)"
+          else
+            echo "::notice title=Good Coverage::Branch coverage is ${BRANCH_COV}%"
+          fi
+
+  push_to_mirror:
+    if: ${{ !contains(github.repository, 'Neptnium/Choco2') && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+    needs: [run_tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
