@@ -125,6 +125,8 @@ ast_node_t *create_ast_pipe(ast_node_t *ast, token_t *token);
 ast_node_t *create_ast_redirect(ast_node_t *ast, token_t *token);
 ast_node_t *create_ast_semi_colon(ast_node_t *ast, token_t *token);
 ast_node_t *create_ast_command(ast_node_t *ast, token_t *token);
+ast_node_t *create_ast_and(ast_node_t *ast, token_t *token);
+ast_node_t *create_ast_or(ast_node_t *ast, token_t *token);
 
 /*
  * AST Free functions

@@ -144,6 +144,8 @@ exitcode_t exec_built_in(char **argv);
 exitcode_t execute_command_fork(ast_node_t *ast);
 int execute_pipes(ast_node_t *node);
 int execute_redirection(ast_node_t *node);
+int execute_and(ast_node_t *node);
+int execute_or(ast_node_t *node);
 exitcode_t get_wait_status(int wait_pid_result);
 
 /*

@@ -41,9 +41,10 @@ print_ast_recursive(ast_node_t *ast, int depth, char const *names[])
         my_printf("* %s = ", names[ast->token->token_type]);
         print_array(ast->token->data._argv);
     }
-    if (ast->token->token_type == TOKEN_SEMI_COLON)
-        my_printf("* %s\n", names[ast->token->token_type]);
-    if (ast->token->token_type == TOKEN_PIPE)
+    if (ast->token->token_type == TOKEN_SEMI_COLON ||
+        ast->token->token_type == TOKEN_PIPE ||
+        ast->token->token_type == TOKEN_AND ||
+        ast->token->token_type == TOKEN_OR)
         my_printf("* %s\n", names[ast->token->token_type]);
     print_ast_recursive(ast->left, depth + 1, names);
     print_ast_recursive(ast->right, depth + 1, names);

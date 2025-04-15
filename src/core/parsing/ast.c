@@ -25,9 +25,12 @@ pass_possible_tokens(ast_command_t *asts, token_t *tokens, int *i)
         asts->commands[*i] = create_ast_command(asts->commands[*i], tokens);
     if (tokens->token_type == TOKEN_PIPE)
         asts->commands[*i] = create_ast_pipe(asts->commands[*i], tokens);
-    if (tokens->token_type == TOKEN_LEFT_APPEND ||
-        tokens->token_type == TOKEN_RIGHT_APPEND ||
-        tokens->token_type == TOKEN_RIGHT_REDIRECTION ||
+    if (tokens->token_type == TOKEN_OR)
+        asts->commands[*i] = create_ast_or(asts->commands[*i], tokens);
+    if (tokens->token_type == TOKEN_AND)
+        asts->commands[*i] = create_ast_and(asts->commands[*i], tokens);
+    if (tokens->token_type == TOKEN_LEFT_APPEND || tokens->token_type ==
+        TOKEN_RIGHT_APPEND || tokens->token_type == TOKEN_RIGHT_REDIRECTION ||
         tokens->token_type == TOKEN_LEFT_REDIRECTION)
         asts->commands[*i] = create_ast_redirect(asts->commands[*i], tokens);
     if (tokens->token_type == TOKEN_SEMI_COLON) {
