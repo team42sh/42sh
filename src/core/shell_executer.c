@@ -108,6 +108,7 @@ exec_binary(char **argv)
     free_array_string(env_array_child);
     free_null_check(path);
     get_shell()->last_exit_code = ERROR_OUTPUT;
+    exit(ERROR_OUTPUT);
 }
 
 /**
