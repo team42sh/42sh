@@ -9,6 +9,12 @@
     #define TYPES_H
 
 /*
+ * Defines for code clarity, IN for value entered as parameter and not
+ * Modidified, OUT if thhe variable is modified in the function
+ */
+    #define IN
+    #define OUT
+/*
  * Some define use to not use magic number in code.
  * Put your defines here to make it more clean.
  */
