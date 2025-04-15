@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
 
 
 const char *tokens_name[] = {"COMMAND", "PIPE", "LEFT_REDIRECTION",
@@ -57,10 +58,11 @@ create_token_list(void)
 exitcode_t
 add_token(token_list_t *list, token_t *token)
 {
-    token_t *tmp_head = list->head;
+    token_t *tmp_head;
 
-    if (token == NULL)
+    if (token == NULL || list == NULL)
         return ERROR_OUTPUT;
+    tmp_head = list->head;
     list->count++;
     if (tmp_head == NULL) {
         list->head = token;
@@ -186,6 +188,20 @@ tokenize_line(char *line)
 }
 
 /**
+ * @brief Print the token file info
+ *
+ * @param tmp_head The token head
+ */
+static void print_token_file(token_t *tmp_head)
+{
+    if (tmp_head->data._file == NULL)
+        my_printf("  \033[1;32m↳ File:\033[0m \033[1mNONE\033[0m\n");
+    else
+        my_printf("  \033[1;32m↳ File:\033[0m \033[1m%s\033[0m\n",
+            tmp_head->data._file);
+}
+
+/**
  * @brief Print the list of tokens.
  *
  * @param list  The token list
@@ -193,6 +209,8 @@ tokenize_line(char *line)
 void
 print_tokens(token_list_t *list)
 {
+    if (list == NULL)
+        return;
     for (token_t *tmp_head = list->head; tmp_head != NULL;
         tmp_head = tmp_head->next) {
         my_printf("\n\033[1;33m[ TOKEN ]\033[0m %s\n",
@@ -206,11 +224,7 @@ print_tokens(token_list_t *list)
             tmp_head->token_type != TOKEN_RIGHT_REDIRECTION &&
             tmp_head->token_type != TOKEN_RIGHT_APPEND)
             continue;
-        if (tmp_head->data._file == NULL)
-            my_printf("  \033[1;32m↳ File:\033[0m \033[1mNONE\033[0m\n");
-        else
-            my_printf("  \033[1;32m↳ File:\033[0m \033[1m%s\033[0m\n",
-                tmp_head->data._file);
+        print_token_file(tmp_head);
     }
     my_printf("\n");
 }

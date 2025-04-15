@@ -6,6 +6,8 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
+#include <stdio.h>
 
 /*
  * Handing of %s in stderr output.
@@ -44,6 +46,23 @@ static int print_simple_char(char *message, int i)
 }
 
 /*
+ * Handle the special case for the message
+ */
+static void handle_special_case(va_list *list, int *i, char *message)
+{
+    switch (message[*i + 1]) {
+        case '\0':
+            break;
+        case 'd':
+            *i += handle_d(list);
+            break;
+        case 's':
+            *i += handle_s(list);
+            break;
+    }
+}
+
+/*
  * Print a simple message in the stderr output.
  * This message can take only 2 format at the moment :
  * - %s
@@ -55,20 +74,13 @@ int print_err(char *message, ...)
 {
     va_list list;
 
+    if (message == NULL)
+        return ERROR_OUTPUT;
     va_start(list, message);
     for (int i = 0; message[i]; i++) {
         if (print_simple_char(message, i) == 1)
             continue;
-        switch (message[i + 1]) {
-            case '\0':
-                break;
-            case 'd':
-                i += handle_d(&list);
-                break;
-            case 's':
-                i += handle_s(&list);
-                break;
-        }
+        handle_special_case(&list, &i, message);
     }
     va_end(list);
     return ERROR_OUTPUT;

@@ -7,6 +7,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdbool.h>
 
 /*
  * Return true or false if the char c passed in parameter in a letter or not.
@@ -28,6 +29,8 @@ bool is_only_numbers(char *string)
 {
     char *str = string;
 
+    if (string == NULL)
+        return false;
     while (*str) {
         if ((*str < '0' || *str > '9') && *str != '+' && *str != '-')
             return false;
@@ -44,6 +47,8 @@ bool is_alpha_num(char *string)
 {
     char *str = string;
 
+    if (str == NULL)
+        return false;
     while (*str) {
         if ((*str >= 'a' && *str <= 'z')
             || (*str >= 'A' && *str <= 'Z')

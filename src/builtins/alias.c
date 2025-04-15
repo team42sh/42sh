@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 /*
  * This function is when you execute alias command without argument.
@@ -49,6 +50,8 @@ static exitcode_t show_one_alias(char *alias_name)
  */
 exitcode_t alias_command(char **argv)
 {
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return show_aliases();
     if (argv[1] != NULL && argv[2] == NULL)

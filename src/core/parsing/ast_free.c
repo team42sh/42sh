@@ -21,6 +21,8 @@ void free_ast(ast_node_t *ast)
 
 void free_asts(ast_command_t *asts)
 {
+    if (asts == NULL)
+        return;
     for (int i = 0; i < asts->count; i++) {
         free_ast(asts->commands[i]);
     }

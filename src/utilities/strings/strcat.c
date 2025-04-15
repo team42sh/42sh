@@ -17,6 +17,8 @@ char *my_strncat(char *dest, char const *src, size_t n)
     char *tmp = dest;
     size_t i = 0;
 
+    if (dest == NULL || src == NULL)
+        return NULL;
     while (*tmp)
         tmp++;
     while (*src && i < n) {
@@ -38,6 +40,8 @@ char *my_strcat(char *dest, char const *src)
 {
     char *tmp = dest;
 
+    if (dest == NULL || src == NULL)
+        return NULL;
     while (*tmp)
         tmp++;
     while (*src) {
