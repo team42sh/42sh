@@ -10,6 +10,8 @@
 #include "core/minishell.h"
 #include "core/parser.h"
 #include <criterion/criterion.h>
+#include <criterion/internal/assert.h>
+#include <criterion/internal/test.h>
 #include <criterion/redirect.h>
 #include <stdbool.h>
 
@@ -19,9 +21,9 @@ static void redirect_all_std(void)
     cr_redirect_stderr();
 }
 
-TestSuite(null_ptr_handling, .description="This suite try to give NULL ptr"
-    "to all the function.\nIts only purpose is to check whether the function"
-    "crash or not.\nReturn value are not checked and may vary from function to function.",
+TestSuite(null_ptr_handling, .description="\e[32mThis suite try to give NULL ptr"
+    " to all the function.\n\e[32mIts only purpose is to check whether the function"
+    " crash or not.\n\e[32mReturn value are not checked and may vary from function to function.\e[0m",
     .disabled = false, .timeout = 10., .init = redirect_all_std);
 
 Test(null_ptr_handling, alias_command)
