@@ -7,6 +7,7 @@
 
 #include "core/minishell.h"
 #include "core/parser.h"
+#include "core/types.h"
 
 /**
  * @brief Free ASTs and token list. Depending on NULL delivered in parameters.
@@ -62,6 +63,8 @@ static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
 exitcode_t
 execute_ast_node(ast_node_t *node)
 {
+    if (node == NULL)
+        return ERROR_OUTPUT;
     switch (node->token->token_type) {
         case TOKEN_PIPE:
             return execute_pipes(node);
@@ -91,9 +94,12 @@ execute_ast_node(ast_node_t *node)
 void
 exec_binary(char **argv)
 {
-    char *path = get_binary_path(argv[0]);
+    char *path;
     char **env_array_child;
 
+    if (argv == NULL)
+        return;
+    path = get_binary_path(argv[0]);
     if (path == NULL)
         path = my_strdup(argv[0]);
     env_array_child = env_node_to_array(get_shell()->env);

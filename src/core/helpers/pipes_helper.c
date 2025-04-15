@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 /**
  * @brief Regroup of small instructions to dup the right FD.
@@ -236,6 +237,8 @@ execute_pipes(ast_node_t *node)
     char **argv[2] = {NULL, NULL};
     bool is_builtins[2] = {false, false};
 
+    if (node == NULL)
+        return ERROR_OUTPUT;
     get_argv_pipe_info(node->left, &argv[LEFT], &is_builtins[LEFT]);
     get_argv_pipe_info(node->right, &argv[RIGHT], &is_builtins[RIGHT]);
     if (pipe(pipes) == -1)

@@ -44,6 +44,8 @@ char *env_search(char *key)
 {
     env_node_t *env = get_shell()->env;
 
+    if (key == NULL)
+        return NULL;
     while (env != NULL) {
         if (my_strcmp(env->key, key) == 0)
             return env->value;

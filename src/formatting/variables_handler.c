@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 /*
  * Extract the content after the $
@@ -67,9 +68,12 @@ static int extract_var(char *input, int *index, string_t **strings)
 string_t *extract_vars_in_string(string_t *strings, char *input)
 {
     int index = 0;
-    int len = my_strlen(input);
+    int len;
     int tmp_result = 0;
 
+    if (strings == NULL || input == NULL)
+        return NULL;
+    len = my_strlen(input);
     while (index < len) {
         tmp_result = extract_var(input, &index, &strings);
         if (tmp_result == 2)
@@ -91,6 +95,8 @@ string_t *extract_vars_in_array(char **array)
 {
     string_t *head = NULL;
 
+    if (array == NULL)
+        return NULL;
     for (int i = 0; array[i] != NULL; i++)
         head = extract_vars_in_string(head, array[i]);
     return head;
@@ -105,6 +111,8 @@ int replace_env_variables(char ***argv)
     string_t *vars_replace = NULL;
     string_t *head = NULL;
 
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     vars_replace = extract_vars_in_array(*argv);
     head = vars_replace;
     while (vars_replace != NULL) {
@@ -132,6 +140,8 @@ int replace_variables(char ***argv)
 {
     char *exitcode_str = my_itoa(get_shell()->last_exit_code);
 
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     *argv = my_strreplace_array(*argv, "$?", exitcode_str);
     free_null_check(exitcode_str);
     if (replace_env_variables(argv) == ERROR_OUTPUT)

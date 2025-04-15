@@ -31,9 +31,13 @@ ast_command_t *create_ast_array(void)
  */
 ast_command_t *add_ast_array(ast_command_t *asts)
 {
-    size_t new_len = asts->count + 1;
-    ast_node_t **new_commands = malloc(sizeof(ast_node_t *) * (new_len + 1));
+    size_t new_len;
+    ast_node_t **new_commands;
 
+    if (asts == NULL)
+        return NULL;
+    new_len = asts->count + 1;
+    new_commands = malloc(sizeof(ast_node_t *) * (new_len + 1));
     if (new_commands == NULL)
         return asts;
     for (size_t i = 0; i < new_len; i++)

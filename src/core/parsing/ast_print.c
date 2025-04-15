@@ -72,6 +72,8 @@ print_ast(ast_node_t *ast)
 void
 print_asts(ast_command_t *asts)
 {
+    if (asts == NULL)
+        return;
     for (int i = 0; i < asts->count; i++) {
         my_printf("\033[1;33m----------------\033[0m\n");
         print_ast(asts->commands[i]);

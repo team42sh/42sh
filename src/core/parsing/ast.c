@@ -50,10 +50,14 @@ pass_possible_tokens(ast_command_t *asts, token_t *tokens, int *i)
 ast_command_t *
 create_tree(token_list_t *list)
 {
-    ast_command_t *asts = create_ast_array();
-    token_t *tokens = list->head;
+    ast_command_t *asts;
+    token_t *tokens;
     int index = 0;
 
+    if (list == NULL)
+        return NULL;
+    asts = create_ast_array();
+    tokens = list->head;
     if (list->count <= 0)
         return NULL;
     while (tokens != NULL) {

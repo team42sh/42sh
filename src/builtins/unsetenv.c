@@ -17,6 +17,8 @@
  */
 exitcode_t unsetenv_command(char **argv)
 {
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return print_err("unsetenv: Too few arguments.\n");
     for (int i = 1; argv[i] != NULL; i++) {

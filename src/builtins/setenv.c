@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 static exitcode_t modify_shell_vars(char *key, char *value)
 {
@@ -26,6 +27,8 @@ exitcode_t setenv_command(char **argv)
     char *key;
     char *value;
 
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return env_command(argv);
     if (!is_letter(argv[1][0]) && argv[1][0] != '_')
