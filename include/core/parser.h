@@ -142,5 +142,6 @@ void free_token_list(token_list_t *list);
  */
 bool is_token_redirection_simple(token_t *token);
 bool is_token_redirection_append(token_t *token);
+syntax_ast_error_t analyse_token(token_t *token);
 
 #endif /* ifndef PARSING_H */

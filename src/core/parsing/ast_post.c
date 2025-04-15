@@ -7,6 +7,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
 
 static ast_node_t *swap_or_and(OUT ast_node_t *and_node)
 {
@@ -39,7 +40,16 @@ static ast_node_t *ast_priority_node(IN ast_node_t *head)
 
     while (tmp) {
         if (tmp->token->token_type == TOKEN_AND &&
-            tmp->left && tmp->left->token->token_type == TOKEN_OR)
+            tmp->left && (tmp->left->token->token_type == TOKEN_OR ||
+            tmp->left->token->token_type == TOKEN_AND))
+            return swap_or_and(tmp);
+        if (tmp->token->token_type == TOKEN_PIPE &&
+            tmp->left && (tmp->left->token->token_type == TOKEN_AND ||
+            tmp->left->token->token_type == TOKEN_OR))
+            return swap_or_and(tmp);
+        if (is_redirection(tmp->token->token_type) &&
+            tmp->left && (tmp->left->token->token_type == TOKEN_AND ||
+            tmp->left->token->token_type == TOKEN_OR))
             return swap_or_and(tmp);
         tmp = tmp->left;
     }

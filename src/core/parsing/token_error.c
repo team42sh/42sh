@@ -8,30 +8,6 @@
 
 #include "core/minishell.h"
 
-static syntax_ast_error_t analyse_token(token_t *token)
-{
-    if (token->token_type == TOKEN_PIPE) {
-        if (!token->next || token->next->token_type == TOKEN_PIPE)
-            return PIPE_NO_COMMAND;
-        if (token->next->token_type == TOKEN_COMMAND && token->next->next &&
-            (token->next->next->token_type == TOKEN_LEFT_REDIRECTION ||
-            token->next->next->token_type == TOKEN_LEFT_APPEND))
-            return AMBIGUOUS_INPUT;
-    }
-    if (is_redirection(token->token_type) && token->data._file == NULL)
-        return REDIRECT_NO_NAME;
-    if (token->token_type == TOKEN_RIGHT_APPEND ||
-        token->token_type == TOKEN_RIGHT_REDIRECTION)
-        if (token->next && token->next->token_type != TOKEN_SEMI_COLON)
-            return AMBIGUOUS_OUTPUT;
-    if (token->token_type == TOKEN_LEFT_APPEND ||
-        token->token_type == TOKEN_LEFT_REDIRECTION)
-        if ((token->next && token->next->token_type == TOKEN_LEFT_APPEND) ||
-            (token->next && token->next->token_type == TOKEN_LEFT_REDIRECTION))
-            return AMBIGUOUS_INPUT;
-    return NO_ERROR;
-}
-
 static int show_error_parsing(syntax_ast_error_t error_index)
 {
     switch (error_index) {

@@ -80,7 +80,7 @@ ast_node_t *create_ast_command(ast_node_t *ast, token_t *token)
  *
  * @return               The node of the AST.
  */
-ast_node_t *create_ast_and(ast_node_t *ast, token_t *token)
+ast_node_t *create_ast_and(IN ast_node_t *ast, IN token_t *token)
 {
     ast_node_t *new_ast = malloc(sizeof(ast_node_t));
 
@@ -98,7 +98,7 @@ ast_node_t *create_ast_and(ast_node_t *ast, token_t *token)
  *
  * @return               The node of the AST.
  */
-ast_node_t *create_ast_or(ast_node_t *ast, token_t *token)
+ast_node_t *create_ast_or(IN ast_node_t *ast, IN token_t *token)
 {
     ast_node_t *new_ast = malloc(sizeof(ast_node_t));
 
