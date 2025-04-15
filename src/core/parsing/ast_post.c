@@ -9,22 +9,22 @@
 #include "core/minishell.h"
 #include "core/parser.h"
 
-static ast_node_t *swap_or_and(OUT ast_node_t *and_node)
+static ast_node_t *swap_node(OUT ast_node_t *node)
 {
-    ast_node_t *or_node = and_node->left;
-    ast_node_t *true_cmd = or_node->left;
-    ast_node_t *fail_cmd = or_node->right;
-    ast_node_t *succ_cmd = and_node->right;
+    ast_node_t *left_node = node->left;
+    ast_node_t *true_cmd = left_node->left;
+    ast_node_t *fail_cmd = left_node->right;
+    ast_node_t *succ_cmd = node->right;
     ast_node_t *swap = NULL;
 
-    and_node->left = fail_cmd;
-    and_node->right = succ_cmd;
-    or_node->left = and_node;
-    or_node->right = true_cmd;
-    swap = or_node->left;
-    or_node->left = or_node->right;
-    or_node->right = swap;
-    return or_node;
+    node->left = fail_cmd;
+    node->right = succ_cmd;
+    left_node->left = node;
+    left_node->right = true_cmd;
+    swap = left_node->left;
+    left_node->left = left_node->right;
+    left_node->right = swap;
+    return left_node;
 }
 
 /**
@@ -42,15 +42,15 @@ static ast_node_t *ast_priority_node(IN ast_node_t *head)
         if (tmp->token->token_type == TOKEN_AND &&
             tmp->left && (tmp->left->token->token_type == TOKEN_OR ||
             tmp->left->token->token_type == TOKEN_AND))
-            return swap_or_and(tmp);
+            return swap_node(tmp);
         if (tmp->token->token_type == TOKEN_PIPE &&
             tmp->left && (tmp->left->token->token_type == TOKEN_AND ||
             tmp->left->token->token_type == TOKEN_OR))
-            return swap_or_and(tmp);
+            return swap_node(tmp);
         if (is_redirection(tmp->token->token_type) &&
             tmp->left && (tmp->left->token->token_type == TOKEN_AND ||
             tmp->left->token->token_type == TOKEN_OR))
-            return swap_or_and(tmp);
+            return swap_node(tmp);
         tmp = tmp->left;
     }
     return head;
