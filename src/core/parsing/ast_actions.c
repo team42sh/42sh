@@ -6,6 +6,8 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
+#include "my_printf.h"
 
 /**
  * @brief Create a AST node for piping.

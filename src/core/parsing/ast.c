@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
 
 /**
  * @brief Parse every possible tokens and create the appropriate node.
@@ -59,5 +60,5 @@ create_tree(token_list_t *list)
         pass_possible_tokens(asts, tokens, &index);
         tokens = tokens->next;
     }
-    return asts;
+    return ast_priority_process(asts);
 }

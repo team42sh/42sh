@@ -115,6 +115,7 @@ void print_ast(ast_node_t *ast);
 void print_asts(ast_command_t *asts);
 
 ast_command_t *create_tree(token_list_t *list);
+ast_command_t *ast_priority_process(ast_command_t *ast);
 ast_command_t *create_ast_array(void);
 ast_command_t *add_ast_array(ast_command_t *asts);
 

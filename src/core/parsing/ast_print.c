@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /**
  * @brief Print the depth to see the right indentation of elements.
