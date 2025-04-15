@@ -20,6 +20,8 @@
     #include <sys/stat.h>
     #include <errno.h>
     #include <fcntl.h>
+    #include <termios.h>
+    #include <string.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -115,6 +117,8 @@ typedef struct string_s {
  * - user_input_buffer = The original input buffer in case you need it.
  */
 typedef struct shell_s {
+    struct termios _original_termios;
+    struct termios _current_termios;
     env_node_t *env;
     alias_t *aliases;
     shell_variables_t *vars;
@@ -164,6 +168,12 @@ int remove_env(char *key);
 char *env_search(char *key);
 void clear_env(void);
 void reset_initial_env(void);
+
+/*
+ * Termios helping functions
+ */
+void init_termios(void);
+char *termios_get_input(void);
 
 /*
  * Environment transformer functions

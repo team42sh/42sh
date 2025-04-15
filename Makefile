@@ -6,10 +6,10 @@
 ##
 
 CC = gcc
-CFLAGS = -I./include -Wall -Wextra -Werror -g -I./lib/my_printf/include
+CFLAGS = -I./include -g -I./lib/my_printf/include
 CFLAGS += $(CUSTOMCFLAGS)
 ## CFLAGS += -fprofile-arcs -ftest-coverage
-LDFLAGS = -lmy_printf -L./lib
+LDFLAGS = -lmy_printf -L./lib -lncurses
 UNIT_FLAGS = -lcriterion
 TARGET = 42sh
 

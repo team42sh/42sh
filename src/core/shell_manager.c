@@ -33,14 +33,14 @@ setup_shell_informations(shell_t *shell)
  *
  * @return The final exitcode to return at the end of the shell.
  */
-exitcode_t
-exit_shell(void)
+exitcode_t exit_shell(void)
 {
     exitcode_t exit_code = get_shell()->last_exit_code;
 
     clear_env();
     clear_aliases();
     free_shell_vars();
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &get_shell()->_original_termios);
     free_null_check(get_shell()->last_input_buffer);
     free_null_check(get_shell());
     return exit_code;

@@ -6,6 +6,8 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
+#include <wchar.h>
 
 /*
  * Declaration of all BUILT IN commands.
@@ -32,10 +34,12 @@ static int shell_loop(void)
 {
     size_t line_size = 0;
     exitcode_t e_ret = 0;
+    int char_code = -1;
 
-    while (1) {
-        if (isatty(STDIN_FILENO))
-            print_shell_prompt();
+    if (isatty(STDIN_FILENO))
+        print_shell_prompt();
+    termios_get_input();
+        /*
         if (getline(&get_shell()->last_input_buffer, &line_size, stdin) == -1)
             return exit_command(NULL);
         remove_newline(get_shell()->last_input_buffer);
@@ -45,7 +49,7 @@ static int shell_loop(void)
             return OK_OUTPUT;
         free_null_check(get_shell()->vars->github_repository);
         get_shell()->vars->github_repository = get_github_repository_name();
-    }
+        */
 }
 
 /*
@@ -75,7 +79,9 @@ static int setup_shell(void)
  */
 int main(void)
 {
-    if (setup_shell() == OK_OUTPUT)
+    if (setup_shell() == OK_OUTPUT) {
+        init_termios();
         shell_loop();
+    }
     return exit_shell();
 }
