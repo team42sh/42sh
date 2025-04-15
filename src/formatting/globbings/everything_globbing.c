@@ -53,7 +53,8 @@ char *create_path_to_dir(IN char *globbing_string)
         result_path = my_strdup(".");
         return result_path;
     }
-    if (globbing_string[globbing_index - 1] != '\0' && globbing_string[globbing_index - 1] == '/') {
+    if (globbing_string[globbing_index - 1] != '\0' &&
+        globbing_string[globbing_index - 1] == '/') {
         result_path = malloc(sizeof(char) * (globbing_index));
     }
     return NULL;
@@ -61,8 +62,6 @@ char *create_path_to_dir(IN char *globbing_string)
 
 char **change_star_to_list_of_files(IN char **argv)
 {
-    //char **tab = NULL;
-    //int file_nb = 0;
     int globbing_index = find_char_index_in_tab(argv, '*');
     char *path = NULL;
 
