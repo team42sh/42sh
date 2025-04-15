@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
 
 /**
  * @brief Free ASTs and token list. Depending on NULL delivered in parameters.
@@ -26,6 +27,14 @@ free_tokens_ast(ast_command_t *asts, token_list_t *list, bool free_list)
         free_null_check(list);
 }
 
+/**
+ * @brief Execute every ast seperated by ';'
+ *
+ * @param asts                  The list of ASTs
+ * @param list                  The list of tokens
+ *
+ * @return The final exit code of all ASTs. The last command.
+ */
 static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
 {
     exitcode_t exec_command_return = 0;
@@ -63,6 +72,10 @@ execute_ast_node(ast_node_t *node)
         case TOKEN_RIGHT_APPEND:
         case TOKEN_LEFT_APPEND:
             return execute_redirection(node);
+        case TOKEN_AND:
+            return execute_and(node);
+        case TOKEN_OR:
+            return execute_or(node);
         default:
             return ERROR_OUTPUT;
     }
