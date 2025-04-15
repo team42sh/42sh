@@ -28,6 +28,14 @@
     #include "core/parser.h"
     #include "my_printf.h"
 
+    #ifndef IN
+        #define IN
+    #endif /* ifndef IN */
+
+    #ifndef OUT
+        #define OUT
+    #endif /* ifndef OUT */
+
 /*
  * Environment structure used in a linked list.
  * This method is faster than a normal array aka extern char **environ

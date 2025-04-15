@@ -14,7 +14,7 @@
  *
  * @return The exitcode of the AND.
  */
-int execute_and(ast_node_t *node)
+int execute_and(IN ast_node_t *node)
 {
     exitcode_t left_code = execute_ast_node(node->left);
     exitcode_t right_code = -1;
@@ -32,7 +32,7 @@ int execute_and(ast_node_t *node)
  *
  * @return The exitcode of the OR.
  */
-int execute_or(ast_node_t *node)
+int execute_or(IN ast_node_t *node)
 {
     exitcode_t left_code = execute_ast_node(node->left);
     exitcode_t right_code = -1;
