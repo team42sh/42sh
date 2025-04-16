@@ -6,8 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
-#include <wchar.h>
 
 /*
  * Declaration of all BUILT IN commands.
@@ -30,26 +28,26 @@ const builtin_t BUILTINS[] = {
  * Without this you shell will not work :)
  * The return value of this function is useless.
  */
-static int shell_loop(void)
+int shell_loop(void)
 {
-    size_t line_size = 0;
     exitcode_t e_ret = 0;
-    int char_code = -1;
 
     if (isatty(STDIN_FILENO))
         print_shell_prompt();
-    termios_get_input();
-        /*
-        if (getline(&get_shell()->last_input_buffer, &line_size, stdin) == -1)
-            return exit_command(NULL);
-        remove_newline(get_shell()->last_input_buffer);
-        write_command_history(get_shell()->last_input_buffer);
-        e_ret = shell_execute(tokenize_line(get_shell()->last_input_buffer));
-        if (e_ret == CURRENTLY_CHILD || get_shell()->should_exit)
-            return OK_OUTPUT;
-        free_null_check(get_shell()->vars->github_repository);
-        get_shell()->vars->github_repository = get_github_repository_name();
-        */
+    init_termios();
+    HIDE_CURSOR();
+    get_shell()->last_input_buffer = termios_get_input();
+    SHOW_CURSOR();
+    if (get_shell()->last_input_buffer == NULL)
+        return exit_command(NULL);
+    write_command_history(get_shell()->last_input_buffer);
+    e_ret = shell_execute(tokenize_line(get_shell()->last_input_buffer));
+    if (e_ret == CURRENTLY_CHILD || get_shell()->should_exit)
+        return OK_OUTPUT;
+    free_null_check(get_shell()->vars->github_repository);
+    get_shell()->vars->github_repository = get_github_repository_name();
+    shell_loop();
+    return OK_OUTPUT;
 }
 
 /*
@@ -79,9 +77,7 @@ static int setup_shell(void)
  */
 int main(void)
 {
-    if (setup_shell() == OK_OUTPUT) {
-        init_termios();
+    if (setup_shell() == OK_OUTPUT)
         shell_loop();
-    }
     return exit_shell();
 }

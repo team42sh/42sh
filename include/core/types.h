@@ -27,6 +27,8 @@
     #define MAX_WORD_LEN 2048
     #define BUFFER_TERMIOS_SIZE 4096
 
+    #define CTRL_D_VALUE 4
+    #define BACKSPACE_VALUE 127
     #define COMMENT_CHAR '#'
 
 /*

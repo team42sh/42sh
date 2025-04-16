@@ -26,6 +26,7 @@ setup_shell_informations(shell_t *shell)
     shell->saved_stdin = dup(STDIN_FILENO);
     shell->saved_stdout = dup(STDOUT_FILENO);
     shell->vars = create_shell_vars();
+    shell->_term_info = setup_shell_term_info();
 }
 
 /**
@@ -40,7 +41,8 @@ exitcode_t exit_shell(void)
     clear_env();
     clear_aliases();
     free_shell_vars();
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &get_shell()->_original_termios);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH,
+        &get_shell()->_term_info->_original_termios);
     free_null_check(get_shell()->last_input_buffer);
     free_null_check(get_shell());
     return exit_code;

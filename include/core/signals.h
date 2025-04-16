@@ -9,6 +9,7 @@
     #define SIGNALS_H
 
     #include <sys/types.h>
+    #include <signal.h>
 
     #include "types.h"
 

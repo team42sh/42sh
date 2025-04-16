@@ -6,7 +6,7 @@
 ##
 
 CC = gcc
-CFLAGS = -I./include -g -I./lib/my_printf/include
+CFLAGS = -I./include -Wall -Wextra -Werror -g -I./lib/my_printf/include
 CFLAGS += $(CUSTOMCFLAGS)
 ## CFLAGS += -fprofile-arcs -ftest-coverage
 LDFLAGS = -lmy_printf -L./lib -lncurses

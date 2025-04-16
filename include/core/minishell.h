@@ -25,18 +25,11 @@
 
     #include "builtins.h"
     #include "macros/math_macros.h"
+    #include "macros/misc_macros.h"
     #include "core/types.h"
     #include "core/signals.h"
     #include "core/parser.h"
     #include "my_printf.h"
-
-    #ifndef IN
-        #define IN
-    #endif /* ifndef IN */
-
-    #ifndef OUT
-        #define OUT
-    #endif /* ifndef OUT */
 
 /*
  * Environment structure used in a linked list.
@@ -108,6 +101,19 @@ typedef struct string_s {
     struct string_s *next;
 } string_t;
 
+/**
+ * @brief Terminal structure informations
+ *        Contains stuff for the input line with cursor.
+ */
+typedef struct term_info_s {
+    struct termios _original_termios;
+    struct termios _current_termios;
+    char _buffer[4096];
+    size_t _buffer_len;
+    size_t _cursor_index;
+    bool _sig_buffer_reset;
+} term_info_t;
+
 /*
  * Shell structure
  * - env = Linked list with all environment variables.
@@ -117,8 +123,7 @@ typedef struct string_s {
  * - user_input_buffer = The original input buffer in case you need it.
  */
 typedef struct shell_s {
-    struct termios _original_termios;
-    struct termios _current_termios;
+    term_info_t *_term_info;
     env_node_t *env;
     alias_t *aliases;
     shell_variables_t *vars;
@@ -172,8 +177,11 @@ void reset_initial_env(void);
 /*
  * Termios helping functions
  */
+term_info_t *setup_shell_term_info(void);
 void init_termios(void);
 char *termios_get_input(void);
+void reset_buffer_termios(term_info_t *term_info);
+void print_input_termios(term_info_t *term_info, bool show_cursor);
 
 /*
  * Environment transformer functions
