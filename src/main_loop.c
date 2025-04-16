@@ -6,8 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "core/types.h"
-#include "my_printf.h"
 
 /*
  * Declaration of all BUILT IN commands.

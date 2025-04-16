@@ -55,10 +55,11 @@ ReportHook(POST_ALL)(struct criterion_global_stats *stat)
             if (success_percent == 100)
                 printf("\e[32mSuccess rate of \e[1;34m%.2f%%\e[0m !\n"
                 "Tests suite find no probleme at all, well done !\e[0m\n", success_percent);
-            float total_ms = 0;
-            for (struct criterion_test_stats *ts = suite_stat->tests; ts; ts = ts->next)
-                total_ms += ts->elapsed_time;
-            printf("Suite completed in %.4f second\n\n", total_ms);
+            float max_second = 0;
+            for (struct criterion_test_stats *stat_test = suite_stat->tests; stat_test; stat_test = stat_test->next)
+                if (max_second < stat_test->elapsed_time)
+                    max_second = stat_test->elapsed_time;
+            printf("Suite completed in %.4f second\n\n", max_second);
         i++;
     }
 }

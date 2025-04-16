@@ -7,6 +7,7 @@
 
 #include "core/minishell.h"
 #include "core/parser.h"
+#include "core/types.h"
 
 /**
  * @brief Free ASTs and token list. Depending on NULL delivered in parameters.

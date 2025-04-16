@@ -8,7 +8,6 @@
 
 #include "core/minishell.h"
 #include "core/types.h"
-#include "my_printf.h"
 
 /**
  * @brief Get the return value of the wait pit.
