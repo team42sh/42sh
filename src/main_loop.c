@@ -20,6 +20,7 @@ const builtin_t BUILTINS[] = {
     {"cd", &cd_command},
     {"alias", &alias_command},
     {"unalias", &unalias_command},
+    {"echo", &echo_command},
     {NULL, NULL}
 };
 
