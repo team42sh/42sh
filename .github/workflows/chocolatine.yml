@@ -84,8 +84,6 @@ jobs:
     container:
       image: epitechcontent/epitest-docker:latest
 
-    continue-on-error: true
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -102,6 +100,7 @@ jobs:
       - name: Run unit tests
         if: env.has_tests == 'true'
         timeout-minutes: 2
+        continue-on-error: true
         run: |
           make tests_run
 
