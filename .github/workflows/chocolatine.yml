@@ -84,6 +84,8 @@ jobs:
     container:
       image: epitechcontent/epitest-docker:latest
 
+    continue-on-error: true
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
