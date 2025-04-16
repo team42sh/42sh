@@ -27,6 +27,33 @@ static int print_variables(void)
 }
 
 /**
+ * @brief A function to get the value to assing to a local variable
+ * Can be a single word or a list of words between ()
+ *
+ * @param key
+ * @param argv
+ * @return char*
+ */
+static char *get_new_var_value(char *key, char **argv)
+{
+    int key_len = my_strlen(key);
+    char *new_value = NULL;
+
+    if (key_len == my_strlen(argv[1]))
+        return new_value;
+    new_value = my_strdup(&argv[1][key_len + 1]);
+    if (argv[1][key_len + 1] == '(') {
+        for (int i = 2; argv[i] != NULL; i++) {
+            new_value = realloc(new_value,
+                my_strlen(new_value) + my_strlen(argv[i]) + 2);
+            new_value = my_strcat(new_value, " ");
+            new_value = my_strcat(new_value, argv[i]);
+        }
+    }
+    return new_value;
+}
+
+/**
  * @brief A function to modify an existing local variable
  *
  * @param argv
@@ -43,8 +70,7 @@ static int modify_existing(char **argv)
             continue;
         }
         free_null_check(var->value);
-        if (my_strlen(argv[1]) != my_strlen(key))
-            var->value = my_strdup(&argv[1][my_strlen(key) + 1]);
+        var->value = get_new_var_value(key, argv);
         free(key);
         return OK_OUTPUT;
     }
@@ -62,14 +88,11 @@ static int add_variable(char **argv)
 {
     var_node_t *var = get_shell()->variables;
     char *key = my_strtok(argv[1], '=');
-    int key_len = my_strlen(key);
     var_node_t *new_var = malloc(sizeof(var_node_t));
 
     new_var->key = key;
-    new_var->value = NULL;
+    new_var->value = get_new_var_value(key, argv);
     new_var->read_only = 0;
-    if (key_len != my_strlen(argv[1]))
-        new_var->value = my_strdup(&argv[1][key_len + 1]);
     new_var->next = var;
     get_shell()->variables = new_var;
     return OK_OUTPUT;
@@ -87,9 +110,7 @@ exitcode_t set_command(char **argv)
 
     if (argv_count == 1)
         return print_variables();
-    if (argv_count == 2) {
-        if (modify_existing(argv) == ERROR_OUTPUT)
-            return add_variable(argv);
-    }
+    if (modify_existing(argv) == ERROR_OUTPUT)
+        return add_variable(argv);
     return OK_OUTPUT;
 }

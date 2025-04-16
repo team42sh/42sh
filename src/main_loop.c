@@ -15,6 +15,7 @@ const builtin_t BUILTINS[] = {
     {"exit", &exit_command},
     {"printenv", &env_command},
     {"env", &env_command},
+    {"set", &set_command},
     {"setenv", &setenv_command},
     {"unsetenv", &unsetenv_command},
     {"cd", &cd_command},
