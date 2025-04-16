@@ -41,7 +41,7 @@ typedef struct builtin_s {
 int is_builtin(char **argv);
 
 /*
- * DECLARATE IN ./src/main.c
+ * DECLARATE IN ./src/main_loop.c
  */
 extern const builtin_t BUILTINS[];
 

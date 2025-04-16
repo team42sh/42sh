@@ -9,6 +9,8 @@
 
 void free_token(token_t *token)
 {
+    if (token == NULL)
+        return;
     if (token->token_type == TOKEN_COMMAND)
         free_array_string(token->data._argv);
     if (token->token_type == TOKEN_LEFT_APPEND ||
@@ -21,9 +23,12 @@ void free_token(token_t *token)
 
 void free_token_list(token_list_t *list)
 {
-    token_t *tmp_token = list->head;
+    token_t *tmp_token = NULL;
     token_t *next = NULL;
 
+    if (list == NULL)
+        return;
+    tmp_token = list->head;
     while (tmp_token != NULL) {
         next = tmp_token->next;
         free_token(tmp_token);

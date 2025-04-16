@@ -7,6 +7,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 /**
  * @brief Get the return value of the wait pit.
@@ -37,6 +38,8 @@ get_wait_status(int wait_pid_result)
 int
 show_error_execve(int errno_val, char **argv)
 {
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     switch (errno_val) {
         case ENOEXEC:
             return print_err("%s: Exec format error."
@@ -60,6 +63,8 @@ is_builtin(char **argv)
 {
     char *command_name = NULL;
 
+    if (argv == NULL)
+        return -1;
     for (int i = 0; BUILTINS[i].command_name != NULL; i++) {
         command_name = my_strdup(BUILTINS[i].command_name);
         if (my_strcmp(argv[0], command_name) == 0) {
@@ -69,6 +74,23 @@ is_builtin(char **argv)
         free(command_name);
     }
     return -1;
+}
+
+static exitcode_t command_fork(ast_node_t *ast)
+{
+    pid_t pid = 0;
+    int status_wait = 0;
+
+    pid = fork();
+    if (pid == -1)
+        return ERROR_OUTPUT;
+    if (pid == 0) {
+        if (exec_binary(ast->token->data._argv) == CURRENTLY_CHILD)
+            return CURRENTLY_CHILD;
+    }
+    waitpid(pid, &status_wait, 0);
+    get_shell()->last_exit_code = get_wait_status(status_wait);
+    return OK_OUTPUT;
 }
 
 /**
@@ -82,23 +104,20 @@ is_builtin(char **argv)
 exitcode_t
 execute_command_fork(ast_node_t *ast)
 {
-    pid_t pid = 0;
-    int status_wait = 0;
+    exitcode_t result = OK_OUTPUT;
     int status = -1;
 
+    if (ast == NULL)
+        return ERROR_OUTPUT;
     status = exec_built_in(ast->token->data._argv);
     if (status != OK_OUTPUT && status != -1 && get_shell()->is_piped_shell)
         get_shell()->should_exit = 1;
     if (status == -1) {
-        pid = fork();
-        if (pid == -1)
-            return ERROR_OUTPUT;
-        if (pid == 0) {
-            exec_binary(ast->token->data._argv);
+        result = command_fork(ast);
+        if (result == CURRENTLY_CHILD)
             return CURRENTLY_CHILD;
-        }
-        waitpid(pid, &status_wait, 0);
-        get_shell()->last_exit_code = get_wait_status(status_wait);
+        if (result != OK_OUTPUT)
+            return result;
     }
     return get_shell()->last_exit_code;
 }

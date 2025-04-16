@@ -44,6 +44,8 @@ char *env_search(char *key)
 {
     env_node_t *env = get_shell()->env;
 
+    if (key == NULL)
+        return NULL;
     while (env != NULL) {
         if (my_strcmp(env->key, key) == 0)
             return env->value;
@@ -135,6 +137,8 @@ void reset_initial_env(void)
     char *tmp_value = NULL;
 
     clear_env();
+    if (environ == NULL)
+        return;
     for (int i = 0; environ[i] != NULL; i++) {
         tmp_key = my_strtok(environ[i], '=');
         tmp_value = my_strdup(&(environ[i][my_strlen(tmp_key) + 1]));

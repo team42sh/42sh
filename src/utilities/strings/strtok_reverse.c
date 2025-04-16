@@ -8,20 +8,6 @@
 #include "core/minishell.h"
 
 /*
- * Count the number of character before the until_char.
- * By starting at the end.
- */
-int count_char_from_end(const char *str, char c)
-{
-    int i = 0;
-    int len = my_strlen(str);
-
-    while (i < len && str[len - 1 - i] != c)
-        i++;
-    return i;
-}
-
-/*
  * Return the entire string after the last occurrence of until_char.
  * Example : strtok_reverse("foo=bar=baz", '=') --> "baz".
  */

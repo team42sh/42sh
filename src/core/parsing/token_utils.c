@@ -9,6 +9,8 @@
 
 bool is_token_redirection_append(token_t *token)
 {
+    if (token == NULL)
+        return false;
     if (token->token_type == TOKEN_LEFT_APPEND ||
         token->token_type == TOKEN_RIGHT_APPEND)
         return true;
@@ -17,6 +19,8 @@ bool is_token_redirection_append(token_t *token)
 
 bool is_token_redirection_simple(token_t *token)
 {
+    if (token == NULL)
+        return false;
     if (token->token_type == TOKEN_LEFT_REDIRECTION ||
         token->token_type == TOKEN_RIGHT_REDIRECTION)
         return true;

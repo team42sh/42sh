@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdlib.h>
 
 /*
  * Remove the \n for the last character and put it as \0.
@@ -14,6 +15,8 @@ void remove_newline(char *str)
 {
     int len = my_strlen(str);
 
+    if (str == NULL)
+        return;
     if (len > 0 && str[len - 1] == '\n')
         str[len - 1] = '\0';
 }
@@ -23,6 +26,8 @@ void remove_newline(char *str)
  */
 int my_strcmp(char *s1, char *s2)
 {
+    if (s1 == NULL || s2 == NULL)
+        return 0;
     while (*s1 && (*s1 == *s2)) {
         s1++;
         s2++;
@@ -38,6 +43,8 @@ int my_strncmp(char *s1, char *s2, size_t n)
 {
     size_t temp = 0;
 
+    if (s1 == NULL || s2 == NULL)
+        return 0;
     while (*s1 && (*s1 == *s2) && temp < n) {
         s1++;
         s2++;
@@ -56,8 +63,10 @@ char *my_strdup(char const *src)
     int len_src = my_strlen(src);
     char *new_str = malloc(sizeof(char) * (len_src + 1));
 
-    if (new_str == NULL)
+    if (new_str == NULL || src == NULL) {
+        free(new_str);
         return NULL;
+    }
     my_strcpy(new_str, src);
     return new_str;
 }

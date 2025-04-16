@@ -65,6 +65,8 @@ static ast_node_t *ast_priority_node(IN ast_node_t *head)
  */
 ast_command_t *ast_priority_process(IN ast_command_t *asts)
 {
+    if (asts == NULL)
+        return NULL;
     for (int i = 0; i < asts->count; i++) {
         asts->commands[i] = ast_priority_node(asts->commands[i]);
     }

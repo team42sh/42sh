@@ -33,6 +33,8 @@ static int get_occurence_to_replace(char *string, char *to_replace)
     int index = 0;
     int occurences_amount = 0;
 
+    if (string == NULL || to_replace == NULL)
+        return 0;
     while (string[index] != '\0') {
         if (check_occurrence_at_index(string, to_replace, index)) {
             occurences_amount++;
@@ -82,6 +84,8 @@ char **my_strreplace_array(char **array, char *to_replace, char *replace_str)
 {
     char *temp_free = NULL;
 
+    if (array == NULL || to_replace == NULL || replace_str == NULL)
+        return NULL;
     for (int i = 0; array[i] != NULL; i++) {
         temp_free = array[i];
         array[i] = my_strreplace(array[i], to_replace, replace_str);
@@ -96,6 +100,8 @@ char **my_strreplace_array(char **array, char *to_replace, char *replace_str)
  */
 char *my_strreplace_full(char *string, char *from, char *to)
 {
+    if (string == NULL || from == NULL || to == NULL)
+        return NULL;
     if (my_strcmp(string, from) == 0) {
         free(string);
         string = my_strdup(to);
@@ -111,6 +117,8 @@ char *my_strreplace_full(char *string, char *from, char *to)
  */
 char **my_strreplace_array_full(char **array, char *to_replace, char *replace)
 {
+    if (array == NULL || to_replace == NULL || replace == NULL)
+        return NULL;
     for (int i = 0; array[i] != NULL; i++)
         array[i] = my_strreplace_full(array[i], to_replace, replace);
     return array;
