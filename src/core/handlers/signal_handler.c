@@ -65,9 +65,13 @@ void handle_signal(signal_t signal)
 {
     switch (signal) {
         case SIGINT:
+            get_shell()->_term_info->_sig_buffer_reset = true;
             if (get_shell()->current_child_pid == -1) {
+                print_input_termios(get_shell()->_term_info, false);
+                reset_buffer_termios(get_shell()->_term_info);
                 write(1, "\n", 1);
                 print_shell_prompt();
+                my_printf(CURSOR_COLOR " " RESET_COLOR);
                 get_shell()->last_exit_code = 1;
                 return;
             }

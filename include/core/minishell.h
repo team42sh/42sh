@@ -20,21 +20,16 @@
     #include <sys/stat.h>
     #include <errno.h>
     #include <fcntl.h>
+    #include <termios.h>
+    #include <string.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
+    #include "macros/misc_macros.h"
     #include "core/types.h"
     #include "core/signals.h"
     #include "core/parser.h"
     #include "my_printf.h"
-
-    #ifndef IN
-        #define IN
-    #endif /* ifndef IN */
-
-    #ifndef OUT
-        #define OUT
-    #endif /* ifndef OUT */
 
 /*
  * Environment structure used in a linked list.
@@ -106,6 +101,20 @@ typedef struct string_s {
     struct string_s *next;
 } string_t;
 
+/**
+ * @brief Terminal structure informations
+ *        Contains stuff for the input line with cursor.
+ */
+typedef struct term_info_s {
+    struct termios _original_termios;
+    struct termios _current_termios;
+    char _buffer[4096];
+    size_t _buffer_len;
+    size_t _cursor_index;
+    bool _sig_buffer_reset;
+    int _history_index;
+} term_info_t;
+
 /*
  * Shell structure
  * - env = Linked list with all environment variables.
@@ -115,6 +124,9 @@ typedef struct string_s {
  * - user_input_buffer = The original input buffer in case you need it.
  */
 typedef struct shell_s {
+    term_info_t *_term_info;
+    string_t *_history_input;
+    int _max_history;
     env_node_t *env;
     alias_t *aliases;
     shell_variables_t *vars;
@@ -152,7 +164,7 @@ void free_shell_vars(void);
  */
 int show_error_execve(int errno_val, char **argv);
 exitcode_t execute_ast_node(ast_node_t *node);
-void exec_binary(char **argv);
+exitcode_t exec_binary(char **argv);
 exitcode_t exec_built_in(char **argv);
 exitcode_t exec_built_in(char **argv);
 exitcode_t execute_command_fork(ast_node_t *ast);
@@ -170,6 +182,19 @@ int remove_env(char *key);
 char *env_search(char *key);
 void clear_env(void);
 void reset_initial_env(void);
+
+/*
+ * Termios helping functions
+ */
+term_info_t *setup_shell_term_info(void);
+void init_termios(void);
+char *termios_get_input(void);
+void reset_buffer_termios(term_info_t *term_info);
+void print_input_termios(term_info_t *term_info, bool show_cursor);
+void enable_raw_mode(shell_t *shell);
+
+void handle_ctrl_e(term_info_t *ti);
+void handle_ctrl_a(term_info_t *ti);
 
 /*
  * Environment transformer functions
@@ -205,6 +230,8 @@ int is_quote_delimiter(char c, char prev_c);
 string_t *add_string(string_t *head, char *string);
 void free_strings(string_t *head);
 void print_strings(string_t *head);
+void print_string_index(string_t *head, int index);
+char *get_string_index(string_t *head, int index);
 
 void remove_newline(char *str);
 char **command_formatter(char **argv);
@@ -234,7 +261,7 @@ void print_shell_prompt(void);
 /*
  * Aliases handler functions
  */
-void add_alias(char *original_string, char *alias_string);
+void add_alias(char *original_string, char **alias_arr);
 int remove_alias(char *original_string);
 void clear_aliases(void);
 char **replaces_all_aliases(char **input);
