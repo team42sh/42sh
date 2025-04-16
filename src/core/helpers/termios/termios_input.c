@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
 
 /**
  * @brief Handles the deletion of a character using backspace.
@@ -135,8 +134,13 @@ static bool choose_char_case(IN char c, OUT term_info_t *term_info)
         handle_escape(term_info);
     if (c == BACKSPACE_VALUE)
         handle_backspace(term_info);
+    if (c == CTRL_A_VALUE)
+        handle_ctrl_a(term_info);
+    if (c == CTRL_E_VALUE)
+        handle_ctrl_e(term_info);
     if (c != '\e' && c != '\n' && c != '\t' &&
-        c != CTRL_D_VALUE && c != BACKSPACE_VALUE)
+        c != CTRL_D_VALUE && c != BACKSPACE_VALUE &&
+        c != CTRL_A_VALUE && c != CTRL_E_VALUE)
         handle_character(term_info, c);
     return false;
 }
