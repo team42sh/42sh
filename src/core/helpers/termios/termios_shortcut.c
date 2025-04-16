@@ -6,8 +6,12 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
 
+/**
+ * @brief Handling of the shortcut CTRL A
+ *
+ * @param ti            The structure terminal information
+ */
 void handle_ctrl_a(OUT term_info_t *ti)
 {
     if (ti == NULL)
@@ -15,6 +19,11 @@ void handle_ctrl_a(OUT term_info_t *ti)
     ti->_cursor_index = 0;
 }
 
+/**
+ * @brief Handling of the shortcut CTRL E
+ *
+ * @param ti            The structure terminal information
+ */
 void handle_ctrl_e(OUT term_info_t *ti)
 {
     if (ti == NULL)
