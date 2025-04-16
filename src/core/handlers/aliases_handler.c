@@ -17,7 +17,7 @@ static alias_t *create_node(char *original, char *alias)
 
     if (original == NULL || alias == NULL)
         return NULL;
-    alias_node->alias_string = my_strdup(alias);
+    alias_node->alias_string = alias;
     alias_node->original_string = my_strdup(original);
     alias_node->next = NULL;
     return alias_node;
@@ -34,6 +34,35 @@ static int free_alias(alias_t *alias)
     free_null_check(alias->alias_string);
     free(alias);
     return 0;
+}
+
+/**
+ * @brief By passing a char ** make 1 char *
+ *
+ * @param alias_arr             The array of strings
+ *
+ * @return The alias string.
+ */
+static char *make_alias_one_string(IN char **alias_arr)
+{
+    size_t total_len = 0;
+    char *result = NULL;
+
+    if (!alias_arr)
+        return NULL;
+    for (int i = 0; alias_arr[i]; i++) {
+        total_len += my_strlen(alias_arr[i]);
+        if (alias_arr[i + 1])
+            total_len += 1;
+    }
+    result = malloc(total_len + 1);
+    result[0] = '\0';
+    for (int i = 0; alias_arr[i]; i++) {
+        my_strcat(result, alias_arr[i]);
+        if (alias_arr[i + 1] != NULL)
+            my_strcat(result, " ");
+    }
+    return result;
 }
 
 /*
@@ -71,10 +100,10 @@ static char **modify_every_words(char **input, alias_t *aliases)
  * Add an aliase at the top of the linked list aliases in the shell structure.
  * If the alias is already existing then just modifying it.
  */
-void add_alias(char *original_string, char *alias_string)
+void add_alias(char *original_string, char **alias_arr)
 {
     alias_t *aliases = get_shell()->aliases;
-    alias_t *tmp = NULL;
+    char *alias_string = make_alias_one_string(alias_arr);
 
     while (aliases != NULL) {
         if (my_strcmp(aliases->original_string, original_string) == 0) {
@@ -84,14 +113,14 @@ void add_alias(char *original_string, char *alias_string)
         }
         aliases = aliases->next;
     }
-    aliases = get_shell()->aliases;
-    if (aliases == NULL) {
+    if (get_shell()->aliases == NULL) {
         get_shell()->aliases = create_node(original_string, alias_string);
         return;
     }
-    tmp = create_node(original_string, alias_string);
-    tmp->next = aliases;
-    get_shell()->aliases = tmp;
+    aliases = get_shell()->aliases;
+    while (aliases->next != NULL)
+        aliases = aliases->next;
+    aliases->next = create_node(original_string, alias_string);
 }
 
 /*

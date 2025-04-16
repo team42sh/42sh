@@ -261,7 +261,7 @@ void print_shell_prompt(void);
 /*
  * Aliases handler functions
  */
-void add_alias(char *original_string, char *alias_string);
+void add_alias(char *original_string, char **alias_arr);
 int remove_alias(char *original_string);
 void clear_aliases(void);
 char **replaces_all_aliases(char **input);
