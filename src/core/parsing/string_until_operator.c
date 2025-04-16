@@ -38,6 +38,8 @@ get_string_until_operator(char *line)
     char *new_string = NULL;
     int in_quotes = 0;
 
+    if (line == NULL)
+        return NULL;
     while (line[len] != '\0') {
         if (is_quote_delimiter(line[len], len > 0 ? line[len - 1] : 0))
             in_quotes = !in_quotes;

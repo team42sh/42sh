@@ -82,8 +82,11 @@ ast_node_t *create_ast_command(ast_node_t *ast, token_t *token)
  */
 ast_node_t *create_ast_and(IN ast_node_t *ast, IN token_t *token)
 {
-    ast_node_t *new_ast = malloc(sizeof(ast_node_t));
+    ast_node_t *new_ast;
 
+    if (ast == NULL || token == NULL)
+        return NULL;
+    new_ast = malloc(sizeof(ast_node_t));
     new_ast->left = ast;
     new_ast->right = NULL;
     new_ast->token = token;
@@ -100,8 +103,11 @@ ast_node_t *create_ast_and(IN ast_node_t *ast, IN token_t *token)
  */
 ast_node_t *create_ast_or(IN ast_node_t *ast, IN token_t *token)
 {
-    ast_node_t *new_ast = malloc(sizeof(ast_node_t));
+    ast_node_t *new_ast;
 
+    if (ast == NULL || token == NULL)
+        return NULL;
+    new_ast = malloc(sizeof(ast_node_t));
     new_ast->left = ast;
     new_ast->right = NULL;
     new_ast->token = token;

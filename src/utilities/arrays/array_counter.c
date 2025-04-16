@@ -15,6 +15,8 @@ size_t array_count_string(char **string_array)
 {
     size_t count = 0;
 
+    if (string_array == NULL)
+        return 0;
     while (string_array[count] != NULL)
         count++;
     return count;

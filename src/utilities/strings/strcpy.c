@@ -14,6 +14,8 @@ char *my_strcpy(char *dest, char const *src)
 {
     char *tmp = dest;
 
+    if (dest == NULL || src == NULL)
+        return NULL;
     while (*src) {
         *tmp = *src;
         tmp++;
@@ -32,6 +34,8 @@ char *my_strncpy(char *dest, char const *src, size_t n)
 {
     char *tmp = dest;
 
+    if (dest == NULL || src == NULL)
+        return NULL;
     while (n > 0 && *src) {
         *tmp = *src;
         tmp++;
@@ -48,8 +52,11 @@ char *my_strncpy(char *dest, char const *src, size_t n)
  */
 char *my_strncpy_alloc(char const *src, size_t n)
 {
-    char *result = malloc(sizeof(char) * (n + 1));
+    char *result;
 
+    if (src == NULL)
+        return NULL;
+    result = malloc(sizeof(char) * (n + 1));
     if (!result)
         return NULL;
     my_strncpy(result, src, n);

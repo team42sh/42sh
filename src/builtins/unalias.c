@@ -15,6 +15,8 @@
  */
 exitcode_t unalias_command(char **argv)
 {
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return print_err("%s: Too few arguments.\n", argv[0]);
     for (int i = 1; argv[i] != NULL; i++) {

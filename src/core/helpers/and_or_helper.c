@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 /**
  * @brief Execute a AND node.
@@ -16,9 +17,12 @@
  */
 int execute_and(IN ast_node_t *node)
 {
-    exitcode_t left_code = execute_ast_node(node->left);
+    exitcode_t left_code;
     exitcode_t right_code = -1;
 
+    if (node == NULL)
+        return ERROR_OUTPUT;
+    left_code = execute_ast_node(node->left);
     if (left_code == OK_OUTPUT)
         right_code = execute_ast_node(node->right);
     get_shell()->last_exit_code = right_code == -1 ? left_code : right_code;
@@ -34,9 +38,12 @@ int execute_and(IN ast_node_t *node)
  */
 int execute_or(IN ast_node_t *node)
 {
-    exitcode_t left_code = execute_ast_node(node->left);
+    exitcode_t left_code;
     exitcode_t right_code = -1;
 
+    if (node == NULL)
+        return ERROR_OUTPUT;
+    left_code = execute_ast_node(node->left);
     if (left_code != OK_OUTPUT)
         right_code = execute_ast_node(node->right);
     get_shell()->last_exit_code = right_code == -1 ? left_code : right_code;

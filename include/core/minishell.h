@@ -137,6 +137,12 @@ typedef struct shell_s {
 } shell_t;
 
 /*
+ * Function used in the main
+ */
+int setup_shell(void);
+int shell_loop(void);
+
+/*
  * Shell manager functions
  */
 shell_t *get_shell(void);
