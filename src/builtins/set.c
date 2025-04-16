@@ -7,6 +7,18 @@
 
 #include "core/minishell.h"
 
+
+static int is_value_wordlist(char *str)
+{
+    if (str == NULL)
+        return 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ' ')
+            return 1;
+    }
+    return 0;
+}
+
 /**
  * @brief A fucntion to print the local variables stored in the shell
  *
@@ -15,12 +27,14 @@
 static int print_variables(void)
 {
     var_node_t *var = get_shell()->variables;
+    int is_wordlist = 0;
 
     while (var != NULL) {
+        is_wordlist = is_value_wordlist(var->value);
         my_printf("%s\t", var->key);
         if (var->value != NULL)
-            my_printf("%s", var->value);
-        my_printf("\n");
+            my_printf("%.*s%s", is_wordlist, "(", var->value);
+        my_printf("%.*s\n", is_wordlist, ")");
         var = var->next;
     }
     return OK_OUTPUT;
@@ -41,15 +55,18 @@ static char *get_new_var_value(char *key, char **argv)
 
     if (key_len == my_strlen(argv[1]))
         return new_value;
-    new_value = my_strdup(&argv[1][key_len + 1]);
     if (argv[1][key_len + 1] == '(') {
+        new_value = my_strdup(&argv[1][key_len + 2]);
         for (int i = 2; argv[i] != NULL; i++) {
             new_value = realloc(new_value,
                 my_strlen(new_value) + my_strlen(argv[i]) + 2);
             new_value = my_strcat(new_value, " ");
             new_value = my_strcat(new_value, argv[i]);
         }
-    }
+        if (new_value[my_strlen(new_value) - 1] == ')')
+            new_value[my_strlen(new_value) - 1] = '\0';
+    } else
+        new_value = my_strdup(&argv[1][key_len + 1]);
     return new_value;
 }
 
