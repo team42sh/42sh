@@ -39,6 +39,7 @@ term_info_t *setup_shell_term_info(void)
     term_info->_sig_buffer_reset = false;
     for (int i = 0; i < BUFFER_TERMIOS_SIZE; i++)
         term_info->_buffer[i] = 0;
+    term_info->_history_index = 0;
     return term_info;
 }
 

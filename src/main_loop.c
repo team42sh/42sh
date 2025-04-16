@@ -55,17 +55,22 @@ static char *get_user_input(void)
 int shell_loop(void)
 {
     exitcode_t e_ret = 0;
+    shell_t *shell = get_shell();
 
     if (get_user_input() == NULL)
         return exit_command(NULL);
-    write_command_history(get_shell()->last_input_buffer);
-    e_ret = shell_execute(tokenize_line(get_shell()->last_input_buffer));
-    if (e_ret == CURRENTLY_CHILD || get_shell()->should_exit)
+    if (shell->last_input_buffer[0] == '\0')
+        return shell_loop();
+    write_command_history(shell->last_input_buffer);
+    e_ret = shell_execute(tokenize_line(shell->last_input_buffer));
+    if (e_ret == CURRENTLY_CHILD || shell->should_exit)
         return OK_OUTPUT;
-    free_null_check(get_shell()->vars->github_repository);
-    get_shell()->vars->github_repository = get_github_repository_name();
-    shell_loop();
-    return OK_OUTPUT;
+    free_null_check(shell->vars->github_repository);
+    shell->vars->github_repository = get_github_repository_name();
+    shell->_max_history++;
+    shell->_history_input = add_string(shell->_history_input,
+        shell->last_input_buffer);
+    return shell_loop();
 }
 
 /*

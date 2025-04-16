@@ -27,6 +27,8 @@ setup_shell_informations(shell_t *shell)
     shell->saved_stdout = dup(STDOUT_FILENO);
     shell->vars = create_shell_vars();
     shell->_term_info = setup_shell_term_info();
+    shell->_history_input = NULL;
+    shell->_max_history = 0;
 }
 
 /**

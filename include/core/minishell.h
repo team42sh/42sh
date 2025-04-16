@@ -112,6 +112,7 @@ typedef struct term_info_s {
     size_t _buffer_len;
     size_t _cursor_index;
     bool _sig_buffer_reset;
+    int _history_index;
 } term_info_t;
 
 /*
@@ -124,6 +125,8 @@ typedef struct term_info_s {
  */
 typedef struct shell_s {
     term_info_t *_term_info;
+    string_t *_history_input;
+    int _max_history;
     env_node_t *env;
     alias_t *aliases;
     shell_variables_t *vars;
@@ -223,6 +226,8 @@ int is_quote_delimiter(char c, char prev_c);
 string_t *add_string(string_t *head, char *string);
 void free_strings(string_t *head);
 void print_strings(string_t *head);
+void print_string_index(string_t *head, int index);
+char *get_string_index(string_t *head, int index);
 
 void remove_newline(char *str);
 char **command_formatter(char **argv);
