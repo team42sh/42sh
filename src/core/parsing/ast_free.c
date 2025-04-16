@@ -15,7 +15,6 @@ void free_ast(ast_node_t *ast)
         free_ast(ast->left);
     if (ast->right != NULL)
         free_ast(ast->right);
-    free_token(ast->token);
     free(ast);
 }
 

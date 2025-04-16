@@ -7,25 +7,20 @@
 
 #include "core/minishell.h"
 #include "core/parser.h"
-#include "core/types.h"
 
 /**
  * @brief Free ASTs and token list. Depending on NULL delivered in parameters.
  *
  * @param asts                  ASTs
  * @param list                  The token list
- * @param free_list             Bool to say if we need to free the list
- *                              Generally used 'true' if error.
  */
 static void
-free_tokens_ast(ast_command_t *asts, token_list_t *list, bool free_list)
+free_tokens_ast(ast_command_t *asts, token_list_t *list)
 {
     if (asts != NULL)
         free_asts(asts);
-    if (list != NULL && free_list)
-        free_token_list(list);
     if (list != NULL)
-        free_null_check(list);
+        free_token_list(list);
 }
 
 /**
@@ -48,7 +43,7 @@ static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
         if (exec_command_return == CURRENTLY_CHILD)
             break;
     }
-    free_tokens_ast(asts, list, false);
+    free_tokens_ast(asts, list);
     return exec_command_return;
 }
 
