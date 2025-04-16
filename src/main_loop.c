@@ -23,6 +23,29 @@ const builtin_t BUILTINS[] = {
     {NULL, NULL}
 };
 
+/**
+ * @brief Get user input by choosing if we use termios or getline()
+ *
+ * @return NULL if reached the end of the file or the input.
+ */
+static char *get_user_input(void)
+{
+    size_t line_size = 0;
+
+    if (isatty(STDIN_FILENO)) {
+        print_shell_prompt();
+        init_termios();
+        HIDE_CURSOR();
+        get_shell()->last_input_buffer = termios_get_input();
+        SHOW_CURSOR();
+        return get_shell()->last_input_buffer;
+    }
+    if (getline(&get_shell()->last_input_buffer, &line_size, stdin) == -1)
+        return NULL;
+    remove_newline(get_shell()->last_input_buffer);
+    return get_shell()->last_input_buffer;
+}
+
 /*
  * Loop function for the main function of the shell.
  * Without this you shell will not work :)
@@ -30,22 +53,23 @@ const builtin_t BUILTINS[] = {
  */
 int shell_loop(void)
 {
-    size_t line_size = 0;
     exitcode_t e_ret = 0;
+    shell_t *shell = get_shell();
 
-    while (1) {
-        if (isatty(STDIN_FILENO))
-            print_shell_prompt();
-        if (getline(&get_shell()->last_input_buffer, &line_size, stdin) == -1)
-            return exit_command(NULL);
-        remove_newline(get_shell()->last_input_buffer);
-        write_command_history(get_shell()->last_input_buffer);
-        e_ret = shell_execute(tokenize_line(get_shell()->last_input_buffer));
-        if (e_ret == CURRENTLY_CHILD || get_shell()->should_exit)
-            return OK_OUTPUT;
-        free_null_check(get_shell()->vars->github_repository);
-        get_shell()->vars->github_repository = get_github_repository_name();
-    }
+    if (get_user_input() == NULL)
+        return exit_command(NULL);
+    if (shell->last_input_buffer[0] == '\0')
+        return shell_loop();
+    write_command_history(shell->last_input_buffer);
+    e_ret = shell_execute(tokenize_line(shell->last_input_buffer));
+    if (e_ret == CURRENTLY_CHILD || shell->should_exit)
+        return OK_OUTPUT;
+    free_null_check(shell->vars->github_repository);
+    shell->vars->github_repository = get_github_repository_name();
+    shell->_max_history++;
+    shell->_history_input = add_string(shell->_history_input,
+        shell->last_input_buffer);
+    return shell_loop();
 }
 
 /*
