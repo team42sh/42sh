@@ -164,7 +164,7 @@ void free_shell_vars(void);
  */
 int show_error_execve(int errno_val, char **argv);
 exitcode_t execute_ast_node(ast_node_t *node);
-void exec_binary(char **argv);
+exitcode_t exec_binary(char **argv);
 exitcode_t exec_built_in(char **argv);
 exitcode_t exec_built_in(char **argv);
 exitcode_t execute_command_fork(ast_node_t *ast);

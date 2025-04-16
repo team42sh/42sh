@@ -7,7 +7,6 @@
 
 #include "core/minishell.h"
 #include "core/parser.h"
-#include "core/types.h"
 
 /**
  * @brief Free ASTs and token list. Depending on NULL delivered in parameters.
@@ -91,14 +90,14 @@ execute_ast_node(ast_node_t *node)
  *
  * @param argv   The ARGV
  */
-void
+exitcode_t
 exec_binary(char **argv)
 {
     char *path;
     char **env_array_child;
 
     if (argv == NULL)
-        return;
+        return CURRENTLY_CHILD;
     path = get_binary_path(argv[0]);
     if (path == NULL)
         path = my_strdup(argv[0]);

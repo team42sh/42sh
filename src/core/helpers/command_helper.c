@@ -8,6 +8,7 @@
 
 #include "core/minishell.h"
 #include "core/types.h"
+#include "my_printf.h"
 
 /**
  * @brief Get the return value of the wait pit.
@@ -85,8 +86,8 @@ static exitcode_t command_fork(ast_node_t *ast)
     if (pid == -1)
         return ERROR_OUTPUT;
     if (pid == 0) {
-        exec_binary(ast->token->data._argv);
-        return CURRENTLY_CHILD;
+        if (exec_binary(ast->token->data._argv) == CURRENTLY_CHILD)
+            return CURRENTLY_CHILD;
     }
     waitpid(pid, &status_wait, 0);
     get_shell()->last_exit_code = get_wait_status(status_wait);
@@ -114,6 +115,8 @@ execute_command_fork(ast_node_t *ast)
         get_shell()->should_exit = 1;
     if (status == -1) {
         result = command_fork(ast);
+        if (result == CURRENTLY_CHILD)
+            return CURRENTLY_CHILD;
         if (result != OK_OUTPUT)
             return result;
     }

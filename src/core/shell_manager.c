@@ -45,6 +45,8 @@ exitcode_t exit_shell(void)
     free_shell_vars();
     tcsetattr(STDIN_FILENO, TCSAFLUSH,
         &get_shell()->_term_info->_original_termios);
+    free_strings(get_shell()->_history_input);
+    free_null_check(get_shell()->_term_info);
     free_null_check(get_shell()->last_input_buffer);
     free_null_check(get_shell());
     return exit_code;
