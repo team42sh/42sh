@@ -34,7 +34,7 @@ static char *get_user_input(void)
 
     if (isatty(STDIN_FILENO)) {
         print_shell_prompt();
-        init_termios();
+        enable_raw_mode(get_shell());
         HIDE_CURSOR();
         get_shell()->last_input_buffer = termios_get_input();
         SHOW_CURSOR();
@@ -81,6 +81,7 @@ int shell_loop(void)
 int setup_shell(void)
 {
     get_shell();
+    init_termios();
     if (isatty(STDIN_FILENO))
         if (load_myshrc() == CURRENTLY_CHILD)
             return CURRENTLY_CHILD;
