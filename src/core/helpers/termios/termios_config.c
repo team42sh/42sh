@@ -13,7 +13,7 @@
  *
  * @param shell         The shell structure
  */
-static void enable_raw_mode(OUT shell_t *shell)
+void enable_raw_mode(OUT shell_t *shell)
 {
     if (shell == NULL)
         return;

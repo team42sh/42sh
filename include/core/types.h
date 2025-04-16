@@ -28,6 +28,8 @@
     #define BUFFER_TERMIOS_SIZE 4096
 
     #define CTRL_D_VALUE 4
+    #define CTRL_A_VALUE '\x01'
+    #define CTRL_E_VALUE '\x05'
     #define BACKSPACE_VALUE 127
     #define COMMENT_CHAR '#'
 

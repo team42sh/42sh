@@ -207,6 +207,10 @@ void init_termios(void);
 char *termios_get_input(void);
 void reset_buffer_termios(term_info_t *term_info);
 void print_input_termios(term_info_t *term_info, bool show_cursor);
+void enable_raw_mode(shell_t *shell);
+
+void handle_ctrl_e(term_info_t *ti);
+void handle_ctrl_a(term_info_t *ti);
 
 /*
  * Environment transformer functions
