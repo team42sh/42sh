@@ -34,6 +34,14 @@ void clear_var(void)
     get_shell()->variables = NULL;
 }
 
+/**
+ * @brief A function to delete the first element of a linked list
+ *
+ * @param key
+ * @param var
+ * @param before
+ * @return int
+ */
 static int remove_if_first(IN char *key, OUT var_node_t **var,
     var_node_t **before)
 {
