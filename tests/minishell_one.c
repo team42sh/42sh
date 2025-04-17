@@ -473,7 +473,7 @@ Test(minishell_one, no_perm)
     dup2(pipes[0], 0);
     close(pipes[0]);
 
-    cr_assert(chmod(input, strtol("0000", NULL, 8)) >= 0);
+    cr_assert(chmod(input, strtol("0664", NULL, 8)) >= 0);
 
     cr_assert(false_main() == 1);
 
