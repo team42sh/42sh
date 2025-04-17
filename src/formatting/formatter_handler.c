@@ -65,6 +65,6 @@ char **command_formatter(char **argv)
         return NULL;
     }
     argv = replaces_all_aliases(argv);
-    print_array(argv);
+    argv = change_star_to_list_of_files(argv);
     return argv;
 }

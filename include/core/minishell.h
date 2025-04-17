@@ -147,6 +147,11 @@ int execute_redirection(ast_node_t *node);
 exitcode_t get_wait_status(int wait_pid_result);
 
 /*
+ * Globbing handling functions
+ */
+char **change_star_to_list_of_files(IN char **argv);
+
+/*
  * Environment handling functions
  */
 void add_env(char *key, char *value);
