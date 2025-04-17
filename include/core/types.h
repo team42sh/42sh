@@ -30,6 +30,9 @@
     #define CTRL_D_VALUE 4
     #define CTRL_A_VALUE '\x01'
     #define CTRL_E_VALUE '\x05'
+    #define CTRL_H_VALUE '\x08'
+    #define CTRL_K_VALUE '\x0B'
+    #define CTRL_Y_VALUE '\x19'
     #define BACKSPACE_VALUE 127
     #define COMMENT_CHAR '#'
 

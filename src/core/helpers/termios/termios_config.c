@@ -37,10 +37,26 @@ term_info_t *setup_shell_term_info(void)
     term_info->_cursor_index = 0;
     term_info->_buffer_len = 0;
     term_info->_sig_buffer_reset = false;
-    for (int i = 0; i < BUFFER_TERMIOS_SIZE; i++)
+    for (int i = 0; i < BUFFER_TERMIOS_SIZE; i++) {
         term_info->_buffer[i] = 0;
+        term_info->_yank_buffer[i] = 0;
+    }
     term_info->_history_index = 0;
     return term_info;
+}
+
+/**
+ * @brief Get the terminal line width.
+ *
+ * @return The terminal width.
+ */
+int get_terminal_width(void)
+{
+    struct winsize win;
+
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) == -1)
+        return 80;
+    return win.ws_col;
 }
 
 /**

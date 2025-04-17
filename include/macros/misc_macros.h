@@ -21,7 +21,7 @@
 
     #define HIDE_CURSOR() my_printf("\033[?25l")
     #define SHOW_CURSOR() my_printf("\033[?25h")
-    #define RESET_LINE() write(STDOUT_FILENO, "\r\033[2K", 5)
+    #define RESET_LINE() write(STDOUT_FILENO, "\033[K", 3)
 
     #define CURSOR_COLOR "\033[6;30;48;5;254m"
     #define RESET_COLOR "\033[0m"

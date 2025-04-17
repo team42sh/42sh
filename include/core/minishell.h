@@ -18,6 +18,7 @@
     #include <signal.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
+    #include <sys/ioctl.h>
     #include <errno.h>
     #include <fcntl.h>
     #include <termios.h>
@@ -109,6 +110,7 @@ typedef struct term_info_s {
     struct termios _original_termios;
     struct termios _current_termios;
     char _buffer[4096];
+    char _yank_buffer[4096];
     size_t _buffer_len;
     size_t _cursor_index;
     bool _sig_buffer_reset;
@@ -192,9 +194,12 @@ char *termios_get_input(void);
 void reset_buffer_termios(term_info_t *term_info);
 void print_input_termios(term_info_t *term_info, bool show_cursor);
 void enable_raw_mode(shell_t *shell);
+int get_terminal_width(void);
 
 void handle_ctrl_e(term_info_t *ti);
 void handle_ctrl_a(term_info_t *ti);
+void handle_ctrl_k(term_info_t *ti);
+void handle_ctrl_y(term_info_t *ti);
 
 /*
  * Environment transformer functions
@@ -257,6 +262,7 @@ bool is_file_exist(char *path_file);
  * Prompt helper functions
  */
 void print_shell_prompt(void);
+int get_len_prompt(void);
 
 /*
  * Aliases handler functions

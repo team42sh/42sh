@@ -32,3 +32,31 @@ void print_shell_prompt(void)
         print_github_repository();
     my_printf("\033[0m ");
 }
+
+/**
+ * @brief Calculate the total length of the shell prompt.
+ *
+ * @return The length of the prompt, including dynamic content like PWD
+ *         and GitHub repository info.
+ */
+int get_len_prompt(void)
+{
+    char *pwd = get_shell()->vars->pwd_var;
+    char *home = get_shell()->vars->home_var;
+    int len = 0;
+
+    len += 5;
+    if (home != NULL && my_strcmp(pwd, home) == 0) {
+        len += 1;
+    } else if (my_strcmp(pwd, "/") != 0) {
+        len += my_strlen(my_strtok_reverse(pwd, '/'));
+    } else {
+        len += 1;
+    }
+    if (is_in_github_repository() == true) {
+        len += 5;
+        len += my_strlen(get_shell()->vars->github_repository);
+        len += 2;
+    }
+    return len;
+}

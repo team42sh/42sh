@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /**
  * @brief Handles the deletion of a character using backspace.
@@ -112,6 +113,29 @@ static void handle_escape(OUT term_info_t *ti)
 }
 
 /**
+* @brief Handle shortcut if there is a shorcut, return NULL if there is no
+*        shorcuts.
+*
+* @param c              The character
+* @param ti             Term information structure
+*/
+static bool handle_shortcuts(IN char c, OUT term_info_t *ti)
+{
+    if (c == CTRL_A_VALUE)
+        handle_ctrl_a(ti);
+    if (c == CTRL_E_VALUE)
+        handle_ctrl_e(ti);
+    if (c == CTRL_K_VALUE)
+        handle_ctrl_k(ti);
+    if (c == CTRL_Y_VALUE)
+        handle_ctrl_y(ti);
+    if (c == CTRL_A_VALUE || c == CTRL_K_VALUE || c == CTRL_E_VALUE ||
+        c == CTRL_Y_VALUE)
+        return true;
+    return false;
+}
+
+/**
  * @brief Handles special input characters like TAB, ENTER, and BACKSPACE.
  *        Performs the appropriate operation based on the character
  *        read from stdin.
@@ -132,15 +156,12 @@ static bool choose_char_case(IN char c, OUT term_info_t *term_info)
     }
     if (c == '\e')
         handle_escape(term_info);
-    if (c == BACKSPACE_VALUE)
+    if (c == BACKSPACE_VALUE || c == CTRL_H_VALUE)
         handle_backspace(term_info);
-    if (c == CTRL_A_VALUE)
-        handle_ctrl_a(term_info);
-    if (c == CTRL_E_VALUE)
-        handle_ctrl_e(term_info);
+    if (handle_shortcuts(c, term_info))
+        return false;
     if (c != '\e' && c != '\n' && c != '\t' &&
-        c != CTRL_D_VALUE && c != BACKSPACE_VALUE &&
-        c != CTRL_A_VALUE && c != CTRL_E_VALUE)
+        c != CTRL_D_VALUE && c != BACKSPACE_VALUE && c != CTRL_H_VALUE)
         handle_character(term_info, c);
     return false;
 }
@@ -160,32 +181,6 @@ void reset_buffer_termios(OUT term_info_t *term_info)
     term_info->_buffer_len = 0;
     term_info->_cursor_index = 0;
     get_shell()->_term_info->_sig_buffer_reset = 0;
-}
-
-/**
- * @brief Print the input line with the cursor.
- *        Used when pressing a key or Ctrl C in signal_handler.c
- *
- * @param ti            Term information structure
- * @param show_cursor   Show the cursor or not
- */
-void print_input_termios(IN term_info_t *term_info, IN bool show_cursor)
-{
-    if (term_info == NULL)
-        return;
-    RESET_LINE();
-    print_shell_prompt();
-    write(STDOUT_FILENO, term_info->_buffer, term_info->_cursor_index);
-    if (show_cursor)
-        my_printf("\033[6;30;48;5;254m");
-    if ((term_info->_cursor_index >= term_info->_buffer_len ||
-        term_info->_buffer_len == 0) && show_cursor)
-        write(1, " \033[0m", 5);
-    else if (term_info->_buffer_len > 0)
-        my_printf("%c\033[0m", term_info->_buffer[term_info->_cursor_index]);
-    if (term_info->_buffer_len > 0)
-        my_printf("\033[0m%s",
-            &term_info->_buffer[term_info->_cursor_index + 1]);
 }
 
 /**
