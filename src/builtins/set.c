@@ -8,7 +8,7 @@
 #include "core/minishell.h"
 
 /**
- * @brief A function that returns 1 if the value of a 
+ * @brief A function that returns 1 if the value of a
  * local variable is a wordlist and not a word
  *
  * @param str
@@ -58,7 +58,8 @@ static int print_variables(IN int is_readonly)
  * @param argv
  * @return char*
  */
-static char *get_new_var_value(IN char *key, IN char **argv, IN int is_readonly)
+static char *get_new_var_value(IN char *key, IN char **argv,
+    IN int is_readonly)
 {
     int key_len = my_strlen(key);
     char *new_value = NULL;
@@ -81,6 +82,21 @@ static char *get_new_var_value(IN char *key, IN char **argv, IN int is_readonly)
 }
 
 /**
+ * @brief A function to check if a local variable is read-only
+ *
+ * @param var
+ * @return int
+ */
+static int is_var_readonly(IN var_node_t *var)
+{
+    if (var->read_only) {
+        print_err("set: $%s is read-only.\n", var->key);
+        return ERROR_OUTPUT;
+    }
+    return OK_OUTPUT;
+}
+
+/**
  * @brief A function to modify an existing local variable
  *
  * @param argv
@@ -96,8 +112,7 @@ static int modify_existing(IN char **argv, IN int is_readonly)
             var = var->next;
             continue;
         }
-        if (var->read_only) {
-            print_err("set: $%s is read-only.\n", key);
+        if (is_var_readonly(var) == ERROR_OUTPUT) {
             free(key);
             return OK_OUTPUT;
         }
@@ -123,6 +138,11 @@ static int add_variable(IN char **argv, IN int is_readonly)
     char *key = my_strtok(argv[is_readonly + 1], '=');
     var_node_t *new_var = malloc(sizeof(var_node_t));
 
+    if (!IS_ALPHA(key[0]) && key[0] != '_') {
+        print_err("set: Variable name must begin with a letter.\n");
+        free(key);
+        return ERROR_OUTPUT;
+    }
     new_var->key = key;
     new_var->value = get_new_var_value(key, argv, is_readonly);
     new_var->read_only = is_readonly;
