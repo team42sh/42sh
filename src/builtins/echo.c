@@ -7,8 +7,6 @@
 
 #include "core/minishell.h"
 #include "core/types.h"
-#include "my_printf.h"
-#include <stddef.h>
 
 /**
  * @brief change the backslash to the real escaped character, part 2
