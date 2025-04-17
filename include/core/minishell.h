@@ -22,6 +22,7 @@
     #include <fcntl.h>
     #include <sys/types.h>
     #include <dirent.h>
+    #include <string.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -158,6 +159,16 @@ int count_files(char *path);
 int index_of_last_ocurence(IN char *str, IN char c);
 int count_matches(char **array, char *pattern);
 void fill_matches(char **array, char *pattern, char **result);
+void copy_before_globbing(char **argv, char **result, int globbing_index);
+void copy_matches(char **matches, char **result, int globbing_index);
+void copy_after_globbing(char **argv, char **result, int start_pos,
+    int result_index);
+char **process_globbing_pattern(char **argv, int globbing_index);
+char *create_path_to_dir(IN char *globbing_string);
+int starts_with(char *str, char *prefix, int prefix_len);
+int ends_with(char *str, char *suffix, int str_len, int suffix_len);
+char **replace_globbing_with_matches(char **argv, int globbing_index,
+    char **matches);
 
 /*
  * Environment handling functions

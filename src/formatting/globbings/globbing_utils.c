@@ -21,8 +21,11 @@ int count_files(IN char *path)
     dir = opendir(path);
     if (dir == NULL)
         return -1;
-    while ((entry = readdir(dir)) != NULL)
+    entry = readdir(dir);
+    while (entry != NULL) {
         i++;
+        entry = readdir(dir);
+    }
     closedir(dir);
     return (i > 0) ? i : -1;
 }
@@ -67,7 +70,6 @@ int index_of_last_ocurence(IN char *str, IN char c)
             char_index = i;
     return char_index;
 }
-
 
 /**
  * @brief Filter array based on pattern
