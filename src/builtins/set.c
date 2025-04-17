@@ -1,14 +1,20 @@
 /*
 ** EPITECH PROJECT, 2025
-** src/commands/set
+** src/builtins/set
 ** File description:
 ** This files contains the main core of the set command
 */
 
 #include "core/minishell.h"
 
-
-static int is_value_wordlist(char *str)
+/**
+ * @brief A function that returns 1 if the value of a 
+ * local variable is a wordlist and not a word
+ *
+ * @param str
+ * @return int
+ */
+static int is_value_wordlist(IN char *str)
 {
     if (str == NULL)
         return 0;
@@ -24,12 +30,16 @@ static int is_value_wordlist(char *str)
  *
  * @return int
  */
-static int print_variables(void)
+static int print_variables(IN int is_readonly)
 {
     var_node_t *var = get_shell()->variables;
     int is_wordlist = 0;
 
     while (var != NULL) {
+        if (var->read_only != is_readonly) {
+            var = var->next;
+            continue;
+        }
         is_wordlist = is_value_wordlist(var->value);
         my_printf("%s\t", var->key);
         if (var->value != NULL)
@@ -48,16 +58,16 @@ static int print_variables(void)
  * @param argv
  * @return char*
  */
-static char *get_new_var_value(char *key, char **argv)
+static char *get_new_var_value(IN char *key, IN char **argv, IN int is_readonly)
 {
     int key_len = my_strlen(key);
     char *new_value = NULL;
 
-    if (key_len == my_strlen(argv[1]))
+    if (key_len == my_strlen(argv[is_readonly + 1]))
         return new_value;
-    if (argv[1][key_len + 1] == '(') {
-        new_value = my_strdup(&argv[1][key_len + 2]);
-        for (int i = 2; argv[i] != NULL; i++) {
+    if (argv[is_readonly + 1][key_len + 1] == '(') {
+        new_value = my_strdup(&argv[is_readonly + 1][key_len + 2]);
+        for (int i = is_readonly + 2; argv[i] != NULL; i++) {
             new_value = realloc(new_value,
                 my_strlen(new_value) + my_strlen(argv[i]) + 2);
             new_value = my_strcat(new_value, " ");
@@ -66,7 +76,7 @@ static char *get_new_var_value(char *key, char **argv)
         if (new_value[my_strlen(new_value) - 1] == ')')
             new_value[my_strlen(new_value) - 1] = '\0';
     } else
-        new_value = my_strdup(&argv[1][key_len + 1]);
+        new_value = my_strdup(&argv[is_readonly + 1][key_len + 1]);
     return new_value;
 }
 
@@ -76,9 +86,9 @@ static char *get_new_var_value(char *key, char **argv)
  * @param argv
  * @return int
  */
-static int modify_existing(char **argv)
+static int modify_existing(IN char **argv, IN int is_readonly)
 {
-    char *key = my_strtok(argv[1], '=');
+    char *key = my_strtok(argv[is_readonly + 1], '=');
     var_node_t *var = get_shell()->variables;
 
     while (var != NULL) {
@@ -86,8 +96,14 @@ static int modify_existing(char **argv)
             var = var->next;
             continue;
         }
+        if (var->read_only) {
+            print_err("set: $%s is read-only.\n", key);
+            free(key);
+            return OK_OUTPUT;
+        }
         free_null_check(var->value);
-        var->value = get_new_var_value(key, argv);
+        var->value = get_new_var_value(key, argv, is_readonly);
+        var->read_only = is_readonly;
         free(key);
         return OK_OUTPUT;
     }
@@ -101,15 +117,15 @@ static int modify_existing(char **argv)
  * @param argv
  * @return int
  */
-static int add_variable(char **argv)
+static int add_variable(IN char **argv, IN int is_readonly)
 {
     var_node_t *var = get_shell()->variables;
-    char *key = my_strtok(argv[1], '=');
+    char *key = my_strtok(argv[is_readonly + 1], '=');
     var_node_t *new_var = malloc(sizeof(var_node_t));
 
     new_var->key = key;
-    new_var->value = get_new_var_value(key, argv);
-    new_var->read_only = 0;
+    new_var->value = get_new_var_value(key, argv, is_readonly);
+    new_var->read_only = is_readonly;
     new_var->next = var;
     get_shell()->variables = new_var;
     return OK_OUTPUT;
@@ -121,13 +137,20 @@ static int add_variable(char **argv)
  * @param argv The arguments passed to the command
  * @return exitcode_t
  */
-exitcode_t set_command(char **argv)
+exitcode_t set_command(IN char **argv)
 {
     ssize_t argv_count = array_count_string(argv);
+    int is_readonly = 0;
+    int value_index = 1;
 
+    if (argv[value_index] != NULL && my_strcmp(argv[value_index], "-r") == 0) {
+        is_readonly = 1;
+        value_index++;
+        argv_count--;
+    }
     if (argv_count == 1)
-        return print_variables();
-    if (modify_existing(argv) == ERROR_OUTPUT)
-        return add_variable(argv);
+        return print_variables(is_readonly);
+    if (modify_existing(argv, is_readonly) == ERROR_OUTPUT)
+        return add_variable(argv, is_readonly);
     return OK_OUTPUT;
 }
