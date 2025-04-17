@@ -46,10 +46,10 @@ typedef struct env_node_s {
  * Variable structure used in a linked list.
  */
 typedef struct var_node_s {
-    char *key;
-    char *value;
-    int read_only;
-    struct var_node_s *next;
+    char *_key;
+    char *_value;
+    int _read_only;
+    struct var_node_s *_next;
 } var_node_t;
 
 /*

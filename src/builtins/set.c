@@ -36,16 +36,16 @@ static int print_variables(IN int is_readonly)
     int is_wordlist = 0;
 
     while (var != NULL) {
-        if (var->read_only != is_readonly) {
-            var = var->next;
+        if (var->_read_only != is_readonly) {
+            var = var->_next;
             continue;
         }
-        is_wordlist = is_value_wordlist(var->value);
-        my_printf("%s\t", var->key);
-        if (var->value != NULL)
-            my_printf("%.*s%s", is_wordlist, "(", var->value);
+        is_wordlist = is_value_wordlist(var->_value);
+        my_printf("%s\t", var->_key);
+        if (var->_value != NULL)
+            my_printf("%.*s%s", is_wordlist, "(", var->_value);
         my_printf("%.*s\n", is_wordlist, ")");
-        var = var->next;
+        var = var->_next;
     }
     return OK_OUTPUT;
 }
@@ -89,8 +89,8 @@ static char *get_new_var_value(IN char *key, IN char **argv,
  */
 int is_var_readonly(IN var_node_t *var)
 {
-    if (var->read_only) {
-        print_err("set: $%s is read-only.\n", var->key);
+    if (var->_read_only) {
+        print_err("set: $%s is read-only.\n", var->_key);
         return ERROR_OUTPUT;
     }
     return OK_OUTPUT;
@@ -113,10 +113,10 @@ static int add_variable(IN char **argv, IN int is_readonly)
         free(key);
         return ERROR_OUTPUT;
     }
-    new_var->key = key;
-    new_var->value = get_new_var_value(key, argv, is_readonly);
-    new_var->read_only = is_readonly;
-    new_var->next = var;
+    new_var->_key = key;
+    new_var->_value = get_new_var_value(key, argv, is_readonly);
+    new_var->_read_only = is_readonly;
+    new_var->_next = var;
     get_shell()->variables = new_var;
     return OK_OUTPUT;
 }
@@ -133,17 +133,17 @@ static int modify_or_create_var(IN char **argv, IN int is_readonly)
     var_node_t *var = get_shell()->variables;
 
     while (var != NULL) {
-        if (my_strcmp(var->key, key) != 0) {
-            var = var->next;
+        if (my_strcmp(var->_key, key) != 0) {
+            var = var->_next;
             continue;
         }
         if (is_var_readonly(var) == ERROR_OUTPUT) {
             free(key);
             return ERROR_OUTPUT;
         }
-        free_null_check(var->value);
-        var->value = get_new_var_value(key, argv, is_readonly);
-        var->read_only = is_readonly;
+        free_null_check(var->_value);
+        var->_value = get_new_var_value(key, argv, is_readonly);
+        var->_read_only = is_readonly;
         free(key);
         return OK_OUTPUT;
     }

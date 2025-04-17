@@ -14,8 +14,8 @@ static void free_var(IN var_node_t *var)
 {
     if (var == NULL)
         return;
-    free_null_check(var->key);
-    free_null_check(var->value);
+    free_null_check(var->_key);
+    free_null_check(var->_value);
     free_null_check(var);
 }
 
@@ -28,7 +28,7 @@ void clear_var(void)
 
     for (var_node_t *var = get_shell()->variables; var != NULL;
         var = next_tmp) {
-        next_tmp = var->next;
+        next_tmp = var->_next;
         free_var(var);
     }
     get_shell()->variables = NULL;
@@ -43,19 +43,19 @@ void clear_var(void)
  * @return int
  */
 static int remove_if_first(IN char *key, OUT var_node_t **var,
-    var_node_t **before)
+    OUT var_node_t **before)
 {
     if (*var == NULL)
         return OK_OUTPUT;
-    if (*var != NULL && my_strcmp((*var)->key, key) == 0) {
+    if (*var != NULL && my_strcmp((*var)->_key, key) == 0) {
         if (is_var_readonly(*var))
             return ERROR_OUTPUT;
-        get_shell()->variables = (*var)->next;
+        get_shell()->variables = (*var)->_next;
         free_var(*var);
         return OK_OUTPUT;
     }
     *before = *var;
-    *var = (*var)->next;
+    *var = (*var)->_next;
     return COMMAND_ERROR;
 }
 
@@ -75,14 +75,14 @@ int remove_var(IN char *key)
     if (remove_first_out != COMMAND_ERROR)
         return remove_first_out;
     while (var != NULL) {
-        if (my_strcmp(key, var->key) != 0) {
+        if (my_strcmp(key, var->_key) != 0) {
             before = var;
-            var = var->next;
+            var = var->_next;
             continue;
         }
         if (is_var_readonly(var))
             return OK_OUTPUT;
-        before->next = var->next;
+        before->_next = var->_next;
         free_var(var);
         return OK_OUTPUT;
     }
