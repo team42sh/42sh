@@ -16,6 +16,7 @@ static void
 setup_shell_informations(shell_t *shell)
 {
     shell->env = NULL;
+    shell->variables = NULL;
     shell->aliases = NULL;
     shell->last_input_buffer = NULL;
     reset_initial_env();
@@ -41,6 +42,7 @@ exitcode_t exit_shell(void)
     exitcode_t exit_code = get_shell()->last_exit_code;
 
     clear_env();
+    clear_var();
     clear_aliases();
     free_shell_vars();
     tcsetattr(STDIN_FILENO, TCSAFLUSH,

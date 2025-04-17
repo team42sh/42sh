@@ -43,6 +43,16 @@ typedef struct env_node_s {
 } env_node_t;
 
 /*
+ * Variable structure used in a linked list.
+ */
+typedef struct var_node_s {
+    char *_key;
+    char *_value;
+    int _read_only;
+    struct var_node_s *_next;
+} var_node_t;
+
+/*
  * Passwd structure
  * This structure contains stuff of a line in /etc/passwd file
  * - user = Name of the user.
@@ -128,6 +138,7 @@ typedef struct shell_s {
     string_t *_history_input;
     int _max_history;
     env_node_t *env;
+    var_node_t *variables;
     alias_t *aliases;
     shell_variables_t *vars;
     exitcode_t last_exit_code;
@@ -182,6 +193,13 @@ int remove_env(char *key);
 char *env_search(char *key);
 void clear_env(void);
 void reset_initial_env(void);
+
+/*
+ * Local variables
+ */
+void clear_var(void);
+int is_var_readonly(IN var_node_t *var);
+int remove_var(char *key);
 
 /*
  * Termios helping functions
