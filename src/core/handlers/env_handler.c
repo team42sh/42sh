@@ -82,6 +82,29 @@ void add_env(char *key, char *value)
     env->next = tmp;
 }
 
+/**
+ * @brief A function to delete the first element of a linked list
+ *
+ * @param key
+ * @param env
+ * @param before
+ * @return int
+ */
+static int remove_if_first(IN char *key, OUT env_node_t **env,
+    OUT env_node_t **before)
+{
+    if (*env == NULL)
+        return OK_OUTPUT;
+    if (*env != NULL && my_strcmp((*env)->key, key) == 0) {
+        get_shell()->env = (*env)->next;
+        free_env(*env);
+        return 0;
+    }
+    *before = *env;
+    *env = (*env)->next;
+    return COMMAND_ERROR;
+}
+
 /*
  * Remove an environment variable using the key.
  * Return -1 if any error occur. 0 if success.
@@ -90,14 +113,11 @@ int remove_env(char *key)
 {
     env_node_t *env = get_shell()->env;
     env_node_t *before = NULL;
+    int remove_first_out;
 
-    if (env != NULL && my_strcmp(env->key, key) == 0) {
-        get_shell()->env = env->next;
-        free_env(env);
-        return 0;
-    }
-    before = env;
-    env = env->next;
+    remove_first_out = remove_if_first(key, &env, &before);
+    if (remove_first_out != COMMAND_ERROR)
+        return remove_first_out;
     while (env != NULL) {
         if (my_strcmp(key, env->key) == 0) {
             before->next = env->next;
