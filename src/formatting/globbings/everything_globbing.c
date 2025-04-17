@@ -9,70 +9,8 @@
 #include "core/parser.h"
 #include "my_printf.h"
 #include <stdlib.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <string.h>
 
-/**
- * @brief Count files in a directory
- */
-int count_files(IN char *path)
-{
-    DIR *dir;
-    struct dirent *entry;
-    int i = 0;
-
-    if (path == NULL)
-        return -1;
-    dir = opendir(path);
-    if (dir == NULL)
-        return -1;
-    while ((entry = readdir(dir)) != NULL)
-        i++;
-    closedir(dir);
-    return (i > 0) ? i : -1;
-}
-
-/**
- * @brief Find index of char in string
- */
-int char_in_str(IN char *str, IN char c)
-{
-    if (str == NULL || c == '\0')
-        return -1;
-    for (int i = 0; str[i] != '\0'; i++)
-        if (str[i] == c)
-            return i;
-    return -1;
-}
-
-/**
- * @brief Find index of tab element containing char
- */
-int find_char_index_in_tab(IN char **tab, IN char c)
-{
-    if (tab == NULL || c == '\0')
-        return -1;
-    for (int i = 0; tab[i] != NULL; i++)
-        if (char_in_str(tab[i], c) != -1)
-            return i;
-    return -1;
-}
-
-/**
- * @brief Find last occurrence index of char in string
- */
-int index_of_last_ocurence(IN char *str, IN char c)
-{
-    int char_index = -1;
-
-    if (str == NULL || c == '\0')
-        return -1;
-    for (int i = 0; str[i] != '\0'; i++)
-        if (str[i] == c)
-            char_index = i;
-    return char_index;
-}
 
 /**
  * @brief Handle simple path case
@@ -92,30 +30,6 @@ char *handle_slash_before_star(char *globbing_string, int globbing_index)
     if (globbing_index > 0 && globbing_string[globbing_index - 1] == '/')
         return my_strncpy_alloc(globbing_string, globbing_index);
     return NULL;
-}
-
-/**
- * @brief Extract directory path from globbing string
- */
-char *create_path_to_dir(IN char *globbing_string)
-{
-    int globbing_index;
-    int last_slash_index;
-    char *path;
-
-    if (globbing_string == NULL)
-        return NULL;
-    globbing_index = char_in_str(globbing_string, '*');
-    path = handle_simple_path(globbing_string);
-    if (path != NULL)
-        return path;
-    path = handle_slash_before_star(globbing_string, globbing_index);
-    if (path != NULL)
-        return path;
-    last_slash_index = index_of_last_ocurence(globbing_string, '/');
-    if (last_slash_index == -1)
-        return my_strdup(".");
-    return my_strncpy_alloc(globbing_string, last_slash_index + 1);
 }
 
 /**
@@ -204,38 +118,6 @@ void fill_matches(char **array, char *pattern, char **result)
 }
 
 /**
- * @brief Filter array based on pattern
- */
-char **filter_array(char **array, char *pattern)
-{
-    char **result = NULL;
-    int count;
-
-    if (array == NULL || pattern == NULL)
-        return NULL;
-    count = count_matches(array, pattern);
-    result = malloc(sizeof(char *) * (count + 1));
-    if (!result)
-        return NULL;
-    fill_matches(array, pattern, result);
-    return result;
-}
-
-/**
- * @brief Count elements in array
- */
-int count_array_elements(char **array)
-{
-    int count = 0;
-
-    if (!array)
-        return 0;
-    while (array[count] != NULL)
-        count++;
-    return count;
-}
-
-/**
  * @brief Allocate new array for results
  */
 static char **allocate_result_array(int argc, int match_count)
@@ -260,7 +142,7 @@ static void copy_before_globbing(char **argv, char **result, int globbing_index)
 /**
  * @brief Copy matched entries to result
  */
-static void copy_matches(char **matches, char **result, int globbing_index)
+void copy_matches(char **matches, char **result, int globbing_index)
 {
     int result_index = globbing_index;
 
@@ -286,8 +168,8 @@ char **replace_globbing_with_matches(char **argv, int globbing_index,
     char **matches)
 {
     char **result;
-    int argc = count_array_elements(argv);
-    int match_count = count_array_elements(matches);
+    int argc = array_count_string(argv);
+    int match_count = array_count_string(matches);
     int result_index;
 
     if (match_count == 0)
@@ -319,22 +201,27 @@ static void free_tab(char **array)
 }
 
 /**
- * @brief Read directory entries to array
+ * @brief Extract directory path from globbing string
  */
-char **read_dir_entries(DIR *dir, int count)
+char *create_path_to_dir(IN char *globbing_string)
 {
-    char **temp_tab;
-    struct dirent *entry;
-    int i = 0;
+    int globbing_index;
+    int last_slash_index;
+    char *path;
 
-    temp_tab = malloc(sizeof(char *) * (count + 1));
-    if (!temp_tab)
+    if (globbing_string == NULL)
         return NULL;
-    while ((entry = readdir(dir)) != NULL && i < count) {
-        temp_tab[i++] = my_strdup(entry->d_name);
-    }
-    temp_tab[i] = NULL;
-    return temp_tab;
+    globbing_index = char_in_str(globbing_string, '*');
+    path = handle_simple_path(globbing_string);
+    if (path != NULL)
+        return path;
+    path = handle_slash_before_star(globbing_string, globbing_index);
+    if (path != NULL)
+        return path;
+    last_slash_index = index_of_last_ocurence(globbing_string, '/');
+    if (last_slash_index == -1)
+        return my_strdup(".");
+    return my_strncpy_alloc(globbing_string, last_slash_index + 1);
 }
 
 /**
@@ -351,7 +238,6 @@ char **process_globbing_pattern(char **argv, int globbing_index)
     path = create_path_to_dir(argv[globbing_index]);
     if (!path)
         return argv;
-
     dir = opendir(path);
     if (!dir) {
         free(path);
@@ -390,6 +276,5 @@ char **change_star_to_list_of_files(IN char **argv)
     argv = process_globbing_pattern(argv, globbing_index);
     if (find_char_index_in_tab(argv, '*') != -1)
         return change_star_to_list_of_files(argv);
-
     return argv;
 }

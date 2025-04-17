@@ -20,6 +20,8 @@
     #include <sys/stat.h>
     #include <errno.h>
     #include <fcntl.h>
+    #include <sys/types.h>
+    #include <dirent.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -149,7 +151,13 @@ exitcode_t get_wait_status(int wait_pid_result);
 /*
  * Globbing handling functions
  */
-char **change_star_to_list_of_files(IN char **argv);
+char **change_star_to_list_of_files(char **argv);
+char **filter_array(char **array, char *pattern);
+char **read_dir_entries(DIR *dir, int count);
+int count_files(char *path);
+int index_of_last_ocurence(IN char *str, IN char c);
+int count_matches(char **array, char *pattern);
+void fill_matches(char **array, char *pattern, char **result);
 
 /*
  * Environment handling functions
@@ -208,6 +216,9 @@ bool is_letter(char c);
 bool is_only_numbers(char *string);
 bool is_alpha_num(char *string);
 int len_to_first_char(char *str);
+
+int char_in_str(char *str, char c);
+int find_char_index_in_tab(IN char **tab, IN char c);
 
 /*
  * Files functions
