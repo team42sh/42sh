@@ -23,6 +23,7 @@ exitcode_t env_command(char **argv __attribute__((unused)));
 exitcode_t set_command(char **argv);
 exitcode_t setenv_command(char **argv);
 exitcode_t unsetenv_command(char **argv);
+exitcode_t unset_command(char **argv);
 exitcode_t cd_command(char **argv);
 exitcode_t alias_command(char **argv);
 exitcode_t unalias_command(char **argv);

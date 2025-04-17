@@ -87,43 +87,13 @@ static char *get_new_var_value(IN char *key, IN char **argv,
  * @param var
  * @return int
  */
-static int is_var_readonly(IN var_node_t *var)
+int is_var_readonly(IN var_node_t *var)
 {
     if (var->read_only) {
         print_err("set: $%s is read-only.\n", var->key);
         return ERROR_OUTPUT;
     }
     return OK_OUTPUT;
-}
-
-/**
- * @brief A function to modify an existing local variable
- *
- * @param argv
- * @return int
- */
-static int modify_existing(IN char **argv, IN int is_readonly)
-{
-    char *key = my_strtok(argv[is_readonly + 1], '=');
-    var_node_t *var = get_shell()->variables;
-
-    while (var != NULL) {
-        if (my_strcmp(var->key, key) != 0) {
-            var = var->next;
-            continue;
-        }
-        if (is_var_readonly(var) == ERROR_OUTPUT) {
-            free(key);
-            return OK_OUTPUT;
-        }
-        free_null_check(var->value);
-        var->value = get_new_var_value(key, argv, is_readonly);
-        var->read_only = is_readonly;
-        free(key);
-        return OK_OUTPUT;
-    }
-    free(key);
-    return ERROR_OUTPUT;
 }
 
 /**
@@ -152,7 +122,38 @@ static int add_variable(IN char **argv, IN int is_readonly)
 }
 
 /**
+ * @brief A function to modify or create a local variable
+ *
+ * @param argv
+ * @return int
+ */
+static int modify_or_create_var(IN char **argv, IN int is_readonly)
+{
+    char *key = my_strtok(argv[is_readonly + 1], '=');
+    var_node_t *var = get_shell()->variables;
+
+    while (var != NULL) {
+        if (my_strcmp(var->key, key) != 0) {
+            var = var->next;
+            continue;
+        }
+        if (is_var_readonly(var) == ERROR_OUTPUT) {
+            free(key);
+            return ERROR_OUTPUT;
+        }
+        free_null_check(var->value);
+        var->value = get_new_var_value(key, argv, is_readonly);
+        var->read_only = is_readonly;
+        free(key);
+        return OK_OUTPUT;
+    }
+    free(key);
+    return add_variable(argv, is_readonly);
+}
+
+/**
  * @brief Functions to run the 'set' builtin
+ * Can set local variables to a word or wordlist and list them
  *
  * @param argv The arguments passed to the command
  * @return exitcode_t
@@ -170,7 +171,7 @@ exitcode_t set_command(IN char **argv)
     }
     if (argv_count == 1)
         return print_variables(is_readonly);
-    if (modify_existing(argv, is_readonly) == ERROR_OUTPUT)
-        return add_variable(argv, is_readonly);
+    if (modify_or_create_var(argv, is_readonly) == ERROR_OUTPUT)
+        return ERROR_OUTPUT;
     return OK_OUTPUT;
 }

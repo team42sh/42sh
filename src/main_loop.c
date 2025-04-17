@@ -18,6 +18,7 @@ const builtin_t BUILTINS[] = {
     {"set", &set_command},
     {"setenv", &setenv_command},
     {"unsetenv", &unsetenv_command},
+    {"unset", &unset_command},
     {"cd", &cd_command},
     {"alias", &alias_command},
     {"unalias", &unalias_command},
