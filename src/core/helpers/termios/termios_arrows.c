@@ -11,12 +11,14 @@ void handle_left_arrow(OUT term_info_t *ti)
 {
     ti->_cursor_index--;
     CURSOR_LEFT_N(1);
+    get_cursor_position(&ti->_cursor_pos[Y], &ti->_cursor_pos[X]);
 }
 
 void handle_right_arrow(OUT term_info_t *ti)
 {
     ti->_cursor_index++;
     CURSOR_RIGHT_N(1);
+    get_cursor_position(&ti->_cursor_pos[Y], &ti->_cursor_pos[X]);
 }
 
 /**

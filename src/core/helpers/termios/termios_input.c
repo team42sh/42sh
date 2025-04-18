@@ -6,8 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "macros/misc_macros.h"
-#include "my_printf.h"
 
 /**
  * @brief Handles the deletion of a character using backspace.
@@ -18,28 +16,23 @@
  */
 static void handle_backspace(OUT term_info_t *ti)
 {
-    int pos[2] = {0};
-    
+    struct winsize ws = get_screen_info();
+
     if (ti == NULL || ti->_cursor_index <= 0)
         return;
-    get_cursor_position(&pos[Y], &pos[X]);
     (ti->_cursor_index)--;
     (ti->_buffer_len)--;
     memmove(&ti->_buffer[ti->_cursor_index],
         &ti->_buffer[ti->_cursor_index + 1],
         ti->_buffer_len - ti->_cursor_index + 1);
-    if (pos[X] <= 1) {
-        CURSOR_UP();
-        CURSOR_TO_COLUMN(get_screen_info().ws_col);
-        write(STDOUT_FILENO, " ", 1);
-        CURSOR_TO_COLUMN(get_screen_info().ws_col);
-    } else
-        write(STDOUT_FILENO, "\b \b", 3);
-    if (ti->_cursor_index != ti->_buffer_len) {
-        write(STDOUT_FILENO, "\033[J", 3);
-        print_multiline_string(&ti->_buffer[ti->_cursor_index], pos[X]);
-        set_cursor_position(pos[Y], pos[X]);
-        CURSOR_LEFT_N(1);
+    ti->_cursor_pos[X]--;
+    if (ti->_cursor_pos[X] < 1) {
+        ti->_cursor_pos[X] = ws.ws_col - 1;
+        ti->_cursor_pos[Y]--;
+        if (ti->_cursor_pos[Y] < ti->_cursor_start_pos[Y]) {
+            ti->_cursor_pos[Y] = ti->_cursor_start_pos[Y];
+            ti->_cursor_pos[X] = ti->_cursor_start_pos[X];
+        }
     }
 }
 
@@ -53,32 +46,24 @@ static void handle_backspace(OUT term_info_t *ti)
  */
 static void handle_character(OUT term_info_t *ti, IN char c)
 {
-    int pos[2] = {0};
-    struct winsize screen = {0};
-    
-    if (ti == NULL)
+    struct winsize ws = get_screen_info();
+
+    if (ti == NULL || ti->_buffer_len >= BUFFER_TERMIOS_SIZE)
         return;
-    if (ti->_buffer_len < BUFFER_TERMIOS_SIZE - 1) {
-        memmove(&ti->_buffer[ti->_cursor_index + 1],
-            &ti->_buffer[ti->_cursor_index],
-            ti->_buffer_len - ti->_cursor_index);
-        ti->_buffer[ti->_cursor_index] = c;
-        (ti->_cursor_index)++;
-        (ti->_buffer_len)++;
-        get_cursor_position(&pos[Y], &pos[X]);
-        write(STDOUT_FILENO, &c, 1);
-        screen = get_screen_info();
-        if (pos[X] == screen.ws_col) {
-            if (pos[Y] == screen.ws_row)
-                write(1, "\n", 1);
-            CURSOR_ANCHOR_LEFT();
-            CURSOR_DOWN();
-        }
-        if (ti->_cursor_index < ti->_buffer_len) {
-            get_cursor_position(&pos[Y], &pos[X]);
-            write(STDOUT_FILENO, "\033[J", 3);
-            print_multiline_string(&ti->_buffer[ti->_cursor_index], pos[X]);
-            set_cursor_position(pos[Y], pos[X]);
+    memmove(&ti->_buffer[ti->_cursor_index + 1],
+        &ti->_buffer[ti->_cursor_index],
+        ti->_buffer_len - ti->_cursor_index);
+    ti->_buffer[ti->_cursor_index] = c;
+    ti->_cursor_index++;
+    ti->_buffer_len++;
+    ti->_cursor_pos[X]++;
+    if (ti->_cursor_pos[X] > ws.ws_col) {
+        ti->_cursor_pos[X] = 2;
+        ti->_cursor_pos[Y]++;
+        if (ti->_cursor_pos[Y] > ws.ws_row) {
+            ti->_cursor_start_pos[Y]--;
+            ti->_cursor_pos[Y] = ws.ws_row;
+            write(1, "\n", 1);
         }
     }
 }
@@ -149,7 +134,6 @@ static bool choose_char_case(IN char c, OUT term_info_t *term_info)
     if (c == '\t' || c == CTRL_D_VALUE)
         my_printf("Auto Complete not implemented yet!\n");
     if (c == '\n') {
-        print_input_termios(term_info, false);
         write(1, "\n", 1);
         return true;
     }
@@ -194,12 +178,31 @@ char *termios_get_input(void)
     term_info_t *ti = get_shell()->_term_info;
     char c;
 
-    print_shell_prompt();
     reset_buffer_termios(ti);
-    print_input_termios(ti, true);
-    get_cursor_position(&ti->_cursor_start_pos[Y], &ti->_cursor_start_pos[X]);
     ti->_history_index = -1;
+
+    print_shell_prompt();
+    get_cursor_position(&ti->_cursor_start_pos[Y], &ti->_cursor_start_pos[X]);
+
+    set_cursor_position(1, 1);
+    my_printf("Cursor Start (%d, %d)  ", ti->_cursor_start_pos[X], ti->_cursor_start_pos[Y]);
+
+    // Start pos = Current pos
+    set_cursor_position(ti->_cursor_start_pos[Y], ti->_cursor_start_pos[X]);
+    get_cursor_position(&ti->_cursor_pos[Y], &ti->_cursor_pos[X]);
+        
+    set_cursor_position(2, 0);
+    my_printf("Cursor Pos (%d, %d)  ", ti->_cursor_pos[X], ti->_cursor_pos[Y]);
+    
+    set_cursor_position(3, 0);
+    my_printf("Max width : %d  Max Height : %d", get_screen_info().ws_col, get_screen_info().ws_row);
+
+    set_cursor_position(ti->_cursor_pos[Y], ti->_cursor_pos[X]);
+
+    // TO KNOW X = 0 n'est pas possiblee c'est 1! (top = 1, 1)
+
     while (read(STDIN_FILENO, &c, 1) == 1) {
+
         if (get_shell()->_term_info->_sig_buffer_reset)
             reset_buffer_termios(ti);
         if (c == CTRL_D_VALUE && ti->_buffer_len == 0) {
@@ -209,6 +212,12 @@ char *termios_get_input(void)
         if (choose_char_case(c, ti) == true)
             return my_strdup(ti->_buffer);
         ti->_buffer[ti->_buffer_len] = '\0';
+
+        set_cursor_position(2, 0);
+        my_printf("Cursor Pos (%d, %d)  ", ti->_cursor_pos[X], ti->_cursor_pos[Y]);
+
+        print_multiline_buffer(ti);
+        set_cursor_position(ti->_cursor_pos[Y], ti->_cursor_pos[X]);
     }
     return my_strdup(ti->_buffer);
 }

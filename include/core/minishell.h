@@ -112,6 +112,7 @@ typedef struct term_info_s {
     char _buffer[4096];
     char _yank_buffer[4096];
     int _cursor_start_pos[2];
+    int _cursor_pos[2];
     size_t _buffer_len;
     size_t _cursor_index;
     bool _sig_buffer_reset;
@@ -193,10 +194,9 @@ term_info_t *setup_shell_term_info(void);
 void init_termios(void);
 char *termios_get_input(void);
 void reset_buffer_termios(term_info_t *term_info);
-void print_input_termios(term_info_t *term_info, bool show_cursor);
 void enable_raw_mode(shell_t *shell);
 void get_cursor_position(int *row, int *col);
-void print_multiline_string(const char *str, int start_pos);
+void print_multiline_buffer(term_info_t *ti);
 void set_cursor_position(int y, int x);
 struct winsize get_screen_info(void);
 
@@ -270,7 +270,6 @@ bool is_file_exist(char *path_file);
  * Prompt helper functions
  */
 void print_shell_prompt(void);
-int get_len_prompt(void);
 
 /*
  * Aliases handler functions

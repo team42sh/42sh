@@ -79,6 +79,7 @@ struct winsize get_screen_info(void)
     struct winsize win = {0};
 
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+    win.ws_col++;
     return win;
 }
 

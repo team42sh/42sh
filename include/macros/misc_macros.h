@@ -19,9 +19,13 @@
         #define OUT
     #endif /* ifndef OUT */
 
+    #define DEBUG_PRINT() my_printf("AAAAA\nAAAAA")
+
     #define CURSOR_HIDE() my_printf("\033[?25l")
     #define CURSOR_SHOW() my_printf("\033[?25h")
     #define CLEAR_LINE() my_printf("\033[2K")
+    #define CLEAR_SCREEN_FROM_CURSOR() my_printf("\033[J")
+    #define CLEAR_LINE_FROM_CURSOR() my_printf("\033[K")
     #define CURSOR_LINE_START() my_printf("\r")
     #define CURSOR_UP() my_printf("\033[A")
     #define CURSOR_DOWN() my_printf("\033[B")
