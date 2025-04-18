@@ -23,6 +23,9 @@
     #define LEFT 0
     #define RIGHT 1
 
+    #define X 1
+    #define Y 0
+
     #define MAX_WORDS_COUNT 2048
     #define MAX_WORD_LEN 2048
     #define BUFFER_TERMIOS_SIZE 4096

@@ -19,11 +19,20 @@
         #define OUT
     #endif /* ifndef OUT */
 
-    #define HIDE_CURSOR() my_printf("\033[?25l")
-    #define SHOW_CURSOR() my_printf("\033[?25h")
-    #define RESET_LINE() write(STDOUT_FILENO, "\033[K", 3)
+    #define CURSOR_HIDE() my_printf("\033[?25l")
+    #define CURSOR_SHOW() my_printf("\033[?25h")
+    #define CLEAR_LINE() my_printf("\033[2K")
+    #define CURSOR_LINE_START() my_printf("\r")
+    #define CURSOR_UP() my_printf("\033[A")
+    #define CURSOR_DOWN() my_printf("\033[B")
+    #define CURSOR_ANCHOR_LEFT() my_printf("\r")
 
-    #define CURSOR_COLOR "\033[6;30;48;5;254m"
+    #define CURSOR_TO_COLUMN(col) my_printf("\033[%dG", (col))
+    #define CURSOR_UP_N(n) my_printf("\033[%dA", (n))
+    #define CURSOR_DOWN_N(n) my_printf("\033[%dB", (n))
+    #define CURSOR_RIGHT_N(n) my_printf("\033[%dC", (n))
+    #define CURSOR_LEFT_N(n) my_printf("\033[%dD", (n))
+
     #define RESET_COLOR "\033[0m"
 
 #endif /* ifndef MISC_MACROS_H_ */

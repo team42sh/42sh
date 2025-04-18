@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "macros/misc_macros.h"
 #include "my_printf.h"
 
 /**
@@ -17,14 +18,28 @@
  */
 static void handle_backspace(OUT term_info_t *ti)
 {
-    if (ti == NULL)
+    int pos[2] = {0};
+    
+    if (ti == NULL || ti->_cursor_index <= 0)
         return;
-    if (ti->_cursor_index > 0) {
-        (ti->_cursor_index)--;
-        (ti->_buffer_len)--;
-        memmove(&ti->_buffer[ti->_cursor_index],
-            &ti->_buffer[ti->_cursor_index + 1],
-            ti->_buffer_len - ti->_cursor_index + 1);
+    get_cursor_position(&pos[Y], &pos[X]);
+    (ti->_cursor_index)--;
+    (ti->_buffer_len)--;
+    memmove(&ti->_buffer[ti->_cursor_index],
+        &ti->_buffer[ti->_cursor_index + 1],
+        ti->_buffer_len - ti->_cursor_index + 1);
+    if (pos[X] <= 1) {
+        CURSOR_UP();
+        CURSOR_TO_COLUMN(get_screen_info().ws_col);
+        write(STDOUT_FILENO, " ", 1);
+        CURSOR_TO_COLUMN(get_screen_info().ws_col);
+    } else
+        write(STDOUT_FILENO, "\b \b", 3);
+    if (ti->_cursor_index != ti->_buffer_len) {
+        write(STDOUT_FILENO, "\033[J", 3);
+        print_multiline_string(&ti->_buffer[ti->_cursor_index], pos[X]);
+        set_cursor_position(pos[Y], pos[X]);
+        CURSOR_LEFT_N(1);
     }
 }
 
@@ -38,6 +53,9 @@ static void handle_backspace(OUT term_info_t *ti)
  */
 static void handle_character(OUT term_info_t *ti, IN char c)
 {
+    int pos[2] = {0};
+    struct winsize screen = {0};
+    
     if (ti == NULL)
         return;
     if (ti->_buffer_len < BUFFER_TERMIOS_SIZE - 1) {
@@ -47,39 +65,20 @@ static void handle_character(OUT term_info_t *ti, IN char c)
         ti->_buffer[ti->_cursor_index] = c;
         (ti->_cursor_index)++;
         (ti->_buffer_len)++;
-    }
-}
-
-/**
- * @brief Handles navigation through the command history using the up/down keys
- *        This function updates the terminal information structure `ti` for
- *        the user's request to move either up or down in the command history.
- *
- * @param up    A boolean indicating the direction:
- *               - `true` to move up (previous command),
- *               - `false` to move down (next command)
- * @param ti    A pointer to the term_info_t structure
- */
-static void handle_history_up_down(IN bool up, OUT term_info_t *ti)
-{
-    if (up && ti->_history_index < get_shell()->_max_history - 1) {
-        reset_buffer_termios(ti);
-        (ti->_history_index)++;
-        if (ti->_history_index >= 0) {
-            my_strcpy(ti->_buffer, get_string_index(
-                get_shell()->_history_input, ti->_history_index));
-            ti->_buffer_len = my_strlen(ti->_buffer);
-            ti->_cursor_index = ti->_buffer_len;
+        get_cursor_position(&pos[Y], &pos[X]);
+        write(STDOUT_FILENO, &c, 1);
+        screen = get_screen_info();
+        if (pos[X] == screen.ws_col) {
+            if (pos[Y] == screen.ws_row)
+                write(1, "\n", 1);
+            CURSOR_ANCHOR_LEFT();
+            CURSOR_DOWN();
         }
-    }
-    if (!up && ti->_history_index > -1) {
-        (ti->_history_index)--;
-        reset_buffer_termios(ti);
-        if (ti->_history_index >= 0) {
-            my_strcpy(ti->_buffer, get_string_index(
-                get_shell()->_history_input, ti->_history_index));
-            ti->_buffer_len = my_strlen(ti->_buffer);
-            ti->_cursor_index = ti->_buffer_len;
+        if (ti->_cursor_index < ti->_buffer_len) {
+            get_cursor_position(&pos[Y], &pos[X]);
+            write(STDOUT_FILENO, "\033[J", 3);
+            print_multiline_string(&ti->_buffer[ti->_cursor_index], pos[X]);
+            set_cursor_position(pos[Y], pos[X]);
         }
     }
 }
@@ -105,9 +104,9 @@ static void handle_escape(OUT term_info_t *ti)
     if (sequence[0] != '[')
         return;
     if (sequence[1] == 'D' && ti->_cursor_index > 0)
-        (ti->_cursor_index)--;
+        handle_left_arrow(ti);
     if (sequence[1] == 'C' && ti->_cursor_index < ti->_buffer_len)
-        (ti->_cursor_index)++;
+        handle_right_arrow(ti);
     if (sequence[1] == 'A' || sequence[1] == 'B')
         handle_history_up_down(sequence[1] == 'A' ? true : false, ti);
 }
@@ -195,21 +194,21 @@ char *termios_get_input(void)
     term_info_t *ti = get_shell()->_term_info;
     char c;
 
+    print_shell_prompt();
     reset_buffer_termios(ti);
     print_input_termios(ti, true);
+    get_cursor_position(&ti->_cursor_start_pos[Y], &ti->_cursor_start_pos[X]);
     ti->_history_index = -1;
     while (read(STDIN_FILENO, &c, 1) == 1) {
         if (get_shell()->_term_info->_sig_buffer_reset)
             reset_buffer_termios(ti);
         if (c == CTRL_D_VALUE && ti->_buffer_len == 0) {
             reset_buffer_termios(ti);
-            print_input_termios(ti, false);
             return NULL;
         }
         if (choose_char_case(c, ti) == true)
             return my_strdup(ti->_buffer);
         ti->_buffer[ti->_buffer_len] = '\0';
-        print_input_termios(ti, true);
     }
     return my_strdup(ti->_buffer);
 }

@@ -34,11 +34,8 @@ static char *get_user_input(void)
     size_t line_size = 0;
 
     if (isatty(STDIN_FILENO)) {
-        print_shell_prompt();
         enable_raw_mode(get_shell());
-        HIDE_CURSOR();
         get_shell()->last_input_buffer = termios_get_input();
-        SHOW_CURSOR();
         return get_shell()->last_input_buffer;
     }
     if (getline(&get_shell()->last_input_buffer, &line_size, stdin) == -1)

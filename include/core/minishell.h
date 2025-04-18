@@ -111,6 +111,7 @@ typedef struct term_info_s {
     struct termios _current_termios;
     char _buffer[4096];
     char _yank_buffer[4096];
+    int _cursor_start_pos[2];
     size_t _buffer_len;
     size_t _cursor_index;
     bool _sig_buffer_reset;
@@ -194,12 +195,19 @@ char *termios_get_input(void);
 void reset_buffer_termios(term_info_t *term_info);
 void print_input_termios(term_info_t *term_info, bool show_cursor);
 void enable_raw_mode(shell_t *shell);
-int get_terminal_width(void);
+void get_cursor_position(int *row, int *col);
+void print_multiline_string(const char *str, int start_pos);
+void set_cursor_position(int y, int x);
+struct winsize get_screen_info(void);
 
 void handle_ctrl_e(term_info_t *ti);
 void handle_ctrl_a(term_info_t *ti);
 void handle_ctrl_k(term_info_t *ti);
 void handle_ctrl_y(term_info_t *ti);
+
+void handle_left_arrow(term_info_t *ti);
+void handle_right_arrow(term_info_t *ti);
+void handle_history_up_down(bool up, term_info_t *ti);
 
 /*
  * Environment transformer functions

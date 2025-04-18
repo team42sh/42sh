@@ -46,17 +46,40 @@ term_info_t *setup_shell_term_info(void)
 }
 
 /**
+ * @brief Get the cursor position.
+ *
+ * @param row           Pointer to the row (Y)
+ * @param col           Pointer to the col (X)
+ */
+void get_cursor_position(OUT int *row, OUT int *col)
+{
+    char buf[32];
+    unsigned long i = 0;
+
+    write(STDOUT_FILENO, "\033[6n", 4);
+    while (i < sizeof buf - 1) {
+        if (read(STDIN_FILENO, buf + i, 1) != 1)
+            break;
+        if (buf[i] == 'R')
+            break;
+        i++;
+    }
+    buf[i] = '\0';
+    if (buf[0] == '\033' && buf[1] == '[')
+        sscanf(buf + 2, "%d;%d", row, col);
+}
+
+/**
  * @brief Get the terminal line width.
  *
  * @return The terminal width.
  */
-int get_terminal_width(void)
+struct winsize get_screen_info(void)
 {
-    struct winsize win;
+    struct winsize win = {0};
 
-    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) == -1)
-        return 80;
-    return win.ws_col;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
+    return win;
 }
 
 /**

@@ -8,6 +8,18 @@
 #include "core/minishell.h"
 
 /**
+ * @brief Reset and put at 0 every char in the yank buffer.
+ *
+ * @param ti             The structure terminal information
+ */
+static void reset_yank_buffer(OUT term_info_t *ti)
+{
+    for (size_t i = 0; i < BUFFER_TERMIOS_SIZE; i++) {
+        ti->_yank_buffer[i] = 0;
+    }
+}
+
+/**
  * @brief Handling of the shortcut CTRL A
  *
  * @param ti            The structure terminal information
@@ -42,6 +54,7 @@ void handle_ctrl_k(OUT term_info_t *ti)
 
     if (ti == NULL)
         return;
+    reset_yank_buffer(ti);
     for (size_t i = ti->_cursor_index; i < ti->_buffer_len; i++) {
         ti->_yank_buffer[moved_i] = ti->_buffer[i];
         ti->_buffer[i] = 0;
