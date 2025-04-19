@@ -8,22 +8,6 @@
 #include "core/minishell.h"
 
 /**
- * @brief Enable the row mode for the termios configuration
- *        That means : no echo, no escape characters, no waiting for \n.
- *
- * @param shell         The shell structure
- */
-void enable_raw_mode(OUT shell_t *shell)
-{
-    if (shell == NULL)
-        return;
-    shell->_term_info->_current_termios.c_lflag &= ~(ECHO | ICANON);
-    shell->_term_info->_current_termios.c_cc[VMIN] = 1;
-    shell->_term_info->_current_termios.c_cc[VTIME] = 0;
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &shell->_term_info->_current_termios);
-}
-
-/**
  * @brief Setup the shell termios information.
  *
  * @return The final structure with all values initialized.
@@ -46,27 +30,54 @@ term_info_t *setup_shell_term_info(void)
 }
 
 /**
- * @brief Get the cursor position.
- *
- * @param row           Pointer to the row (Y)
- * @param col           Pointer to the col (X)
+ * @brief Init termios is a function for putting the right terminal config.
  */
-void get_cursor_position(OUT int *row, OUT int *col)
+void init_termios(void)
 {
-    char buf[32];
-    unsigned long i = 0;
+    shell_t *shell = get_shell();
+    struct termios original_termios = {0};
 
-    write(STDOUT_FILENO, "\033[6n", 4);
-    while (i < sizeof buf - 1) {
-        if (read(STDIN_FILENO, buf + i, 1) != 1)
-            break;
-        if (buf[i] == 'R')
-            break;
-        i++;
-    }
-    buf[i] = '\0';
-    if (buf[0] == '\033' && buf[1] == '[')
-        sscanf(buf + 2, "%d;%d", row, col);
+    tcgetattr(STDIN_FILENO, &original_termios);
+    shell->_term_info->_original_termios = original_termios;
+    shell->_term_info->_current_termios = original_termios;
+    enable_raw_mode(shell);
+}
+
+/**
+ * @brief Setup a new prompt, this function need to be called after a
+ * newline.
+ *
+ * @param ti            Terminal information structure
+ */
+void setup_new_prompt(OUT term_info_t *ti)
+{
+    if (ti == NULL)
+        return;
+    reset_buffer_termios(ti);
+    ti->_history_index = -1;
+    print_shell_prompt();
+    get_cursor_position(&ti->_cursor_start_pos[POS_Y],
+        &ti->_cursor_start_pos[POS_X]);
+    get_cursor_position(&ti->_cursor_pos[POS_Y],
+        &ti->_cursor_pos[POS_X]);
+    set_cursor_position(ti->_cursor_start_pos[POS_Y],
+        ti->_cursor_start_pos[POS_X]);
+}
+
+/**
+ * @brief Enable the row mode for the termios configuration
+ *        That means : no echo, no escape characters, no waiting for \n.
+ *
+ * @param shell         The shell structure
+ */
+void enable_raw_mode(OUT shell_t *shell)
+{
+    if (shell == NULL)
+        return;
+    shell->_term_info->_current_termios.c_lflag &= ~(ECHO | ICANON);
+    shell->_term_info->_current_termios.c_cc[VMIN] = 1;
+    shell->_term_info->_current_termios.c_cc[VTIME] = 0;
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &shell->_term_info->_current_termios);
 }
 
 /**
@@ -81,21 +92,4 @@ struct winsize get_screen_info(void)
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
     win.ws_col++;
     return win;
-}
-
-/**
- * @brief Init termios is a function for putting the right terminal
- *        configuration after entering a command, that is useful because
- *        termios can break sometime if spamming some weird stuff.
- *
- */
-void init_termios(void)
-{
-    shell_t *shell = get_shell();
-    struct termios original_termios = {0};
-
-    tcgetattr(STDIN_FILENO, &original_termios);
-    shell->_term_info->_original_termios = original_termios;
-    shell->_term_info->_current_termios = original_termios;
-    enable_raw_mode(shell);
 }

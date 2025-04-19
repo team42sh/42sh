@@ -63,17 +63,25 @@ int send_signal_to_pid(signal_t signal, pid_t pid)
  */
 void handle_signal(signal_t signal)
 {
-    switch (signal) {
-        case SIGINT:
-            get_shell()->_term_info->_sig_buffer_reset = true;
-            if (get_shell()->current_child_pid == -1) {
-                write(1, "\n", 1);
-                print_shell_prompt();
-                get_shell()->last_exit_code = 1;
-                return;
-            }
-            send_signal_to_pid(SIGINT, get_shell()->current_child_pid);
+    shell_t *shell = get_shell();
+    term_info_t *ti = shell->_term_info;
+
+    if (signal == SIGINT) {
+        ti->_sig_buffer_reset = true;
+        if (shell->current_child_pid == -1) {
+            handle_ctrl_e(ti);
+            set_cursor_position(ti->_cursor_pos[POS_Y],
+                ti->_cursor_pos[POS_X]);
+            write(1, "\n", 1);
+            print_shell_prompt();
+            get_cursor_position(&ti->_cursor_pos[POS_Y],
+                &shell->_term_info->_cursor_pos[POS_X]);
+            get_cursor_position(&ti->_cursor_start_pos[POS_Y],
+                &ti->_cursor_start_pos[POS_X]);
+            shell->last_exit_code = 1;
             return;
+        }
+        send_signal_to_pid(SIGINT, shell->current_child_pid);
     }
 }
 

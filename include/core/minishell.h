@@ -32,6 +32,10 @@
     #include "core/parser.h"
     #include "my_printf.h"
 
+    #ifndef _DEBUG_MODE_
+        #define _DEBUG_MODE_ 1
+    #endif /* ifndef _DEBUG_MODE_ */
+
 /*
  * Environment structure used in a linked list.
  * This method is faster than a normal array aka extern char **environ
@@ -198,6 +202,8 @@ void enable_raw_mode(shell_t *shell);
 void get_cursor_position(int *row, int *col);
 void print_multiline_buffer(term_info_t *ti);
 void set_cursor_position(int y, int x);
+void move_cursor_from_position(int move, term_info_t *ti);
+void setup_new_prompt(term_info_t *ti);
 struct winsize get_screen_info(void);
 
 void handle_ctrl_e(term_info_t *ti);
@@ -207,7 +213,8 @@ void handle_ctrl_y(term_info_t *ti);
 
 void handle_left_arrow(term_info_t *ti);
 void handle_right_arrow(term_info_t *ti);
-void handle_history_up_down(bool up, term_info_t *ti);
+void handle_history_up(term_info_t *ti);
+void handle_history_down(term_info_t *ti);
 
 /*
  * Environment transformer functions

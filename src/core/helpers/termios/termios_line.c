@@ -15,8 +15,8 @@
 void print_multiline_buffer(IN term_info_t *ti)
 {
     struct winsize screen = get_screen_info();
-    int x = ti->_cursor_start_pos[X];
-    int y = ti->_cursor_start_pos[Y];
+    int x = ti->_cursor_start_pos[POS_X];
+    int y = ti->_cursor_start_pos[POS_Y];
 
     set_cursor_position(y, x);
     CLEAR_SCREEN_FROM_CURSOR();
@@ -25,23 +25,13 @@ void print_multiline_buffer(IN term_info_t *ti)
         x++;
         if (x <= screen.ws_col)
             continue;
-        x = 1;
+        x = 2;
         y++;
-        if (y > screen.ws_row)
-            y = screen.ws_row;
+        if (y <= screen.ws_row)
+            continue;
+        y = screen.ws_row;
+        ti->_cursor_start_pos[POS_Y]--;
+        if (ti->_cursor_index != ti->_buffer_len)
+            ti->_cursor_pos[POS_Y]--;
     }
-}
-
-/**
- * @brief Set the cursor to this position.
- *
- * @param y             The Y
- * @param x             The X
- */
-void set_cursor_position(IN int y, IN int x)
-{
-    char escape_sequence[32] = {0};
-
-    snprintf(escape_sequence, sizeof(escape_sequence), "\033[%d;%dH", y, x);
-    write(STDOUT_FILENO, escape_sequence, my_strlen(escape_sequence));
 }

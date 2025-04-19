@@ -29,6 +29,8 @@ void handle_ctrl_a(OUT term_info_t *ti)
     if (ti == NULL)
         return;
     ti->_cursor_index = 0;
+    ti->_cursor_pos[POS_Y] = ti->_cursor_start_pos[POS_Y];
+    ti->_cursor_pos[POS_X] = ti->_cursor_start_pos[POS_X];
 }
 
 /**
@@ -38,9 +40,25 @@ void handle_ctrl_a(OUT term_info_t *ti)
  */
 void handle_ctrl_e(OUT term_info_t *ti)
 {
+    struct winsize ws = get_screen_info();
+    int pos[2] = {0};
+
     if (ti == NULL)
         return;
     ti->_cursor_index = ti->_buffer_len;
+    pos[POS_X] = ti->_cursor_start_pos[POS_X];
+    pos[POS_Y] = ti->_cursor_start_pos[POS_Y];
+    for (size_t i = 0; i < ti->_buffer_len; i++) {
+        pos[POS_X]++;
+        if (pos[POS_X] <= ws.ws_col)
+            continue;
+        pos[POS_X] = 2;
+        pos[POS_Y]++;
+        if (pos[POS_Y] > ws.ws_row)
+            pos[POS_Y] = ws.ws_row;
+    }
+    ti->_cursor_pos[POS_X] = pos[POS_X];
+    ti->_cursor_pos[POS_Y] = pos[POS_Y];
 }
 
 /**
@@ -76,14 +94,15 @@ void handle_ctrl_y(OUT term_info_t *ti)
     if (ti == NULL)
         return;
     yank_len = my_strlen(ti->_yank_buffer);
-    if (ti->_buffer_len < BUFFER_TERMIOS_SIZE - (size_t) yank_len) {
-        for (size_t i = 0; i < yank_len; i++) {
-            memmove(&ti->_buffer[ti->_cursor_index + 1],
-                &ti->_buffer[ti->_cursor_index],
-                ti->_buffer_len - ti->_cursor_index);
-            ti->_buffer[ti->_cursor_index] = ti->_yank_buffer[i];
-            (ti->_cursor_index)++;
-            (ti->_buffer_len)++;
-        }
+    if (ti->_buffer_len >= BUFFER_TERMIOS_SIZE - yank_len)
+        return;
+    for (size_t i = 0; i < yank_len; i++) {
+        memmove(&ti->_buffer[ti->_cursor_index + 1],
+            &ti->_buffer[ti->_cursor_index],
+            ti->_buffer_len - ti->_cursor_index);
+        ti->_buffer[ti->_cursor_index] = ti->_yank_buffer[i];
+        ti->_cursor_index++;
+        ti->_buffer_len++;
     }
+    move_cursor_from_position(yank_len, ti);
 }
