@@ -33,7 +33,7 @@
     #include "my_printf.h"
 
     #ifndef _DEBUG_MODE_
-        #define _DEBUG_MODE_ 1
+        #define _DEBUG_MODE_ 0
     #endif /* ifndef _DEBUG_MODE_ */
 
 /*

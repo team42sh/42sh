@@ -35,7 +35,6 @@ static void debug_termios_info(IN term_info_t *ti)
     for (int i = 0; i < ws.ws_col; i++)
         write(1, "-", 1);
     my_printf(RESET_COLOR);
-    set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
 }
 
 /**
@@ -244,6 +243,7 @@ char *termios_get_input(void)
         ti->_buffer[ti->_buffer_len] = '\0';
         print_multiline_buffer(ti);
         debug_termios_info(ti);
+        set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
     }
     return my_strdup(ti->_buffer);
 }
