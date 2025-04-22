@@ -18,9 +18,11 @@
     #include <signal.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
+    #include <sys/ioctl.h>
     #include <errno.h>
     #include <fcntl.h>
     #include <termios.h>
+    #include <ctype.h>
     #include <string.h>
 
     #include "builtins.h"
@@ -30,6 +32,10 @@
     #include "core/signals.h"
     #include "core/parser.h"
     #include "my_printf.h"
+
+    #ifndef _DEBUG_MODE_
+        #define _DEBUG_MODE_ 0
+    #endif /* ifndef _DEBUG_MODE_ */
 
 /*
  * Environment structure used in a linked list.
@@ -119,6 +125,9 @@ typedef struct term_info_s {
     struct termios _original_termios;
     struct termios _current_termios;
     char _buffer[4096];
+    char _yank_buffer[4096];
+    int _cursor_start_pos[2];
+    int _cursor_pos[2];
     size_t _buffer_len;
     size_t _cursor_index;
     bool _sig_buffer_reset;
@@ -209,11 +218,29 @@ term_info_t *setup_shell_term_info(void);
 void init_termios(void);
 char *termios_get_input(void);
 void reset_buffer_termios(term_info_t *term_info);
-void print_input_termios(term_info_t *term_info, bool show_cursor);
 void enable_raw_mode(shell_t *shell);
+void get_cursor_position(int *row, int *col);
+void print_multiline_buffer(term_info_t *ti);
+size_t get_lines_amount_buffer(term_info_t *ti);
+void set_cursor_position(int y, int x);
+void move_cursor_from_position(int move, term_info_t *ti);
+void setup_new_prompt(term_info_t *ti);
+
+struct winsize get_screen_info(void);
+void print_remaining_stdin(void);
+bool has_remaining_input(void);
 
 void handle_ctrl_e(term_info_t *ti);
 void handle_ctrl_a(term_info_t *ti);
+void handle_ctrl_k(term_info_t *ti);
+void handle_ctrl_y(term_info_t *ti);
+void handle_autocomplete(term_info_t *ti);
+
+void handle_character(term_info_t *ti, char c);
+void handle_left_arrow(term_info_t *ti);
+void handle_right_arrow(term_info_t *ti);
+void handle_history_up(term_info_t *ti);
+void handle_history_down(term_info_t *ti);
 
 /*
  * Environment transformer functions
