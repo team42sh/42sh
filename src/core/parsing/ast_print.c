@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /**
  * @brief Print the depth to see the right indentation of elements.
@@ -41,9 +42,10 @@ print_ast_recursive(ast_node_t *ast, int depth, char const *names[])
         my_printf("* %s = ", names[ast->token->token_type]);
         print_array(ast->token->data._argv);
     }
-    if (ast->token->token_type == TOKEN_SEMI_COLON)
-        my_printf("* %s\n", names[ast->token->token_type]);
-    if (ast->token->token_type == TOKEN_PIPE)
+    if (ast->token->token_type == TOKEN_SEMI_COLON ||
+        ast->token->token_type == TOKEN_PIPE ||
+        ast->token->token_type == TOKEN_AND ||
+        ast->token->token_type == TOKEN_OR)
         my_printf("* %s\n", names[ast->token->token_type]);
     print_ast_recursive(ast->left, depth + 1, names);
     print_ast_recursive(ast->right, depth + 1, names);
@@ -70,6 +72,8 @@ print_ast(ast_node_t *ast)
 void
 print_asts(ast_command_t *asts)
 {
+    if (asts == NULL)
+        return;
     for (int i = 0; i < asts->count; i++) {
         my_printf("\033[1;33m----------------\033[0m\n");
         print_ast(asts->commands[i]);

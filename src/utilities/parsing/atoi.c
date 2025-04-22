@@ -81,8 +81,12 @@ static int get_number(char *string, int is_negative)
  */
 int my_atoi(char *string)
 {
-    int negate = is_negative(string);
-    int number = get_number(&string[get_number_start_index(string)], negate);
+    int negate;
+    int number;
 
+    if (string == NULL)
+        return 0;
+    negate = is_negative(string);
+    number = get_number(&string[get_number_start_index(string)], negate);
     return number;
 }

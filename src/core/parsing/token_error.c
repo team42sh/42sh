@@ -7,30 +7,8 @@
 */
 
 #include "core/minishell.h"
-
-static syntax_ast_error_t analyse_token(token_t *token)
-{
-    if (token->token_type == TOKEN_PIPE) {
-        if (!token->next || token->next->token_type == TOKEN_PIPE)
-            return PIPE_NO_COMMAND;
-        if (token->next->token_type == TOKEN_COMMAND && token->next->next &&
-            (token->next->next->token_type == TOKEN_LEFT_REDIRECTION ||
-            token->next->next->token_type == TOKEN_LEFT_APPEND))
-            return AMBIGUOUS_INPUT;
-    }
-    if (is_redirection(token->token_type) && token->data._file == NULL)
-        return REDIRECT_NO_NAME;
-    if (token->token_type == TOKEN_RIGHT_APPEND ||
-        token->token_type == TOKEN_RIGHT_REDIRECTION)
-        if (token->next && token->next->token_type != TOKEN_SEMI_COLON)
-            return AMBIGUOUS_OUTPUT;
-    if (token->token_type == TOKEN_LEFT_APPEND ||
-        token->token_type == TOKEN_LEFT_REDIRECTION)
-        if ((token->next && token->next->token_type == TOKEN_LEFT_APPEND) ||
-            (token->next && token->next->token_type == TOKEN_LEFT_REDIRECTION))
-            return AMBIGUOUS_INPUT;
-    return NO_ERROR;
-}
+#include "core/parser.h"
+#include "core/types.h"
 
 static int show_error_parsing(syntax_ast_error_t error_index)
 {
@@ -71,23 +49,31 @@ static int is_valid_next_semi_colon(token_t *token)
     return 1;
 }
 
+static syntax_ast_error_t get_and_show_error_token(token_t *token)
+{
+    syntax_ast_error_t error = NO_ERROR;
+
+    error = analyse_token(token);
+    show_error_parsing(error);
+    return error;
+}
+
 bool find_token_error(token_list_t *tokens)
 {
     syntax_ast_error_t error = NO_ERROR;
-    token_t *token = tokens->head;
 
+    if (tokens == NULL)
+        return ERROR_OUTPUT;
     if (check_head_token(tokens) == ERROR_OUTPUT)
         return INVALID_COMMAND;
-    while (token != NULL) {
-        error = analyse_token(token);
-        show_error_parsing(error);
+    for (token_t *token = tokens->head; token != NULL; token = token->next) {
+        error = get_and_show_error_token(token);
         if (error != NO_ERROR)
             break;
         if (!is_valid_next_semi_colon(token)) {
             error = INVALID_COMMAND;
             break;
         }
-        token = token->next;
     }
     if (error != NO_ERROR)
         free_token_list(tokens);

@@ -115,6 +115,7 @@ void print_ast(ast_node_t *ast);
 void print_asts(ast_command_t *asts);
 
 ast_command_t *create_tree(token_list_t *list);
+ast_command_t *ast_priority_process(ast_command_t *ast);
 ast_command_t *create_ast_array(void);
 ast_command_t *add_ast_array(ast_command_t *asts);
 
@@ -125,6 +126,8 @@ ast_node_t *create_ast_pipe(ast_node_t *ast, token_t *token);
 ast_node_t *create_ast_redirect(ast_node_t *ast, token_t *token);
 ast_node_t *create_ast_semi_colon(ast_node_t *ast, token_t *token);
 ast_node_t *create_ast_command(ast_node_t *ast, token_t *token);
+ast_node_t *create_ast_and(ast_node_t *ast, token_t *token);
+ast_node_t *create_ast_or(ast_node_t *ast, token_t *token);
 
 /*
  * AST Free functions
@@ -139,5 +142,6 @@ void free_token_list(token_list_t *list);
  */
 bool is_token_redirection_simple(token_t *token);
 bool is_token_redirection_append(token_t *token);
+syntax_ast_error_t analyse_token(token_t *token);
 
 #endif /* ifndef PARSING_H */

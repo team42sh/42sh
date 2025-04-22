@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 #include <stdbool.h>
 
 /**
@@ -166,6 +167,8 @@ is_redirection(token_type_t type)
 int
 execute_redirection(ast_node_t *node)
 {
+    if (node == NULL)
+        return ERROR_OUTPUT;
     if (node->token->token_type == TOKEN_RIGHT_REDIRECTION)
         return redirect_right(node, false);
     if (node->token->token_type == TOKEN_RIGHT_APPEND)

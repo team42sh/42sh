@@ -15,12 +15,13 @@ void free_ast(ast_node_t *ast)
         free_ast(ast->left);
     if (ast->right != NULL)
         free_ast(ast->right);
-    free_token(ast->token);
     free(ast);
 }
 
 void free_asts(ast_command_t *asts)
 {
+    if (asts == NULL)
+        return;
     for (int i = 0; i < asts->count; i++) {
         free_ast(asts->commands[i]);
     }

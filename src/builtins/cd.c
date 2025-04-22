@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/types.h"
 
 /*
  * Get the current working dir using getcwd function, and add it to env var.
@@ -126,6 +127,8 @@ static int change_pwd_to_last(void)
  */
 exitcode_t cd_command(char **argv)
 {
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     if (argv[1] != NULL && argv[2] != NULL)
         return print_err("cd: Too many arguments.\n");
     if (argv[1] == NULL || !my_strcmp(argv[1], "~"))

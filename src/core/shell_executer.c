@@ -6,26 +6,31 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
 
 /**
  * @brief Free ASTs and token list. Depending on NULL delivered in parameters.
  *
  * @param asts                  ASTs
  * @param list                  The token list
- * @param free_list             Bool to say if we need to free the list
- *                              Generally used 'true' if error.
  */
 static void
-free_tokens_ast(ast_command_t *asts, token_list_t *list, bool free_list)
+free_tokens_ast(ast_command_t *asts, token_list_t *list)
 {
     if (asts != NULL)
         free_asts(asts);
-    if (list != NULL && free_list)
-        free_token_list(list);
     if (list != NULL)
-        free_null_check(list);
+        free_token_list(list);
 }
 
+/**
+ * @brief Execute every ast seperated by ';'
+ *
+ * @param asts                  The list of ASTs
+ * @param list                  The list of tokens
+ *
+ * @return The final exit code of all ASTs. The last command.
+ */
 static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
 {
     exitcode_t exec_command_return = 0;
@@ -38,7 +43,7 @@ static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
         if (exec_command_return == CURRENTLY_CHILD)
             break;
     }
-    free_tokens_ast(asts, list, false);
+    free_tokens_ast(asts, list);
     return exec_command_return;
 }
 
@@ -53,6 +58,8 @@ static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
 exitcode_t
 execute_ast_node(ast_node_t *node)
 {
+    if (node == NULL)
+        return ERROR_OUTPUT;
     switch (node->token->token_type) {
         case TOKEN_PIPE:
             return execute_pipes(node);
@@ -63,6 +70,10 @@ execute_ast_node(ast_node_t *node)
         case TOKEN_RIGHT_APPEND:
         case TOKEN_LEFT_APPEND:
             return execute_redirection(node);
+        case TOKEN_AND:
+            return execute_and(node);
+        case TOKEN_OR:
+            return execute_or(node);
         default:
             return ERROR_OUTPUT;
     }
@@ -75,12 +86,15 @@ execute_ast_node(ast_node_t *node)
  *
  * @param argv   The ARGV
  */
-void
+exitcode_t
 exec_binary(char **argv)
 {
-    char *path = get_binary_path(argv[0]);
+    char *path;
     char **env_array_child;
 
+    if (argv == NULL)
+        return CURRENTLY_CHILD;
+    path = get_binary_path(argv[0]);
     if (path == NULL)
         path = my_strdup(argv[0]);
     env_array_child = env_node_to_array(get_shell()->env);
@@ -89,6 +103,7 @@ exec_binary(char **argv)
     free_array_string(env_array_child);
     free_null_check(path);
     get_shell()->last_exit_code = ERROR_OUTPUT;
+    exit(ERROR_OUTPUT);
 }
 
 /**

@@ -7,6 +7,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdlib.h>
 
 /*
  * Count the number of " if it it's not preceded by a \.
@@ -16,6 +17,8 @@ static int count_quotes(char *string)
 {
     int amount_quotes = 0;
 
+    if (string == NULL)
+        return 0;
     for (int i = 0; string[i] != '\0'; i++) {
         if (string[i] == '\"' && (i - 1) >= 0 && string[i - 1] != '\\') {
             amount_quotes++;
@@ -35,6 +38,10 @@ char *handle_quotes(char *string)
     char *clean_string = malloc(sizeof(char) * clean_len);
     int clean_temp = 0;
 
+    if (string == NULL) {
+        free(clean_string);
+        return NULL;
+    }
     if (clean_string == NULL)
         return NULL;
     for (int i = 0; string[i] != '\0'; i++) {

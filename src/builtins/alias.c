@@ -16,7 +16,8 @@ static exitcode_t show_aliases(void)
     alias_t *aliases = get_shell()->aliases;
 
     while (aliases != NULL) {
-        my_printf("%s\t%s\n", aliases->original_string, aliases->alias_string);
+        my_printf("%s\t(%s)\n", aliases->original_string,
+            aliases->alias_string);
         aliases = aliases->next;
     }
     return OK_OUTPUT;
@@ -49,12 +50,12 @@ static exitcode_t show_one_alias(char *alias_name)
  */
 exitcode_t alias_command(char **argv)
 {
+    if (argv == NULL)
+        return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return show_aliases();
     if (argv[1] != NULL && argv[2] == NULL)
         return show_one_alias(argv[1]);
-    if (argv[2] != NULL && argv[3] != NULL)
-        return print_err("%s: Too many arguments.\n", argv[0]);
-    add_alias(argv[1], argv[2]);
+    add_alias(argv[1], &argv[2]);
     return OK_OUTPUT;
 }

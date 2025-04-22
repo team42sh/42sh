@@ -16,6 +16,7 @@ static void
 setup_shell_informations(shell_t *shell)
 {
     shell->env = NULL;
+    shell->variables = NULL;
     shell->aliases = NULL;
     shell->last_input_buffer = NULL;
     reset_initial_env();
@@ -26,6 +27,9 @@ setup_shell_informations(shell_t *shell)
     shell->saved_stdin = dup(STDIN_FILENO);
     shell->saved_stdout = dup(STDOUT_FILENO);
     shell->vars = create_shell_vars();
+    shell->_term_info = setup_shell_term_info();
+    shell->_history_input = NULL;
+    shell->_max_history = 0;
 }
 
 /**
@@ -33,14 +37,18 @@ setup_shell_informations(shell_t *shell)
  *
  * @return The final exitcode to return at the end of the shell.
  */
-exitcode_t
-exit_shell(void)
+exitcode_t exit_shell(void)
 {
     exitcode_t exit_code = get_shell()->last_exit_code;
 
     clear_env();
+    clear_var();
     clear_aliases();
     free_shell_vars();
+    tcsetattr(STDIN_FILENO, TCSAFLUSH,
+        &get_shell()->_term_info->_original_termios);
+    free_strings(get_shell()->_history_input);
+    free_null_check(get_shell()->_term_info);
     free_null_check(get_shell()->last_input_buffer);
     free_null_check(get_shell());
     return exit_code;
