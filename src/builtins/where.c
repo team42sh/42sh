@@ -23,7 +23,8 @@
  * @return true if the binary exist.
  * @return false if the binary doesn't exist.
  */
-static bool is_binary_existing(char full_path[4096], char *dir, char *command)
+static bool is_binary_existing(OUT char full_path[4096],
+    IN char *dir, IN char *command)
 {
     my_strcpy(full_path, dir);
     if (full_path[my_strlen(full_path) - 1] == '/')
@@ -44,7 +45,7 @@ static bool is_binary_existing(char full_path[4096], char *dir, char *command)
  * @param command The command to check.
  * @return exitcode_t if no function was found ERROR, OK otherwise.
  */
-static exitcode_t find_binary_in_paths(char *path_var, char *command)
+static exitcode_t find_binary_in_paths(IN char *path_var, IN char *command)
 {
     char *path_copy = my_strdup(path_var);
     char *dir = my_strtok(path_copy, ':');
@@ -70,7 +71,7 @@ static exitcode_t find_binary_in_paths(char *path_var, char *command)
  * @param arg The argument.
  * @return exitcode_t If it is a function in the path.
  */
-static exitcode_t check_path(char *arg)
+static exitcode_t check_path(IN char *arg)
 {
     char *path_var = get_shell()->vars->path_var;
 
@@ -86,7 +87,7 @@ static exitcode_t check_path(char *arg)
  * @param arg The argument.
  * @return exitcode_t If it is an builtin or not.
  */
-static exitcode_t check_builtin(char *arg)
+static exitcode_t check_builtin(IN char *arg)
 {
     exitcode_t return_status = ERROR_OUTPUT;
 
@@ -108,7 +109,7 @@ static exitcode_t check_builtin(char *arg)
  * @param arg The argument.
  * @return exitcode_t If it is an alias or not.
  */
-static exitcode_t check_alias(char *arg)
+static exitcode_t check_alias(IN char *arg)
 {
     alias_t *alias = get_shell()->aliases;
     exitcode_t return_status = ERROR_OUTPUT;
@@ -156,7 +157,7 @@ static exitcode_t check_loop(IN char **argv)
  * @param argv The arguments.
  * @return exitcode_t Status if there is an error or not.
  */
-static exitcode_t error_handling(char **argv)
+static exitcode_t error_handling(IN char **argv)
 {
     while (*argv != NULL) {
         if (strstr(*argv, "/") != NULL) {
