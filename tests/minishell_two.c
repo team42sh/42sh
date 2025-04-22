@@ -387,7 +387,7 @@ Test(minishell_two, error_redirection_no_perm)
     int pipes[2];
 
     if (getuid() == 0) {
-        cr_log_warn("You are root, this test cannot test the permission");
+        cr_log_warn("You are root, the actual test cannot try to check the perm, it is skipped");
         cr_skip();
     }
     cr_assert(pipe(pipes) == 0);
@@ -494,7 +494,7 @@ Test(minishell_two, error_input_no_perm)
     int pipes[2];
 
     if (getuid() == 0) {
-        cr_log_warn("You are root, this test cannot test the permission");
+        cr_log_warn("You are root, the actual test cannot try to check the perm, it is skipped");
         cr_skip();
     }
     cr_assert(pipe(pipes) == 0);
@@ -645,7 +645,7 @@ Test(minishell_two, error_double_redirection_no_perm)
     int pipes[2];
 
     if (getuid() == 0) {
-        cr_log_warn("You are root, this test cannot test the permission");
+        cr_log_warn("You are root, the actual test cannot try to check the perm. It is skipped");
         cr_skip();
     }
     cr_assert(pipe(pipes) == 0);
