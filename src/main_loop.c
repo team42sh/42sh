@@ -5,6 +5,7 @@
 ** main loop function
 */
 
+#include "core/builtins.h"
 #include "core/minishell.h"
 
 /*
@@ -23,6 +24,8 @@ const builtin_t BUILTINS[] = {
     {"alias", &alias_command},
     {"unalias", &unalias_command},
     {"echo", &echo_command},
+    {"where", &where_function},
+    {"which", &which_function},
     {NULL, NULL}
 };
 

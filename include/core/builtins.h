@@ -28,6 +28,8 @@ exitcode_t cd_command(char **argv);
 exitcode_t alias_command(char **argv);
 exitcode_t unalias_command(char **argv);
 exitcode_t echo_command(char **argv);
+exitcode_t where_function(char **argv);
+exitcode_t which_function(char **argv);
 
 /*
  * BUILTS IN STRUCTURE
