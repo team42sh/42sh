@@ -26,6 +26,8 @@ const builtin_t BUILTINS[] = {
     {"echo", &echo_command},
     {"where", &where_function},
     {"which", &which_function},
+    {"history", &history_command},
+    {"!", &history_command},
     {NULL, NULL}
 };
 

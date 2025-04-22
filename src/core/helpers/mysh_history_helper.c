@@ -6,25 +6,46 @@
 */
 
 #include "core/minishell.h"
+#include <time.h>
+
+static const char *HISTORY_FILE = ".42sh_history";
+
+/*
+ * Get the current time and return it as a string.
+ * The format is HH:MM.
+ * The string is allocated with malloc, so there is a need to free it.
+ */
+static char *get_str_time(void)
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    char *time_str = malloc(sizeof(char) * 6);
+
+    if (!time_str)
+        return NULL;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    snprintf(time_str, 6, "%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min);
+    return time_str;
+}
 
 /*
  * Get the home env path and return the path of the mysh_history.
  * Where it should be.
  */
-static char *get_sh_history_path(void)
+char *get_sh_history_path(void)
 {
-    char *file = ".mysh_history";
     size_t path_len = 0;
     char *path = NULL;
 
     if (env_search("HOME") == NULL)
         return false;
-    path_len = my_strlen(env_search("HOME")) + my_strlen(file) + 1;
+    path_len = my_strlen(env_search("HOME")) + my_strlen(HISTORY_FILE) + 1;
     path = malloc(sizeof(char) * (path_len + 1));
     if (path == NULL)
         return NULL;
     path[0] = '\0';
-    path = my_strcat_list(path, env_search("HOME"), "/", file, NULL);
+    path = my_strcat_list(path, env_search("HOME"), "/", HISTORY_FILE, NULL);
     return path;
 }
 
@@ -56,18 +77,14 @@ int open_history_file(void)
 int write_command_history(char *command)
 {
     int sh_fd = open_history_file();
-    char *line_number_str = NULL;
+    char *time_str = get_str_time();
 
-    if (sh_fd == -1 || command == NULL || command[0] == '\0')
+    get_shell()->vars->history_lines_count = count_number_lines_history();
+    if (sh_fd == -1 || !command || !time_str || command[0] == '\0')
         return ERROR_OUTPUT;
-    line_number_str = my_itoa(get_shell()->vars->history_lines_count);
-    write(sh_fd, line_number_str, my_strlen(line_number_str));
-    write(sh_fd, " : ", 3);
-    write(sh_fd, command, my_strlen(command));
-    write(sh_fd, "\n", 1);
-    close(sh_fd);
-    get_shell()->vars->history_lines_count++;
-    free(line_number_str);
+    dprintf(sh_fd, "%d;%s;%s\n", get_shell()->vars->history_lines_count,
+        time_str, command);
+    free(time_str);
     return OK_OUTPUT;
 }
 

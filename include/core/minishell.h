@@ -333,6 +333,7 @@ int load_myshrc(void);
 int open_history_file(void);
 int write_command_history(char *command);
 int count_number_lines_history(void);
+char *get_sh_history_path(void);
 
 /*
  * Environments variables extracting formatting functions
