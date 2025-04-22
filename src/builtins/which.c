@@ -78,7 +78,7 @@ static exitcode_t check_path(IN char *arg)
 {
     char *path_var = get_shell()->vars->path_var;
 
-    if (arg == NULL || path_var == NULL)
+    if (arg == NULL || path_var == NULL || arg[0] == '\0')
         return ERROR_OUTPUT;
     return find_binary_in_paths(path_var, arg);
 }
