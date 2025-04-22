@@ -12,6 +12,7 @@
 #include <criterion/redirect.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 static void redirect_all_std(void)
 {
@@ -385,6 +386,8 @@ Test(minishell_two, error_redirection_no_perm)
     const char *input = "ls > ./testing/help";
     int pipes[2];
 
+    if (getuid() == 0)
+        cr_skip("You are root, this test cannot test the permission");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -488,6 +491,8 @@ Test(minishell_two, error_input_no_perm)
     const char *input = "cat < testing/yes";
     int pipes[2];
 
+    if (getuid() == 0)
+        cr_skip("You are root, this test cannot test the permission");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -630,11 +635,13 @@ Test(minishell_two, error_souble_redirection_not_possible)
     cr_assert_stderr_eq_str("opzqjdozjq/tests: No such file or directory.\n");
 }
 
-Test(minishell_two, error_souble_redirection_no_perm)
+Test(minishell_two, error_double_redirection_no_perm)
 {
     const char *input = "ls >> ./testing/help";
     int pipes[2];
 
+    if (getuid() == 0)
+        cr_skip("You are root, this test cannot test the permission");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
