@@ -15,8 +15,8 @@
  * @param column_w      The padding to add
  * @param suggestion    The string suggestion to print
  */
-static void print_single_suggestion(int index, int count, int column_w,
-    char *suggestion)
+static void print_single_suggestion(IN int index, IN int count,
+    IN int column_w, IN char *suggestion)
 {
     if (index < count) {
         my_printf("%-*s", column_w, suggestion);
@@ -31,7 +31,8 @@ static void print_single_suggestion(int index, int count, int column_w,
  *
  * @return The padding.
  */
-static int get_padding_for_each_suggestions(int count, char *suggestions[])
+static int get_padding_for_each_suggestions(IN int count,
+    IN char *suggestions[])
 {
     int max_length = 0;
     int padding = 0;
