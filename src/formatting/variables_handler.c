@@ -102,7 +102,8 @@ string_t *extract_vars_in_array(char **array)
     return head;
 }
 
-static int replace_value(char ***argv, string_t *vars_replace, string_t *head)
+static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
+    OUT string_t *head)
 {
     if (var_search(&vars_replace->string[1]) != NULL) {
         *argv = my_strreplace_array(*argv, vars_replace->string,
