@@ -14,6 +14,15 @@
 #include <string.h>
 #include <sys/types.h>
 
+/**
+ * @brief Check if the binary exist, and print its path.
+ *
+ * @param full_path The full path.
+ * @param dir The directory we are checking.
+ * @param command the command.
+ * @return true if the binary exist.
+ * @return false if the binary doesn't exist.
+ */
 static bool is_binary_existing(char full_path[4096], char *dir, char *command)
 {
     my_strcpy(full_path, dir);
@@ -28,6 +37,13 @@ static bool is_binary_existing(char full_path[4096], char *dir, char *command)
     return false;
 }
 
+/**
+ * @brief search the command in all the path in the PATH env.
+ *
+ * @param path_var The path variable.
+ * @param command The command to check.
+ * @return exitcode_t if no function was found ERROR, OK otherwise.
+ */
 static exitcode_t find_binary_in_paths(char *path_var, char *command)
 {
     char *path_copy = my_strdup(path_var);
@@ -47,6 +63,13 @@ static exitcode_t find_binary_in_paths(char *path_var, char *command)
     return result;
 }
 
+/**
+ * @brief It check if the argument is an binary in the path.
+ * If so, print the absolute path to the stdout.
+ *
+ * @param arg The argument.
+ * @return exitcode_t If it is a function in the path.
+ */
 static exitcode_t check_path(char *arg)
 {
     char *path_var = get_shell()->vars->path_var;
@@ -56,6 +79,13 @@ static exitcode_t check_path(char *arg)
     return find_binary_in_paths(path_var, arg);
 }
 
+/**
+ * @brief The function check if the argument is an builtin or not.
+ * If so, it print it to the stdout.
+ *
+ * @param arg The argument.
+ * @return exitcode_t If it is an builtin or not.
+ */
 static exitcode_t check_builtin(char *arg)
 {
     exitcode_t return_status = ERROR_OUTPUT;
@@ -71,6 +101,13 @@ static exitcode_t check_builtin(char *arg)
     return return_status;
 }
 
+/**
+ * @brief The function check if the argument is an alias or not.
+ * If so, it print it to the stdout.
+ *
+ * @param arg The argument.
+ * @return exitcode_t If it is an alias or not.
+ */
 static exitcode_t check_alias(char *arg)
 {
     alias_t *alias = get_shell()->aliases;
@@ -89,6 +126,13 @@ static exitcode_t check_alias(char *arg)
     return return_status;
 }
 
+/**
+ * @brief Loop to do all the check for each arguments given.
+ *
+ * @param argv The arguments.
+ * @return exitcode_t OK if all is good and ERROR if one argument has given
+ * no result.
+ */
 static exitcode_t check_loop(IN char **argv)
 {
     exitcode_t return_status = OK_OUTPUT;
@@ -106,6 +150,12 @@ static exitcode_t check_loop(IN char **argv)
     return return_status;
 }
 
+/**
+ * @brief Handle the error before doing the actual function.
+ *
+ * @param argv The arguments.
+ * @return exitcode_t Status if there is an error or not.
+ */
 static exitcode_t error_handling(char **argv)
 {
     while (*argv != NULL) {
@@ -118,6 +168,12 @@ static exitcode_t error_handling(char **argv)
     return OK_OUTPUT;
 }
 
+/**
+ * @brief The where function that find occurence of the command.
+ *
+ * @param argv The arguments.
+ * @return exitcode_t The status.
+ */
 exitcode_t where_function(IN char **argv)
 {
     if (argv == NULL)
