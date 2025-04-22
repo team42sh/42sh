@@ -11,6 +11,7 @@
 #include "macros/misc_macros.h"
 #include "my_printf.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 
@@ -51,8 +52,11 @@ static exitcode_t find_binary_in_paths(char *path_var, char *command)
     char full_path[4096];
 
     while (dir) {
-        if (is_binary_existing(full_path, dir, command))
+        if (is_binary_existing(full_path, dir, command)) {
+            free(dir);
+            free(path_copy);
             return OK_OUTPUT;
+        }
         free_null_check(dir);
         dir = my_strtok(NULL, ':');
         if (dir == NULL)
