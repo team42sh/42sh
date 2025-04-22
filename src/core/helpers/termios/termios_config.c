@@ -53,6 +53,7 @@ void setup_new_prompt(OUT term_info_t *ti)
 {
     if (ti == NULL)
         return;
+    enable_raw_mode(get_shell());
     reset_buffer_termios(ti);
     ti->_history_index = -1;
     print_shell_prompt();
