@@ -71,7 +71,7 @@ string_t *extract_vars_in_string(string_t *strings, char *input)
     int len;
     int tmp_result = 0;
 
-    if (strings == NULL || input == NULL)
+    if (input == NULL)
         return NULL;
     len = my_strlen(input);
     while (index < len) {
