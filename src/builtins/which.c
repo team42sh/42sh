@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2025
-** where.c
+** which.c
 ** File description:
-** where builtin function
+** which builtin function
 */
 
 #include "core/builtins.h"
