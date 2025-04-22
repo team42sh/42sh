@@ -22,6 +22,7 @@
     #include <errno.h>
     #include <fcntl.h>
     #include <termios.h>
+    #include <ctype.h>
     #include <string.h>
 
     #include "builtins.h"
@@ -201,16 +202,22 @@ void reset_buffer_termios(term_info_t *term_info);
 void enable_raw_mode(shell_t *shell);
 void get_cursor_position(int *row, int *col);
 void print_multiline_buffer(term_info_t *ti);
+size_t get_lines_amount_buffer(term_info_t *ti);
 void set_cursor_position(int y, int x);
 void move_cursor_from_position(int move, term_info_t *ti);
 void setup_new_prompt(term_info_t *ti);
+
 struct winsize get_screen_info(void);
+void print_remaining_stdin(void);
+bool has_remaining_input(void);
 
 void handle_ctrl_e(term_info_t *ti);
 void handle_ctrl_a(term_info_t *ti);
 void handle_ctrl_k(term_info_t *ti);
 void handle_ctrl_y(term_info_t *ti);
+void handle_autocomplete(term_info_t *ti);
 
+void handle_character(term_info_t *ti, char c);
 void handle_left_arrow(term_info_t *ti);
 void handle_right_arrow(term_info_t *ti);
 void handle_history_up(term_info_t *ti);

@@ -35,6 +35,7 @@ static void debug_termios_info(IN term_info_t *ti)
     for (int i = 0; i < ws.ws_col; i++)
         write(1, "-", 1);
     my_printf(RESET_COLOR);
+    set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
 }
 
 /**
@@ -63,35 +64,6 @@ static void handle_backspace(OUT term_info_t *ti)
             ti->_cursor_pos[POS_Y] = ti->_cursor_start_pos[POS_Y];
             ti->_cursor_pos[POS_X] = ti->_cursor_start_pos[POS_X];
         }
-    }
-}
-
-/**
- * @brief Inserts a character into the buffer at the current cursor position.
- *        Shifts the content of the buffer to the right and
- *        add the new character.
- *
- * @param ti            Term information structure
- * @param c             The character to insert
- */
-static void handle_character(OUT term_info_t *ti, IN char c)
-{
-    struct winsize ws = get_screen_info();
-
-    if (ti == NULL || ti->_buffer_len >= BUFFER_TERMIOS_SIZE)
-        return;
-    memmove(&ti->_buffer[ti->_cursor_index + 1],
-        &ti->_buffer[ti->_cursor_index],
-        ti->_buffer_len - ti->_cursor_index);
-    ti->_buffer[ti->_cursor_index] = c;
-    ti->_cursor_index++;
-    ti->_buffer_len++;
-    ti->_cursor_pos[POS_X]++;
-    if (ti->_cursor_pos[POS_X] > ws.ws_col) {
-        ti->_cursor_pos[POS_X] = 2;
-        ti->_cursor_pos[POS_Y]++;
-        if (ti->_cursor_pos[POS_Y] > ws.ws_row)
-            ti->_cursor_pos[POS_Y] = ws.ws_row;
     }
 }
 
@@ -164,7 +136,8 @@ static bool handle_enter(OUT term_info_t *ti)
         return false;
     handle_ctrl_e(ti);
     set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
-    write(1, "\n", 1);
+    write(STDOUT_FILENO, "\n", 1);
+    tcflush(STDIN_FILENO, TCIFLUSH);
     return true;
 }
 
@@ -182,8 +155,10 @@ static bool choose_char_case(IN char c, OUT term_info_t *ti)
 {
     if (ti == NULL)
         return false;
-    if (c == AUTO_COMPLETE_CHAR || c == CTRL_D_VALUE)
+    if (c == CTRL_D_VALUE) {
+        handle_autocomplete(ti);
         return false;
+    }
     if (c == ENTER_CHAR)
         return handle_enter(ti);
     if (c == ESCAPE_CHAR) {
@@ -194,10 +169,38 @@ static bool choose_char_case(IN char c, OUT term_info_t *ti)
         handle_backspace(ti);
     if (handle_shortcuts(c, ti))
         return false;
-    if (c != ESCAPE_CHAR && c != ENTER_CHAR && c != AUTO_COMPLETE_CHAR &&
-        c != CTRL_D_VALUE && c != BACKSPACE_VALUE && c != CTRL_H_VALUE)
+    if (c != BACKSPACE_VALUE && isprint(c))
         handle_character(ti, c);
     return false;
+}
+
+/**
+ * @brief Inserts a character into the buffer at the current cursor position.
+ *        Shifts the content of the buffer to the right and
+ *        add the new character.
+ *
+ * @param ti            Term information structure
+ * @param c             The character to insert
+ */
+void handle_character(OUT term_info_t *ti, IN char c)
+{
+    struct winsize ws = get_screen_info();
+
+    if (ti == NULL || ti->_buffer_len >= BUFFER_TERMIOS_SIZE)
+        return;
+    memmove(&ti->_buffer[ti->_cursor_index + 1],
+        &ti->_buffer[ti->_cursor_index],
+        ti->_buffer_len - ti->_cursor_index);
+    ti->_buffer[ti->_cursor_index] = c;
+    ti->_cursor_index++;
+    ti->_buffer_len++;
+    ti->_cursor_pos[POS_X]++;
+    if (ti->_cursor_pos[POS_X] > ws.ws_col) {
+        ti->_cursor_pos[POS_X] = 2;
+        ti->_cursor_pos[POS_Y]++;
+        if (ti->_cursor_pos[POS_Y] > ws.ws_row)
+            ti->_cursor_pos[POS_Y] = ws.ws_row;
+    }
 }
 
 /**

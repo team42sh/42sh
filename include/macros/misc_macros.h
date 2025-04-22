@@ -20,6 +20,7 @@
     #endif /* ifndef OUT */
 
     #define DEBUG_PRINT() my_printf("AAAAA\nAAAAA")
+    #define NEW_LINE() write(STDOUT_FILENO, "\n", 1)
 
     #define CURSOR_HIDE() my_printf("\033[?25l")
     #define CURSOR_SHOW() my_printf("\033[?25h")

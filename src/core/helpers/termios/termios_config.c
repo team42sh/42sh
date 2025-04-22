@@ -79,17 +79,3 @@ void enable_raw_mode(OUT shell_t *shell)
     shell->_term_info->_current_termios.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &shell->_term_info->_current_termios);
 }
-
-/**
- * @brief Get the terminal line width.
- *
- * @return The terminal width.
- */
-struct winsize get_screen_info(void)
-{
-    struct winsize win = {0};
-
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &win);
-    win.ws_col++;
-    return win;
-}
