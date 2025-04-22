@@ -36,7 +36,7 @@ static int false_main(void)
 }
 
 TestSuite(minishell_two, .description="\e[32mThis test suite goal is to do the same test as the"
-    "minishell 2\n\e[32mIt mostly test different redirection of the 42sh\e[0m",
+    " minishell 2\n\e[32mIt mostly test different redirection of the 42sh\e[0m",
     .disabled = false, .timeout = 10., .init = redirect_all_std, .fini = remove_files);
 
 Test(minishell_two, separator_complex)
