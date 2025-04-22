@@ -25,6 +25,7 @@ const builtin_t BUILTINS[] = {
     {"unalias", &unalias_command},
     {"echo", &echo_command},
     {"where", &where_function},
+    {"which", &which_function},
     {NULL, NULL}
 };
 
