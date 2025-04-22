@@ -8,6 +8,7 @@
 #include "core/minishell.h"
 #include <criterion/criterion.h>
 #include <criterion/internal/assert.h>
+#include <criterion/logging.h>
 #include <criterion/redirect.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -16,6 +17,14 @@ static void redirect_all_std(void)
 {
     cr_redirect_stdout();
     cr_redirect_stderr();
+}
+
+static void remove_files(void)
+{
+    remove("./testing/help");
+    remove("./testing");
+    remove("../tests/binary_test/redirect.txt");
+    remove("test");
 }
 
 static int false_main(void)
@@ -27,7 +36,7 @@ static int false_main(void)
 
 TestSuite(minishell_two, .description="\e[32mThis test suite goal is to do the same test as the"
     "minishell 2\n\e[32mIt mostly test different redirection of the 42sh\e[0m",
-    .disabled = false, .timeout = 10., .init = redirect_all_std);
+    .disabled = false, .timeout = 10., .init = redirect_all_std, .fini = remove_files);
 
 Test(minishell_two, separator_complex)
 {
@@ -83,7 +92,6 @@ Test(minishell_two, ls_redirect_into_file)
     int pipes[2];
     FILE *file = NULL;
 
-    remove("../tests/binary_test/redirect.txt");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -98,7 +106,6 @@ Test(minishell_two, ls_redirect_into_file)
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("");
     fclose(file);
-    remove("../tests/binary_test/redirect.txt");
 }
 
 Test(minishell_two, cat_redirect_input)
@@ -303,7 +310,6 @@ Test(minishell_two, error_redirection_no_command)
 
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("Invalid null command.\n");
-    remove("test");
 }
 
 Test(minishell_two, error_redirection_no_redirect)
@@ -379,7 +385,6 @@ Test(minishell_two, error_redirection_no_perm)
     const char *input = "ls > ./testing/help";
     int pipes[2];
 
-    remove("./testing");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -391,7 +396,6 @@ Test(minishell_two, error_redirection_no_perm)
 
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("./testing/help: Permission denied.\n");
-    remove("./testing");
 }
 
 Test(minishell_two, error_input_no_file)
@@ -484,7 +488,6 @@ Test(minishell_two, error_input_no_perm)
     const char *input = "cat < testing/yes";
     int pipes[2];
 
-    remove("./testing");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -496,7 +499,6 @@ Test(minishell_two, error_input_no_perm)
 
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("testing/yes: Permission denied.\n");
-    remove("./testing");
 }
 
 Test(minishell_two, double_simple_redirect)
@@ -505,7 +507,6 @@ Test(minishell_two, double_simple_redirect)
     int pipes[2];
     FILE *file;
 
-    remove("test");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -520,7 +521,6 @@ Test(minishell_two, double_simple_redirect)
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("");
     fclose(file);
-    remove("test");
 }
 
 Test(minishell_two, double_double_redirect)
@@ -529,7 +529,6 @@ Test(minishell_two, double_double_redirect)
     int pipes[2];
     FILE *file;
 
-    remove("test");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -544,7 +543,6 @@ Test(minishell_two, double_double_redirect)
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("");
     fclose(file);
-    remove("test");
 }
 
 Test(minishell_two, error_double_redirection_no_command)
@@ -562,7 +560,6 @@ Test(minishell_two, error_double_redirection_no_command)
 
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("Invalid null command.\n");
-    remove("test");
 }
 
 Test(minishell_two, error_double_redirection_no_redirect)
@@ -638,7 +635,6 @@ Test(minishell_two, error_souble_redirection_no_perm)
     const char *input = "ls >> ./testing/help";
     int pipes[2];
 
-    remove("./testing");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -650,7 +646,6 @@ Test(minishell_two, error_souble_redirection_no_perm)
 
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("./testing/help: Permission denied.\n");
-    remove("./testing");
 }
 
 Test(minishell_two, combinaison)
@@ -659,7 +654,6 @@ Test(minishell_two, combinaison)
     int pipes[2];
     FILE *file;
 
-    remove("test");
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
@@ -674,7 +668,6 @@ Test(minishell_two, combinaison)
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("");
     fclose(file);
-    remove("test");
 }
 
 Test(minishell_two, ambiguous_redirect_double_output)
