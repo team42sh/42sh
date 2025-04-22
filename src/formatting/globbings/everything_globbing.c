@@ -48,13 +48,14 @@ static char **allocate_result_array(int argc, int match_count)
 char **replace_globbing_with_matches(char **argv, int globbing_index,
     char **matches)
 {
-    char **result;
-    int argc = array_count_string(argv);
+    char **result = NULL;
+    int argc = 0;
     int match_count = array_count_string(matches);
-    int result_index;
+    int result_index = 0;
 
-    if (match_count == 0)
+    if (match_count == 0 || matches == NULL || argv == NULL)
         return argv;
+    argc = array_count_string(argv);
     result = allocate_result_array(argc, match_count);
     if (!result)
         return argv;
@@ -65,9 +66,7 @@ char **replace_globbing_with_matches(char **argv, int globbing_index,
         result_index++;
     }
     copy_after_globbing(argv, result, globbing_index + 1, result_index);
-    for (int i = 0; argv[i] != NULL; i++)
-        free(argv[i]);
-    free(argv);
+    free_array_string(argv);
     return result;
 }
 
@@ -84,7 +83,11 @@ char **change_star_to_list_of_files(IN char **argv)
     if (globbing_index == -1)
         return argv;
     argv = process_globbing_pattern(argv, globbing_index);
+    if (find_char_index_in_tab(argv, '*') > 0) {
+        my_printf("%s: No match.\n", argv[0]);
+        return NULL;
+    }
     if (find_char_index_in_tab(argv, '*') != -1)
-        return change_star_to_list_of_files(argv);
+        return argv;
     return argv;
 }

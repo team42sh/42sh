@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /**
  * @brief Count files in a directory
@@ -59,15 +60,16 @@ int find_char_index_in_tab(IN char **tab, IN char c)
 /**
  * @brief Find last occurrence index of char in string
  */
-int index_of_last_ocurence(IN char *str, IN char c)
+int index_of_last_occurrence(char *str, char c)
 {
     int char_index = -1;
 
-    if (str == NULL || c == '\0')
+    if (str == NULL)
         return -1;
-    for (int i = 0; str[i] != '\0'; i++)
+    for (int i = 0; str[i] != '\0'; i++) {
         if (str[i] == c)
             char_index = i;
+    }
     return char_index;
 }
 
@@ -77,7 +79,7 @@ int index_of_last_ocurence(IN char *str, IN char c)
 char **filter_array(char **array, char *pattern)
 {
     char **result = NULL;
-    int count;
+    int count = 0;
 
     if (array == NULL || pattern == NULL)
         return NULL;
@@ -85,6 +87,7 @@ char **filter_array(char **array, char *pattern)
     result = malloc(sizeof(char *) * (count + 1));
     if (!result)
         return NULL;
+    result[count] = NULL;
     fill_matches(array, pattern, result);
     return result;
 }

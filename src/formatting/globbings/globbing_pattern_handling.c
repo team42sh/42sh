@@ -6,6 +6,8 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
+#include <stdlib.h>
 
 /**
  * @brief Match string against pattern with * wildcard
@@ -44,12 +46,13 @@ int match_pattern(char *str, char *pattern)
 int count_matches(char **array, char *pattern)
 {
     int count = 0;
-    char *base_pattern;
+    char *base_pattern = NULL;
 
     for (int i = 0; array[i] != NULL; i++) {
-        base_pattern = strchr(pattern, '/');
+        base_pattern = strchr(pattern, '*');
         base_pattern = base_pattern ? base_pattern + 1 : pattern;
-        if (match_pattern(array[i], base_pattern))
+        if (match_pattern(array[i],
+            &base_pattern[index_of_last_occurrence(base_pattern, '/')]))
             count++;
     }
     return count;
@@ -61,14 +64,25 @@ int count_matches(char **array, char *pattern)
 void fill_matches(char **array, char *pattern, char **result)
 {
     int result_index = 0;
-    char *base_pattern;
+    char *base_pattern = NULL;
+    char *path = NULL;
+    int len_until_slash = index_of_last_occurrence(pattern, '/') + 1;
+    char *final_path = NULL;
 
+    path = malloc(sizeof(char) * (len_until_slash + 1));
+    path = my_strncpy(path, pattern, len_until_slash);
+    path[len_until_slash] = '\0';
+    base_pattern = strrchr(pattern, '/');
+    base_pattern = base_pattern ? base_pattern + 1 : pattern;
     for (int i = 0; array[i] != NULL; i++) {
-        base_pattern = strrchr(pattern, '/');
-        base_pattern = base_pattern ? base_pattern + 1 : pattern;
-        if (match_pattern(array[i], base_pattern)) {
-            result[result_index] = my_strdup(array[i]);
+        if (match_pattern(array[i], base_pattern) && result != NULL) {
+            final_path = malloc(sizeof(char) *
+            (len_until_slash + my_strlen(array[i]) + 1));
+            my_strcpy(final_path, path);
+            my_strcat(final_path, array[i]);
+            result[result_index] = my_strdup(final_path);
             result_index++;
+            free(final_path);
         }
     }
     result[result_index] = NULL;
@@ -79,11 +93,11 @@ void fill_matches(char **array, char *pattern, char **result)
  */
 char **process_globbing_pattern(char **argv, int globbing_index)
 {
-    char *path;
-    DIR *dir;
+    char *path = NULL;
+    DIR *dir = NULL;
     char **temp_tab = NULL;
     char **filtered_tab = NULL;
-    int count;
+    int count = 0;
 
     path = create_path_to_dir(argv[globbing_index]);
     if (!path)

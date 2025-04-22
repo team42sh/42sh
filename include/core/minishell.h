@@ -20,12 +20,9 @@
     #include <sys/stat.h>
     #include <errno.h>
     #include <fcntl.h>
-<<<<<<< HEAD
     #include <sys/types.h>
     #include <dirent.h>
-=======
     #include <termios.h>
->>>>>>> origin/main
     #include <string.h>
 
     #include "builtins.h"
@@ -197,7 +194,7 @@ char **change_star_to_list_of_files(char **argv);
 char **filter_array(char **array, char *pattern);
 char **read_dir_entries(DIR *dir, int count);
 int count_files(char *path);
-int index_of_last_ocurence(IN char *str, IN char c);
+int index_of_last_occurrence(IN char *str, IN char c);
 int count_matches(char **array, char *pattern);
 void fill_matches(char **array, char *pattern, char **result);
 void copy_before_globbing(char **argv, char **result, int globbing_index);

@@ -76,7 +76,6 @@ char **array_remove_index_string(char **original, size_t index)
         j++;
     }
     new_arr[j] = NULL;
-    if (original != NULL)
-        free(original);
+    free(original);
     return new_arr;
 }

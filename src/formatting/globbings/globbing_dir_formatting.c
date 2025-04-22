@@ -67,7 +67,7 @@ char *create_path_to_dir(IN char *globbing_string)
     path = handle_slash_before_star(globbing_string, globbing_index);
     if (path != NULL)
         return path;
-    last_slash_index = index_of_last_ocurence(globbing_string, '/');
+    last_slash_index = index_of_last_occurrence(globbing_string, '/');
     if (last_slash_index == -1)
         return my_strdup(".");
     return my_strncpy_alloc(globbing_string, last_slash_index + 1);
