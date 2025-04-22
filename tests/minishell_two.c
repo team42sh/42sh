@@ -640,8 +640,10 @@ Test(minishell_two, error_double_redirection_no_perm)
     const char *input = "ls >> ./testing/help";
     int pipes[2];
 
-    if (getuid() == 0)
-        cr_skip("You are root, this test cannot test the permission");
+    if (getuid() == 0) {
+        cr_log_warn("You are root, this test cannot test the permission");
+        cr_skip();
+    }
     cr_assert(pipe(pipes) == 0);
     dprintf(pipes[1], "%s", input);
     close(pipes[1]);
