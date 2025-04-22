@@ -200,6 +200,7 @@ void reset_initial_env(void);
 void clear_var(void);
 int is_var_readonly(IN var_node_t *var);
 int remove_var(char *key);
+char *var_search(IN char *key);
 
 /*
  * Termios helping functions

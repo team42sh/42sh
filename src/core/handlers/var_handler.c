@@ -88,3 +88,23 @@ int remove_var(IN char *key)
     }
     return OK_OUTPUT;
 }
+
+/**
+ * @brief A function to get a local variable by key
+ *
+ * @param key
+ * @return char*
+ */
+char *var_search(IN char *key)
+{
+    var_node_t *var = get_shell()->variables;
+
+    if (key == NULL)
+        return NULL;
+    while (var != NULL) {
+        if (my_strcmp(var->_key, key) == 0)
+            return var->_value;
+        var = var->_next;
+    }
+    return NULL;
+}
