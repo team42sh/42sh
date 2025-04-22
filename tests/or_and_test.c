@@ -41,6 +41,23 @@ Test(and_or_tests, basic_and)
     cr_assert_stderr_eq_str("");
 }
 
+Test(and_or_tests, basic_and_two)
+{
+    const char *input = "cd .github ; false && ls && ls";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 1);
+
+    cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str("");
+}
+
 Test(and_or_tests, basic_and_failed)
 {
     const char *input = "cd .github ; false && ls";
@@ -56,6 +73,57 @@ Test(and_or_tests, basic_and_failed)
 
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("");
+}
+
+Test(and_or_tests, basic_or)
+{
+    const char *input = "cd .github ; false || ls";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 0);
+
+    cr_assert_stdout_eq_str("CODEOWNERS\nworkflows\n");
+    cr_assert_stderr_eq_str("");
+}
+
+Test(and_or_tests, basic_or_two)
+{
+    const char *input = "cd .github ; true || ls || ls";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 0);
+
+    cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str("");
+}
+
+Test(and_or_tests, basic_or_failed)
+{
+    const char *input = "cd .github ; false || cd .github";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 1);
+
+    cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str(".github: No such file or directory.\n");
 }
 
 Test(and_or_tests, and_no_first_arg)
