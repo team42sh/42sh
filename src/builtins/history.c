@@ -8,6 +8,12 @@
 #include "core/minishell.h"
 #include "core/builtins.h"
 
+/**
+ * @brief Get the home env path and return the path of the mysh_history.
+ *
+ * @param file_path
+ * @return exitcode_t
+ */
 static exitcode_t clear_history_file(IN char *file_path)
 {
     FILE *file = fopen(file_path, "w");
@@ -18,6 +24,12 @@ static exitcode_t clear_history_file(IN char *file_path)
     return OK_OUTPUT;
 }
 
+/**
+ * @brief Parse a line of the history file and prints it.
+ *
+ * @param line
+ * @return exitcode_t
+ */
 static exitcode_t parse_history_line(IN char *line)
 {
     char str_index[10] = {0};
@@ -34,6 +46,12 @@ static exitcode_t parse_history_line(IN char *line)
     return OK_OUTPUT;
 }
 
+/**
+ * @brief Parse the history file and prints it.
+ *
+ * @param file_path
+ * @return exitcode_t
+ */
 static exitcode_t parse_history_file(IN char *file_path)
 {
     FILE *file = fopen(file_path, "r");
@@ -54,6 +72,13 @@ static exitcode_t parse_history_file(IN char *file_path)
     return OK_OUTPUT;
 }
 
+/**
+ * @brief This function is the built-in history command.
+ * It can be used with no arguments to show the history or with -c to clear it.
+ *
+ * @param argv
+ * @return exitcode_t
+ */
 exitcode_t history_command(IN char **argv)
 {
     char *HISTORY_PATH = get_sh_history_path();
