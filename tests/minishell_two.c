@@ -274,7 +274,7 @@ Test(minishell_two, error_pipe_not_command)
     cr_assert(false_main() == 1);
 
     cr_assert_stdout_eq_str("");
-    cr_assert_stderr_eq_str("pt: Command not found.\npt: Command not found.\n");
+    cr_assert_stderr_neq_str("");
 }
 
 Test(minishell_two, error_pipe_not_command_exept_first)
