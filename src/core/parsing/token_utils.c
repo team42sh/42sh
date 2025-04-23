@@ -7,6 +7,13 @@
 
 #include "core/minishell.h"
 
+/**
+ * @brief Is token, a redirection append.
+ *
+ * @param token         The token
+ *
+ * @return TRUE or FALSE.
+ */
 bool is_token_redirection_append(IN token_t *token)
 {
     if (token == NULL)
@@ -17,6 +24,13 @@ bool is_token_redirection_append(IN token_t *token)
     return false;
 }
 
+/**
+ * @brief Is token, a redirection simple.
+ *
+ * @param token         The token
+ *
+ * @return TRUE or FALSE.
+ */
 bool is_token_redirection_simple(IN token_t *token)
 {
     if (token == NULL)
@@ -27,6 +41,13 @@ bool is_token_redirection_simple(IN token_t *token)
     return false;
 }
 
+/**
+ * @brief Is token, a redirection right.
+ *
+ * @param token         The token
+ *
+ * @return TRUE or FALSE.
+ */
 bool is_token_redirection_right(IN token_t *token)
 {
     if (token == NULL)
@@ -37,6 +58,13 @@ bool is_token_redirection_right(IN token_t *token)
     return false;
 }
 
+/**
+ * @brief Is token, a redirection left.
+ *
+ * @param token         The token
+ *
+ * @return TRUE or FALSE.
+ */
 bool is_token_redirection_left(IN token_t *token)
 {
     if (token == NULL)
