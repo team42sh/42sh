@@ -9,10 +9,10 @@
 
 /**
  * @brief Handle slash before asterisk case
- * 
- * @param globbing_string 
- * @param globbing_index 
- * @return char* 
+ *
+ * @param globbing_string
+ * @param globbing_index
+ * @return char*
  */
 char *handle_slash_before_star(IN char *globbing_string, IN int globbing_index)
 {
@@ -23,9 +23,9 @@ char *handle_slash_before_star(IN char *globbing_string, IN int globbing_index)
 
 /**
  * @brief Handle simple path case
- * 
- * @param globbing_string 
- * @return char* 
+ *
+ * @param globbing_string
+ * @return char*
  */
 char *handle_simple_path(IN char *globbing_string)
 {
@@ -36,10 +36,10 @@ char *handle_simple_path(IN char *globbing_string)
 
 /**
  * @brief Read directory entries to array
- * 
- * @param dir 
- * @param count 
- * @return char** 
+ *
+ * @param dir
+ * @param count
+ * @return char**
  */
 char **read_dir_entries(IN DIR *dir, IN int count)
 {
@@ -62,9 +62,9 @@ char **read_dir_entries(IN DIR *dir, IN int count)
 
 /**
  * @brief Extract directory path from globbing string
- * 
- * @param globbing_string 
- * @return char* 
+ *
+ * @param globbing_string
+ * @return char*
  */
 char *create_path_to_dir(IN char *globbing_string)
 {

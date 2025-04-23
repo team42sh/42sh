@@ -6,15 +6,13 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
-#include <stdlib.h>
 
 /**
  * @brief Free some variables used to determine
  *        the type of path handling to do
- * 
- * @param before_star 
- * @param after_star 
+ *
+ * @param before_star
+ * @param after_star
  */
 static void free_comparaison_variables(IN char *before_star,
     IN char *after_star)
@@ -26,11 +24,34 @@ static void free_comparaison_variables(IN char *before_star,
 }
 
 /**
+ * @brief Create a final path for the path attribution
+ *
+ * @param pattern
+ * @param file
+ * @param len_until_slash
+ * @param path
+ * @return char*
+ */
+static char *create_final_path(char *pattern, char *file, int len_until_slash,
+    char *path)
+{
+    char *final_path = NULL;
+
+    if (pattern == NULL || file == NULL || len_until_slash == -1)
+        return NULL;
+    final_path = malloc(sizeof(char) *
+        (len_until_slash + my_strlen(file) + 1));
+    my_strcpy(final_path, path);
+    my_strcat(final_path, file);
+    return final_path;
+}
+
+/**
  * @brief Match string against pattern with * wildcard
- * 
- * @param str 
- * @param pattern 
- * @return int 
+ *
+ * @param str
+ * @param pattern
+ * @return int
  */
 int match_pattern(IN char *str, IN char *pattern)
 {
@@ -58,10 +79,10 @@ int match_pattern(IN char *str, IN char *pattern)
 
 /**
  * @brief Count matching entries in array
- * 
- * @param array 
- * @param pattern 
- * @return int 
+ *
+ * @param array
+ * @param pattern
+ * @return int
  */
 int count_matches(char **array, char *pattern)
 {
@@ -80,10 +101,10 @@ int count_matches(char **array, char *pattern)
 
 /**
  * @brief Fill result array with matching entries
- * 
- * @param array 
- * @param pattern 
- * @param result 
+ *
+ * @param array
+ * @param pattern
+ * @param result
  */
 void fill_matches(IN char **array, IN char *pattern, OUT char **result)
 {
@@ -97,11 +118,8 @@ void fill_matches(IN char **array, IN char *pattern, OUT char **result)
     base_pattern = base_pattern ? base_pattern + 1 : pattern;
     for (int i = 0; array[i] != NULL; i++) {
         if (match_pattern(array[i], base_pattern) && result != NULL) {
-            final_path = malloc(sizeof(char) *
-            (len_until_slash + my_strlen(array[i]) + 1));
-            my_strcpy(final_path, path);
-            my_strcat(final_path, array[i]);
-            result[result_index] = my_strdup(final_path);
+            result[result_index] = my_strdup(create_final_path(pattern,
+                array[i], len_until_slash, path));
             result_index++;
             free(final_path);
         }
@@ -112,11 +130,11 @@ void fill_matches(IN char **array, IN char *pattern, OUT char **result)
 
 /**
  * @brief Checks the validity of a path and the dir
- * 
- * @param path 
- * @param dir 
- * @param count 
- * @return int 
+ *
+ * @param path
+ * @param dir
+ * @param count
+ * @return int
  */
 int check_path_validity(IN char *path, IN DIR **dir, OUT int *count)
 {
@@ -138,6 +156,10 @@ int check_path_validity(IN char *path, IN DIR **dir, OUT int *count)
 
 /**
  * @brief Process a single globbing pattern
+ *
+ * @param argv
+ * @param globbing_index
+ * @return char**
  */
 char **process_globbing_pattern(OUT char **argv, IN int globbing_index)
 {
@@ -148,7 +170,7 @@ char **process_globbing_pattern(OUT char **argv, IN int globbing_index)
     int count = 0;
 
     path = create_path_to_dir(argv[globbing_index]);
-    if (check_path_validity(path, &dir, &count) == 1) 
+    if (check_path_validity(path, &dir, &count) == 1)
         return argv;
     closedir(dir);
     dir = opendir(path);

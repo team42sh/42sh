@@ -6,13 +6,12 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
 
 /**
  * @brief Count files in a directory
- * 
- * @param path 
- * @return int 
+ *
+ * @param path
+ * @return int
  */
 int count_files(IN char *path)
 {
@@ -36,10 +35,10 @@ int count_files(IN char *path)
 
 /**
  * @brief Find index of char in string
- * 
- * @param str 
- * @param c 
- * @return int 
+ *
+ * @param str
+ * @param c
+ * @return int
  */
 int char_in_str(IN char *str, IN char c)
 {
@@ -53,10 +52,10 @@ int char_in_str(IN char *str, IN char c)
 
 /**
  * @brief Find index of tab element containing char
- * 
- * @param tab 
- * @param c 
- * @return int 
+ *
+ * @param tab
+ * @param c
+ * @return int
  */
 int find_char_index_in_tab(IN char **tab, IN char c)
 {
@@ -70,10 +69,10 @@ int find_char_index_in_tab(IN char **tab, IN char c)
 
 /**
  * @brief Find last occurrence index of char in string
- * 
- * @param str 
- * @param c 
- * @return int 
+ *
+ * @param str
+ * @param c
+ * @return int
  */
 int index_of_last_occurrence(IN char *str, IN char c)
 {
@@ -90,10 +89,10 @@ int index_of_last_occurrence(IN char *str, IN char c)
 
 /**
  * @brief Filter array based on pattern
- * 
- * @param array 
- * @param pattern 
- * @return char** 
+ *
+ * @param array
+ * @param pattern
+ * @return char**
  */
 char **filter_array(IN char **array, IN char *pattern)
 {
