@@ -24,6 +24,7 @@
     #include <termios.h>
     #include <ctype.h>
     #include <string.h>
+    #include <time.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -32,6 +33,8 @@
     #include "core/signals.h"
     #include "core/parser.h"
     #include "my_printf.h"
+
+    #define HISTORY_FILE ".42sh_history"
 
     #ifndef _DEBUG_MODE_
         #define _DEBUG_MODE_ 0
@@ -209,6 +212,7 @@ void reset_initial_env(void);
 void clear_var(void);
 int is_var_readonly(IN var_node_t *var);
 int remove_var(char *key);
+char *var_search(IN char *key);
 
 /*
  * Termios helping functions
@@ -360,6 +364,7 @@ int load_myshrc(void);
 int open_history_file(void);
 int write_command_history(char *command);
 int count_number_lines_history(void);
+char *get_sh_history_path(void);
 
 /*
  * Environments variables extracting formatting functions
