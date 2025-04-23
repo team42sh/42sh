@@ -18,7 +18,7 @@ ReportHook(POST_ALL)(struct criterion_global_stats *stat)
     double success_percent;
 
     printf("\n");
-    for (struct criterion_suite_stats *suite_stat = stat->suites; i < stat->nb_suites; suite_stat = suite_stat->next) {
+    for (struct criterion_suite_stats *suite_stat = stat->suites; i < stat->nb_suites && suite_stat != NULL; suite_stat = suite_stat->next) {
 
         success_percent = -1;
 
@@ -38,7 +38,7 @@ ReportHook(POST_ALL)(struct criterion_global_stats *stat)
                 , suite_stat->suite->name, suite_stat->nb_tests,
                 suite_stat->tests_passed,
                 suite_stat->tests_skipped + suite_stat->tests_failed,
-                suite_stat->tests_failed - (suite_stat->tests_crashed + suite_stat->tests_skipped),
+                suite_stat->tests_failed - suite_stat->tests_crashed,
                 suite_stat->tests_crashed, suite_stat->tests_skipped,
                 suite_stat->asserts_passed + suite_stat->asserts_failed, suite_stat->asserts_passed, suite_stat->asserts_failed);
 
