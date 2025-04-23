@@ -9,8 +9,12 @@
 
 /**
  * @brief Handle slash before asterisk case
+ * 
+ * @param globbing_string 
+ * @param globbing_index 
+ * @return char* 
  */
-char *handle_slash_before_star(char *globbing_string, int globbing_index)
+char *handle_slash_before_star(IN char *globbing_string, IN int globbing_index)
 {
     if (globbing_index > 0 && globbing_string[globbing_index - 1] == '/')
         return my_strncpy_alloc(globbing_string, globbing_index);
@@ -19,8 +23,11 @@ char *handle_slash_before_star(char *globbing_string, int globbing_index)
 
 /**
  * @brief Handle simple path case
+ * 
+ * @param globbing_string 
+ * @return char* 
  */
-char *handle_simple_path(char *globbing_string)
+char *handle_simple_path(IN char *globbing_string)
 {
     if (my_strcmp(globbing_string, "*") == 0)
         return my_strdup(".");
@@ -29,8 +36,12 @@ char *handle_simple_path(char *globbing_string)
 
 /**
  * @brief Read directory entries to array
+ * 
+ * @param dir 
+ * @param count 
+ * @return char** 
  */
-char **read_dir_entries(DIR *dir, int count)
+char **read_dir_entries(IN DIR *dir, IN int count)
 {
     char **temp_tab;
     struct dirent *entry;
@@ -51,6 +62,9 @@ char **read_dir_entries(DIR *dir, int count)
 
 /**
  * @brief Extract directory path from globbing string
+ * 
+ * @param globbing_string 
+ * @return char* 
  */
 char *create_path_to_dir(IN char *globbing_string)
 {

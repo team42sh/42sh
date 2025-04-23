@@ -11,6 +11,11 @@
 
 /**
  * @brief Check if string starts with prefix
+ * 
+ * @param str 
+ * @param prefix 
+ * @param prefix_len 
+ * @return int 
  */
 int starts_with(char *str, char *prefix, int prefix_len)
 {
@@ -21,6 +26,12 @@ int starts_with(char *str, char *prefix, int prefix_len)
 
 /**
  * @brief Check if string ends with suffix
+ * 
+ * @param str 
+ * @param suffix 
+ * @param str_len 
+ * @param suffix_len 
+ * @return int 
  */
 int ends_with(char *str, char *suffix, int str_len, int suffix_len)
 {
@@ -31,6 +42,10 @@ int ends_with(char *str, char *suffix, int str_len, int suffix_len)
 
 /**
  * @brief Allocate new array for results
+ * 
+ * @param argc 
+ * @param match_count 
+ * @return char** 
  */
 static char **allocate_result_array(int argc, int match_count)
 {
@@ -44,6 +59,11 @@ static char **allocate_result_array(int argc, int match_count)
 
 /**
  * @brief Replace globbing with matched files
+ * 
+ * @param argv 
+ * @param globbing_index 
+ * @param matches 
+ * @return char** 
  */
 char **replace_globbing_with_matches(char **argv, int globbing_index,
     char **matches)
@@ -72,6 +92,9 @@ char **replace_globbing_with_matches(char **argv, int globbing_index,
 
 /**
  * @brief Main function to handle globbing
+ * 
+ * @param argv 
+ * @return char** 
  */
 char **change_star_to_list_of_files(IN char **argv)
 {
@@ -85,6 +108,7 @@ char **change_star_to_list_of_files(IN char **argv)
     argv = process_globbing_pattern(argv, globbing_index);
     if (find_char_index_in_tab(argv, '*') > 0) {
         my_printf("%s: No match.\n", argv[0]);
+        free_array_string(argv);
         return NULL;
     }
     if (find_char_index_in_tab(argv, '*') != -1)
