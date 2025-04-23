@@ -22,6 +22,7 @@
     #include <fcntl.h>
     #include <termios.h>
     #include <string.h>
+    #include <time.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -30,6 +31,8 @@
     #include "core/signals.h"
     #include "core/parser.h"
     #include "my_printf.h"
+
+    #define HISTORY_FILE ".42sh_history"
 
 /*
  * Environment structure used in a linked list.

@@ -6,9 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include <time.h>
-
-static const char *HISTORY_FILE = ".42sh_history";
 
 /*
  * Get the current time and return it as a string.
