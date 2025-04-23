@@ -10,6 +10,8 @@
 
     #include "types.h"
 
+    #define HISTORY_BUFF_SIZE 2048
+
 /*
  * ALL COMMANDS AVAILABLES BUILT-IN
  * - exit
@@ -30,6 +32,7 @@ exitcode_t unalias_command(char **argv);
 exitcode_t echo_command(char **argv);
 exitcode_t where_function(char **argv);
 exitcode_t which_function(char **argv);
+exitcode_t history_command(char **argv);
 
 /*
  * BUILTS IN STRUCTURE
