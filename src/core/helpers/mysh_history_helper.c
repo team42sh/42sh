@@ -39,7 +39,7 @@ char *get_sh_history_path(void)
     char *path = NULL;
 
     if (env_search("HOME") == NULL)
-        return false;
+        return NULL;
     path_len = my_strlen(env_search("HOME")) + my_strlen(HISTORY_FILE) + 1;
     path = malloc(sizeof(char) * (path_len + 1));
     if (path == NULL)
