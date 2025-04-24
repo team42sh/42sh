@@ -68,7 +68,8 @@ char *handle_quotes(IN char *string)
         return NULL;
     for (int i = 0; string[i] != '\0'; i++) {
         if ((string[i + 1] == '\"' && count_backslash(string, i) % 2) ||
-        (string[i] == '\"' && (i == 0 || !(count_backslash(string, i - 1) % 2))))
+        (string[i] == '\"' && (i == 0 ||
+        !(count_backslash(string, i - 1) % 2))))
             continue;
         clean_string[clean_temp] = string[i];
         clean_temp++;

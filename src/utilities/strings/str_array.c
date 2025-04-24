@@ -60,17 +60,14 @@ static int count_words(IN char const *string)
 static int get_word_length(IN const char *str)
 {
     int len = 0;
+    int in_quote = 0;
 
     if (!str)
         return 0;
-    while (str[len] && !is_input_delimiter(str[len])
+    while (str[len] && (!is_input_delimiter(str[len]) || in_quote)
     && len < MAX_WORD_LEN) {
-        if (str[len] == '"') {
-            len++;
-            while (str[len] && !is_quote_delimiter(str[len], str[len - 1])
-                && len < MAX_WORD_LEN)
-                len++;
-        }
+        if (str[len] == '"')
+            in_quote = !in_quote;
         if (str[len])
             len++;
     }
