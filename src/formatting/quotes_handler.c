@@ -15,7 +15,7 @@
  * Count the number of " if it it's not preceded by a \.
  * For exemple : "salue les \"amis\"" -> 2
  */
-static int count_quotes(char *string)
+static int count_quotes(IN char *string)
 {
     int amount_quotes = 0;
 
@@ -34,7 +34,7 @@ static int count_quotes(char *string)
  * If a quotes is preceded by a '\', then keep it.
  * This function will create a new string it in a new memory space.
  */
-char *handle_quotes(char *string)
+char *handle_quotes(IN char *string)
 {
     int clean_len = my_strlen(string) - count_quotes(string) + 1;
     char *clean_string = malloc(sizeof(char) * clean_len);
@@ -61,7 +61,7 @@ char *handle_quotes(char *string)
  * This will handles quotes in an entire array.
  * All elements in this array need to be allocated.
  */
-char **handle_quotes_array(char **array)
+char **handle_quotes_array(OUT char **array)
 {
     char *temp_free = NULL;
 
