@@ -21,6 +21,8 @@
     #include <sys/ioctl.h>
     #include <errno.h>
     #include <fcntl.h>
+    #include <sys/types.h>
+    #include <dirent.h>
     #include <termios.h>
     #include <ctype.h>
     #include <string.h>
@@ -198,6 +200,27 @@ int execute_or(ast_node_t *node);
 exitcode_t get_wait_status(int wait_pid_result);
 
 /*
+ * Globbing handling functions
+ */
+char **change_star_to_list_of_files(char **argv);
+char **filter_array(char **array, char *pattern);
+char **read_dir_entries(DIR *dir, int count);
+int count_files(char *path);
+int index_of_last_occurrence(char *str, char c);
+int count_matches(char **array, char *pattern);
+void fill_matches(char **array, char *pattern, char **result);
+void copy_before_globbing(char **argv, char **result, int globbing_index);
+void copy_matches(char **matches, char **result, int globbing_index);
+void copy_after_globbing(char **argv, char **result, int start_pos,
+    int result_index);
+char **process_globbing_pattern(char **argv, int globbing_index);
+char *create_path_to_dir(char *globbing_string);
+int starts_with(char *str, char *prefix, int prefix_len);
+int ends_with(char *str, char *suffix, int str_len, int suffix_len);
+char **replace_globbing_with_matches(char **argv, int globbing_index,
+    char **matches);
+
+/*
  * Environment handling functions
  */
 void add_env(char *key, char *value);
@@ -210,7 +233,7 @@ void reset_initial_env(void);
  * Local variables
  */
 void clear_var(void);
-int is_var_readonly(IN var_node_t *var);
+int is_var_readonly(var_node_t *var);
 int remove_var(char *key);
 char *var_search(IN char *key);
 
@@ -295,6 +318,9 @@ bool is_letter(char c);
 bool is_only_numbers(char *string);
 bool is_alpha_num(char *string);
 int len_to_first_char(char *str);
+
+int char_in_str(char *str, char c);
+int find_char_index_in_tab(IN char **tab, IN char c);
 
 /*
  * Files functions
