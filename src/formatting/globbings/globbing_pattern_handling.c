@@ -118,8 +118,9 @@ void fill_matches(IN char **array, IN char *pattern, OUT char **result)
     base_pattern = base_pattern ? base_pattern + 1 : pattern;
     for (int i = 0; array[i] != NULL; i++) {
         if (match_pattern(array[i], base_pattern) && result != NULL) {
-            result[result_index] = my_strdup(create_final_path(pattern,
-                array[i], len_until_slash, path));
+            final_path = create_final_path(pattern,
+                array[i], len_until_slash, path);
+            result[result_index] = my_strdup(final_path);
             result_index++;
             free(final_path);
         }
