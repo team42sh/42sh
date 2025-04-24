@@ -11,7 +11,8 @@
 /**
  * @brief Display a parsing error message based on the error type.
  *
- * @param error_index The parsing error code.
+ * @param error_index The parsing error code
+ *
  * @return int Error or success output constant.
  */
 static int show_error_parsing(IN syntax_ast_error_t error_index)
@@ -36,7 +37,8 @@ static int show_error_parsing(IN syntax_ast_error_t error_index)
 /**
  * @brief Check if the first token in the list is valid.
  *
- * @param tokens The list of tokens to check.
+ * @param tokens The list of tokens to check
+ *
  * @return int Error or success output constant.
  */
 static int check_head_token(IN token_list_t *tokens)
@@ -58,7 +60,8 @@ static int check_head_token(IN token_list_t *tokens)
 /**
  * @brief Check if a semicolon is followed by a valid token.
  *
- * @param token The current token to validate.
+ * @param token The current token to validate
+ *
  * @return int 1 if valid, 0 otherwise.
  */
 static int is_valid_next_semi_colon(IN token_t *token)
@@ -73,7 +76,8 @@ static int is_valid_next_semi_colon(IN token_t *token)
 /**
  * @brief Get the syntax error of a token and display it.
  *
- * @param token The token to analyze.
+ * @param token The token to analyze
+ *
  * @return syntax_ast_error_t The found error type.
  */
 static syntax_ast_error_t get_and_show_error_token(IN token_t *token)
@@ -88,8 +92,10 @@ static syntax_ast_error_t get_and_show_error_token(IN token_t *token)
 /**
  * @brief Analyze the full token list for syntax errors.
  *
- * @param tokens The list of tokens to check.
- * @return true (ERROR_OUTPUT) if there is an error, false (OK_OUTPUT) otherwise.
+ * @param tokens The list of tokens to check
+ *
+ * @return true (ERROR_OUTPUT) if there is an error,
+ *         false (OK_OUTPUT) otherwise.
  */
 bool find_token_error(IN token_list_t *tokens)
 {
