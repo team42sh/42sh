@@ -7,6 +7,8 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 /*
@@ -20,7 +22,7 @@ static int count_quotes(char *string)
     if (string == NULL)
         return 0;
     for (int i = 0; string[i] != '\0'; i++) {
-        if (string[i] == '\"' && (i - 1) >= 0 && string[i - 1] != '\\') {
+        if (string[i] == '\"' && ((i - 1) >= 0 ? string[i - 1] != '\\' : 1)) {
             amount_quotes++;
         }
     }
@@ -45,7 +47,8 @@ char *handle_quotes(char *string)
     if (clean_string == NULL)
         return NULL;
     for (int i = 0; string[i] != '\0'; i++) {
-        if (string[i] == '\"' && (i == 0 || string[i - 1] != '\\'))
+        if ((string[i] == '\\' && string[i + 1] == '\"') ||
+        (string[i] == '\"' && (i == 0 || string[i - 1] != '\\')))
             continue;
         clean_string[clean_temp] = string[i];
         clean_temp++;
@@ -65,6 +68,10 @@ char **handle_quotes_array(char **array)
     if (array == NULL)
         return NULL;
     for (int i = 0; array[i] != NULL; i++) {
+        if ((count_quotes(array[i]) & 1)) {
+            dprintf(2, "Unmatched \'\"\'.\n");
+            return NULL;
+        }
         temp_free = array[i];
         array[i] = handle_quotes(array[i]);
         free_null_check(temp_free);
