@@ -11,6 +11,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @brief This function count the number of consecutive backslash from i to 0
+ *
+ * @param string The string
+ * @param i Where to start in the string
+ * @return int number of backslash
+ */
+static int count_backslash(IN char *string, IN int i)
+{
+    int amount_backslash = 0;
+
+    if (string == NULL)
+        return 0;
+    while (i >= 0 && string[i] == '\\') {
+        amount_backslash++;
+        i--;
+    }
+    return amount_backslash;
+}
+
 /*
  * Count the number of " if it it's not preceded by a \.
  * For exemple : "salue les \"amis\"" -> 2
@@ -22,7 +42,7 @@ static int count_quotes(IN char *string)
     if (string == NULL)
         return 0;
     for (int i = 0; string[i] != '\0'; i++) {
-        if (string[i] == '\"' && ((i - 1) >= 0 ? string[i - 1] != '\\' : 1)) {
+        if (string[i] == '\"' && !(count_backslash(string, i - 1) % 2)) {
             amount_quotes++;
         }
     }
@@ -47,8 +67,8 @@ char *handle_quotes(IN char *string)
     if (clean_string == NULL)
         return NULL;
     for (int i = 0; string[i] != '\0'; i++) {
-        if ((string[i] == '\\' && string[i + 1] == '\"') ||
-        (string[i] == '\"' && (i == 0 || string[i - 1] != '\\')))
+        if ((string[i + 1] == '\"' && count_backslash(string, i) % 2) ||
+        (string[i] == '\"' && (i == 0 || !(count_backslash(string, i - 1) % 2))))
             continue;
         clean_string[clean_temp] = string[i];
         clean_temp++;
