@@ -32,8 +32,8 @@ static void free_comparaison_variables(IN char *before_star,
  * @param path
  * @return char*
  */
-static char *create_final_path(char *pattern, char *file, int len_until_slash,
-    char *path)
+static char *create_final_path(IN char *pattern, IN char *file,
+    IN int len_until_slash, IN char *path)
 {
     char *final_path = NULL;
 
@@ -84,7 +84,7 @@ int match_pattern(IN char *str, IN char *pattern)
  * @param pattern
  * @return int
  */
-int count_matches(char **array, char *pattern)
+int count_matches(IN char **array, IN char *pattern)
 {
     int count = 0;
     char *base_pattern = NULL;

@@ -15,7 +15,7 @@
  * @param prefix_len
  * @return int
  */
-int starts_with(char *str, char *prefix, int prefix_len)
+int starts_with(IN char *str, IN char *prefix, IN int prefix_len)
 {
     if (!str || !prefix)
         return 0;
@@ -31,7 +31,7 @@ int starts_with(char *str, char *prefix, int prefix_len)
  * @param suffix_len
  * @return int
  */
-int ends_with(char *str, char *suffix, int str_len, int suffix_len)
+int ends_with(IN char *str, IN char *suffix, IN int str_len, IN int suffix_len)
 {
     if (!str || !suffix || str_len < suffix_len)
         return 0;
@@ -45,7 +45,7 @@ int ends_with(char *str, char *suffix, int str_len, int suffix_len)
  * @param match_count
  * @return char**
  */
-static char **allocate_result_array(int argc, int match_count)
+static char **allocate_result_array(IN int argc, int IN match_count)
 {
     char **result;
 
@@ -63,8 +63,8 @@ static char **allocate_result_array(int argc, int match_count)
  * @param matches
  * @return char**
  */
-char **replace_globbing_with_matches(char **argv, int globbing_index,
-    char **matches)
+char **replace_globbing_with_matches(IN char **argv, IN int globbing_index,
+    IN char **matches)
 {
     char **result = NULL;
     int argc = 0;
