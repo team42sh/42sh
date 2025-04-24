@@ -7,10 +7,14 @@
 */
 
 #include "core/minishell.h"
-#include "core/parser.h"
-#include "core/types.h"
 
-static int show_error_parsing(syntax_ast_error_t error_index)
+/**
+ * @brief Display a parsing error message based on the error type.
+ *
+ * @param error_index The parsing error code.
+ * @return int Error or success output constant.
+ */
+static int show_error_parsing(IN syntax_ast_error_t error_index)
 {
     switch (error_index) {
         case REDIRECT_NO_COMMAND:
@@ -29,18 +33,35 @@ static int show_error_parsing(syntax_ast_error_t error_index)
     return OK_OUTPUT;
 }
 
-static int check_head_token(token_list_t *tokens)
+/**
+ * @brief Check if the first token in the list is valid.
+ *
+ * @param tokens The list of tokens to check.
+ * @return int Error or success output constant.
+ */
+static int check_head_token(IN token_list_t *tokens)
 {
+    if (is_redirection(tokens->head->token_type) && tokens->head->data._file) {
+        show_error_parsing(INVALID_COMMAND);
+        return ERROR_OUTPUT;
+    }
     if (tokens != NULL && tokens->head != NULL &&
         tokens->head->token_type != TOKEN_COMMAND &&
-        tokens->head->token_type != TOKEN_SEMI_COLON) {
+        tokens->head->token_type != TOKEN_SEMI_COLON &&
+        !is_redirection(tokens->head->token_type)) {
         show_error_parsing(INVALID_COMMAND);
         return ERROR_OUTPUT;
     }
     return OK_OUTPUT;
 }
 
-static int is_valid_next_semi_colon(token_t *token)
+/**
+ * @brief Check if a semicolon is followed by a valid token.
+ *
+ * @param token The current token to validate.
+ * @return int 1 if valid, 0 otherwise.
+ */
+static int is_valid_next_semi_colon(IN token_t *token)
 {
     if ((token->token_type == TOKEN_SEMI_COLON && token->next != NULL &&
         token->next->token_type != TOKEN_SEMI_COLON &&
@@ -49,7 +70,13 @@ static int is_valid_next_semi_colon(token_t *token)
     return 1;
 }
 
-static syntax_ast_error_t get_and_show_error_token(token_t *token)
+/**
+ * @brief Get the syntax error of a token and display it.
+ *
+ * @param token The token to analyze.
+ * @return syntax_ast_error_t The found error type.
+ */
+static syntax_ast_error_t get_and_show_error_token(IN token_t *token)
 {
     syntax_ast_error_t error = NO_ERROR;
 
@@ -58,7 +85,13 @@ static syntax_ast_error_t get_and_show_error_token(token_t *token)
     return error;
 }
 
-bool find_token_error(token_list_t *tokens)
+/**
+ * @brief Analyze the full token list for syntax errors.
+ *
+ * @param tokens The list of tokens to check.
+ * @return true (ERROR_OUTPUT) if there is an error, false (OK_OUTPUT) otherwise.
+ */
+bool find_token_error(IN token_list_t *tokens)
 {
     syntax_ast_error_t error = NO_ERROR;
 

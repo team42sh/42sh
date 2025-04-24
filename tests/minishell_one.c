@@ -28,7 +28,7 @@ static int false_main(void)
 }
 
 TestSuite(minishell_one, .description="\e[32mThis test suite goal is to do the same test as the"
-    "minishell 1\n\e[32mIt mostly test basic core function of the 42sh\e[0m",
+    " minishell 1\n\e[32mIt mostly test basic core function of the 42sh\e[0m",
     .disabled = false, .timeout = 10., .init = redirect_all_std);
 
 Test(minishell_one, empty_input)
