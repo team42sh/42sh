@@ -14,7 +14,7 @@
  */
 term_info_t *setup_shell_term_info(void)
 {
-    term_info_t *term_info = malloc(sizeof(term_info_t));
+    term_info_t *term_info = calloc(1, sizeof(term_info_t));
 
     if (term_info == NULL)
         return NULL;
