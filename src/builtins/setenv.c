@@ -24,7 +24,7 @@ static exitcode_t modify_shell_vars(char *key, char *value)
  * @param array the argument of the setenv command
  * @return exitcode_t if there is an error or not
  */
-static exitcode_t handle_error(char **array)
+static exitcode_t handle_error(IN char **array)
 {
     int array_len = array_count_string(array);
 
