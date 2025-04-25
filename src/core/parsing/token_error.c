@@ -7,6 +7,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/parser.h"
 
 /**
  * @brief Display a parsing error message based on the error type.
@@ -45,6 +46,7 @@ static int check_head_token(IN token_list_t *tokens)
 {
     if (is_redirection(tokens->head->token_type) && tokens->head->data._file) {
         show_error_parsing(INVALID_COMMAND);
+        free_token_list(tokens);
         return ERROR_OUTPUT;
     }
     if (tokens != NULL && tokens->head != NULL &&
@@ -52,6 +54,7 @@ static int check_head_token(IN token_list_t *tokens)
         tokens->head->token_type != TOKEN_SEMI_COLON &&
         !is_redirection(tokens->head->token_type)) {
         show_error_parsing(INVALID_COMMAND);
+        free_token_list(tokens);
         return ERROR_OUTPUT;
     }
     return OK_OUTPUT;
