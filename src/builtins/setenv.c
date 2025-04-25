@@ -28,7 +28,7 @@ static exitcode_t handle_error(IN char **array)
 {
     int array_len = array_count_string(array);
 
-    if (array_len >= 3) {
+    if (array_len >= 4) {
         print_err("setenv: Too many arguments.\n");
         return ERROR_OUTPUT;
     }
