@@ -18,7 +18,7 @@
  * @param i Where to start in the string
  * @return int number of backslash
  */
-static int count_backslash(IN char *string, IN int i)
+int count_backslash(IN char *string, IN int i)
 {
     int amount_backslash = 0;
 

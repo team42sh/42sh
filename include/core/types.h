@@ -42,6 +42,7 @@
     #define AUTO_COMPLETE_CHAR '\t'
     #define ESCAPE_CHAR '\e'
     #define COMMENT_CHAR '#'
+    #define NOT_INHIBITED "\"*|<>()=[]"
 
 /*
  * Types used in the shell to facilitize the comprenssion of the code.

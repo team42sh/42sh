@@ -309,6 +309,9 @@ void remove_newline(char *str);
 char **command_formatter(char **argv);
 void format_ast(ast_node_t *ast);
 
+int count_backslash(char *string, int i);
+char **handle_inhibitors_array(char **array);
+char *handle_inhibitors(IN char *string);
 char *handle_quotes(char *string);
 char **handle_quotes_array(char **array);
 
