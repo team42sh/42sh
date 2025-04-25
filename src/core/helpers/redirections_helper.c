@@ -8,6 +8,7 @@
 #include "core/minishell.h"
 #include "core/types.h"
 #include <stdbool.h>
+#include <unistd.h>
 
 /**
  * @brief Show the final error message of the open section in redirection.
@@ -102,14 +103,16 @@ write_here_document(int fd, ast_node_t *node)
 
     if (fd == -1)
         return show_file_open_error("");
-    my_printf("? ");
+    if (isatty(0))
+        my_printf("? ");
     while (getline(&buffer, &buffer_size, stdin) != -1) {
         remove_newline(buffer);
         if (my_strcmp(buffer, node->token->data._file) == 0)
             break;
         write(fd, buffer, my_strlen(buffer));
         write(fd, "\n", 1);
-        my_printf("? ");
+        if (isatty(0))
+            my_printf("? ");
     }
     free(buffer);
     return OK_OUTPUT;

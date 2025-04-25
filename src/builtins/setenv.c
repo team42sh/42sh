@@ -7,12 +7,30 @@
 
 #include "core/minishell.h"
 #include "core/types.h"
+#include <stdio.h>
 
 static exitcode_t modify_shell_vars(char *key, char *value)
 {
     if (!my_strcmp(key, "PATH")) {
         free_null_check(get_shell()->vars->path_var);
         get_shell()->vars->path_var = my_strdup(value);
+    }
+    return OK_OUTPUT;
+}
+
+/**
+ * @brief Handle the error, if the setenv is given more that 2 argument
+ *
+ * @param array the argument of the setenv command
+ * @return exitcode_t if there is an error or not
+ */
+static exitcode_t handle_error(IN char **array)
+{
+    int array_len = array_count_string(array);
+
+    if (array_len >= 4) {
+        print_err("setenv: Too many arguments.\n");
+        return ERROR_OUTPUT;
     }
     return OK_OUTPUT;
 }
@@ -27,7 +45,7 @@ exitcode_t setenv_command(char **argv)
     char *key;
     char *value;
 
-    if (argv == NULL)
+    if (argv == NULL || handle_error(argv) == ERROR_OUTPUT)
         return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return env_command(argv);

@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdlib.h>
 
 /*
  * Get the current time and return it as a string.
@@ -77,8 +78,10 @@ int write_command_history(char *command)
     char *time_str = get_str_time();
 
     get_shell()->vars->history_lines_count = count_number_lines_history();
-    if (sh_fd == -1 || !command || !time_str || command[0] == '\0')
+    if (sh_fd == -1 || !command || !time_str || command[0] == '\0') {
+        free(time_str);
         return ERROR_OUTPUT;
+    }
     dprintf(sh_fd, "%d;%s;%s\n", get_shell()->vars->history_lines_count,
         time_str, command);
     free(time_str);
