@@ -7,6 +7,7 @@
 
 #include "core/minishell.h"
 #include "core/builtins.h"
+#include "core/builtins/history.h"
 
 /**
  * @brief Get the home env path and return the path of the mysh_history.
@@ -46,29 +47,18 @@ static exitcode_t parse_history_line(IN char *line)
     return OK_OUTPUT;
 }
 
-/**
- * @brief Parse the history file and prints it.
- *
- * @param file_path
- * @return exitcode_t
- */
-static exitcode_t parse_history_file(IN char *file_path)
+static exitcode_t display_history(IN char *file_path,
+    history_args_t *history_args)
 {
-    FILE *file = fopen(file_path, "r");
-    char *line = NULL;
-    size_t len = 0;
+    char **lines = parse_history_file(file_path, history_args->lines_count);
+    (void)(lines);
+    (void)(parse_history_line);
+    printf("Displaying history...\n");
+    printf("Lines count: %d\n", history_args->lines_count);
+    printf("Clear: %d\n", history_args->clear);
+    printf("Reverse: %d\n", history_args->reverse);
+    printf("Simple: %d\n", history_args->simple);
 
-    if (file == NULL)
-        return ERROR_OUTPUT;
-    while (getline(&line, &len, file) != -1) {
-        if (parse_history_line(line) == ERROR_OUTPUT) {
-            free(line);
-            fclose(file);
-            return ERROR_OUTPUT;
-        }
-    }
-    free(line);
-    fclose(file);
     return OK_OUTPUT;
 }
 
@@ -83,12 +73,18 @@ exitcode_t history_command(IN char **argv)
 {
     char *HISTORY_PATH = get_sh_history_path();
     exitcode_t status = ERROR_OUTPUT;
+    history_args_t *history_args = history_parse_arguments(argv);
 
-    if (argv[1] == NULL) {
-        status = parse_history_file(HISTORY_PATH);
-    } else if (my_strcmp(argv[1], "-c") == 0) {
+    if (history_args == NULL) {
+        free(HISTORY_PATH);
+        return ERROR_OUTPUT;
+    }
+    if (history_args->clear) {
         status = clear_history_file(HISTORY_PATH);
+    } else {
+        status = display_history(HISTORY_PATH, history_args);
     }
     free(HISTORY_PATH);
+    free(history_args);
     return status;
 }
