@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "core/builtins/history.h"
 #include <stdlib.h>
 
 /*

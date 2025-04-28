@@ -10,8 +10,6 @@
 
     #include "types.h"
 
-    #define HISTORY_BUFF_SIZE 2048
-
 /*
  * ALL COMMANDS AVAILABLES BUILT-IN
  * - exit

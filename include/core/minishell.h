@@ -36,8 +36,6 @@
     #include "core/parser.h"
     #include "my_printf.h"
 
-    #define HISTORY_FILE ".42sh_history"
-
     #ifndef _DEBUG_MODE_
         #define _DEBUG_MODE_ 0
     #endif /* ifndef _DEBUG_MODE_ */
