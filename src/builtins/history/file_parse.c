@@ -9,12 +9,29 @@
 #include "core/builtins.h"
 #include "core/builtins/history.h"
 
-static char **resize_lines_array(char **lines, size_t new_size)
+/**
+ * @brief Resize the lines array to a new size.
+ *
+ * @param lines The array of lines to resize.
+ * @param new_size The new size of the array.
+ * @return char** The resized array of lines.
+ * @note The caller is responsible for freeing the old array.
+ */
+static char **resize_lines_array(IN char **lines, IN size_t new_size)
 {
     return realloc(lines, new_size * sizeof(char *));
 }
 
-static int store_line_unlimited(char ***lines, size_t *stored, char *line)
+/**
+ * @brief Store a line in the lines array without a limit on the lines.
+ *
+ * @param lines The array of lines to store the line in.
+ * @param stored The number of lines currently stored in the array.
+ * @param line The line to store.
+ * @return int 0 on success, -1 on failure.
+ */
+static int store_line_unlimited(OUT char ***lines, OUT size_t *stored,
+    IN char *line)
 {
     char **tmp = resize_lines_array(*lines, *stored + 1);
 
@@ -28,7 +45,16 @@ static int store_line_unlimited(char ***lines, size_t *stored, char *line)
     return 0;
 }
 
-static int store_line_limited(char **lines, size_t *stored,
+/**
+ * @brief Store a line in the lines array with a limit on the number of lines.
+ *
+ * @param lines The array of lines to store the line in.
+ * @param stored The number of lines currently stored in the array.
+ * @param max The maximum number of lines to keep.
+ * @param line The line to store.
+ * @return int 0 on success, -1 on failure.
+ */
+static int store_line_limited(IN char **lines, IN size_t *stored,
     int max, char *line)
 {
     free(lines[*stored % max]);
@@ -39,7 +65,14 @@ static int store_line_limited(char **lines, size_t *stored,
     return 0;
 }
 
-void free_all_lines(char **lines, size_t stored, int limit)
+/**
+ * @brief Free all lines in the array and the array itself.
+ *
+ * @param lines The array of lines to free.
+ * @param stored The number of lines currently stored in the array.
+ * @param limit The maximum number of lines to keep (-1 for unlimited).
+ */
+void free_all_lines(IN char **lines, IN size_t stored, IN int limit)
 {
     size_t max = (limit == -1 || stored < (size_t)limit)
         ? stored : (size_t)limit;
@@ -51,8 +84,16 @@ void free_all_lines(char **lines, size_t stored, int limit)
     free(lines);
 }
 
-static char **finalize_lines_array(char **lines, size_t stored,
-    int limit)
+/**
+ * @brief Finalize the lines array by limiting the number of lines.
+ *
+ * @param lines The array of lines to finalize.
+ * @param stored The number of lines currently stored in the array.
+ * @param limit The maximum number of lines to keep (-1 for unlimited).
+ * @return char** An array of strings containing the finalized lines.
+ */
+static char **finalize_lines_array(IN char **lines, IN size_t stored,
+    IN int limit)
 {
     size_t start = 0;
     size_t count = stored;
@@ -73,8 +114,17 @@ static char **finalize_lines_array(char **lines, size_t stored,
     return result;
 }
 
-static int read_lines(FILE *file, char ***lines, size_t *stored,
-    int lines_count)
+/**
+ * @brief Read lines from a file and store them in an array.
+ *
+ * @param file The file to read from.
+ * @param lines The array of lines to store the read lines.
+ * @param stored The number of lines currently stored in the array.
+ * @param lines_count The maximum number of lines to read (-1 for unlimited).
+ * @return int 0 on success, -1 on failure.
+ */
+static int read_lines(IN FILE *file, OUT char ***lines, OUT size_t *stored,
+    IN int lines_count)
 {
     char *line = NULL;
     size_t len = 0;
@@ -93,7 +143,26 @@ static int read_lines(FILE *file, char ***lines, size_t *stored,
     return 0;
 }
 
-char **parse_history_file(IN char *file_path, int lines_count)
+/**
+ * @brief Close the file and returns null.
+ *
+ * @param file The file to close.
+ * @return char** An array of strs containing the lines from the file (NULL).
+ */
+static void *close_and_return_null(IN FILE *file)
+{
+    fclose(file);
+    return NULL;
+}
+
+/**
+ * @brief Parse the history file and return an array of lines.
+ *
+ * @param file_path The path to the history file.
+ * @param lines_count The number of lines to read from the file.
+ * @return char** An array of strings containing the lines from the file.
+ */
+char **parse_history_file(IN char *file_path, IN int lines_count)
 {
     FILE *file = fopen(file_path, "r");
     size_t stored = 0;
@@ -103,14 +172,11 @@ char **parse_history_file(IN char *file_path, int lines_count)
     if (!file)
         return NULL;
     lines = calloc(lines_count > 0 ? lines_count : 1, sizeof(char *));
-    if (!lines) {
-        fclose(file);
-        return NULL;
-    }
+    if (!lines)
+        return close_and_return_null(file);
     if (read_lines(file, &lines, &stored, lines_count) != 0) {
-        fclose(file);
         free_all_lines(lines, stored, lines_count);
-        return NULL;
+        return close_and_return_null(file);
     }
     fclose(file);
     result = finalize_lines_array(lines, stored, lines_count);

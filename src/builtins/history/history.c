@@ -10,6 +10,22 @@
 #include "core/builtins/history.h"
 
 /**
+ * @brief Count all lines in the lines array.
+ *
+ * @param lines The array of lines to count.
+ * @return int The number of lines in the array.
+ * @note The lines array must be NULL terminated.
+ */
+static int count_lines(char **lines)
+{
+    int count = 0;
+
+    for (int i = 0; lines[i] != NULL; i++)
+        count++;
+    return count;
+}
+
+/**
  * @brief Get the home env path and return the path of the mysh_history.
  *
  * @param file_path
@@ -31,7 +47,7 @@ static exitcode_t clear_history_file(IN char *file_path)
  * @param line
  * @return exitcode_t
  */
-static exitcode_t parse_history_line(IN char *line)
+static exitcode_t parse_history_line(IN char *line, IN int simple)
 {
     char str_index[10] = {0};
     char str_time[6] = {0};
@@ -43,22 +59,40 @@ static exitcode_t parse_history_line(IN char *line)
         my_printf("Error: Invalid history line format\n");
         return ERROR_OUTPUT;
     }
-    printf("%5s  %s   %s\n", str_index, str_time, command_str);
+    if (simple)
+        printf("%s\n", command_str);
+    else
+        printf("%5s\t%s\t%s\n", str_index, str_time, command_str);
     return OK_OUTPUT;
 }
 
+/**
+ * @brief Display the history file.
+ *
+ * @param file_path
+ * @param history_args
+ * @return exitcode_t
+ */
 static exitcode_t display_history(IN char *file_path,
     history_args_t *history_args)
 {
-    char **lines = parse_history_file(file_path, history_args->lines_count);
-    (void)(lines);
-    (void)(parse_history_line);
-    printf("Displaying history...\n");
-    printf("Lines count: %d\n", history_args->lines_count);
-    printf("Clear: %d\n", history_args->clear);
-    printf("Reverse: %d\n", history_args->reverse);
-    printf("Simple: %d\n", history_args->simple);
+    char **lines = NULL;
 
+    if (history_args->lines_count <= 0 && history_args->lines_count != -1) {
+        my_printf("history: Invalid number of lines.\n");
+        return ERROR_OUTPUT;
+    }
+    lines = parse_history_file(file_path, history_args->lines_count);
+    if (!lines) {
+        my_printf("history: Failed to read history file.\n");
+        return ERROR_OUTPUT;
+    }
+    if (history_args->reverse)
+        for (int i = count_lines(lines) - 1; i >= 0; i--)
+            parse_history_line(lines[i], history_args->simple);
+    else
+        for (int i = 0; lines[i] != NULL; i++)
+            parse_history_line(lines[i], history_args->simple);
     return OK_OUTPUT;
 }
 
