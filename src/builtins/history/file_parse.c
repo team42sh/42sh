@@ -55,7 +55,7 @@ static int store_line_unlimited(OUT char ***lines, OUT size_t *stored,
  * @return int 0 on success, -1 on failure.
  */
 static int store_line_limited(IN char **lines, IN size_t *stored,
-    int max, char *line)
+    IN int max, IN char *line)
 {
     free(lines[*stored % max]);
     lines[*stored % max] = strdup(line);

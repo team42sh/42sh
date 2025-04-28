@@ -16,7 +16,7 @@
  * @return int The number of lines in the array.
  * @note The lines array must be NULL terminated.
  */
-static int count_lines(char **lines)
+static int count_lines(IN char **lines)
 {
     int count = 0;
 
@@ -74,7 +74,7 @@ static exitcode_t parse_history_line(IN char *line, IN int simple)
  * @return exitcode_t
  */
 static exitcode_t display_history(IN char *file_path,
-    history_args_t *history_args)
+    IN history_args_t *history_args)
 {
     char **lines = NULL;
 
