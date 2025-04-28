@@ -84,7 +84,8 @@ history_args_t *history_parse_arguments(IN char **argv)
     args->lines_count = -1;
     if (get_args_number(argv) > 3) {
         my_printf("history: Too many arguments.\n");
-        return args;
+        free(args);
+        return NULL;
     }
     if (argv[1] != NULL && strcmp(argv[1], "-c") == 0) {
         args->clear = 1;
