@@ -36,7 +36,7 @@ static int history_parse_line_count(IN char **argv, IN history_args_t *args)
 {
     if (argv[1] != NULL && argv[1][0] != '-')
         args->lines_count = atoi(argv[1]);
-    else if (argv[2] != NULL && argv[2][0] != '-')
+    else if (argv[1] != NULL && argv[2] != NULL && argv[2][0] != '-')
         args->lines_count = atoi(argv[2]);
     return 0;
 }
@@ -64,7 +64,7 @@ static char *parse_argument_string(IN char *arg, IN history_args_t *args)
                 args->simple = 1;
                 break;
             default:
-                my_printf("history: Invalid option: %c\n", arg[i]);
+                my_printf("Usage: history [-chr] [# number of events].\n");
                 return NULL;
         }
     }
@@ -91,7 +91,10 @@ history_args_t *history_parse_arguments(IN char **argv)
         return args;
     }
     if (argv[1] != NULL && argv[1][0] == '-')
-        parse_argument_string(argv[1], args);
+        if (parse_argument_string(argv[1], args) == NULL) {
+            free(args);
+            return NULL;
+        }
     history_parse_line_count(argv, args);
     return args;
 }
