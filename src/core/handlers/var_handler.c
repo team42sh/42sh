@@ -121,6 +121,17 @@ char **var_search(IN char *key)
     return NULL;
 }
 
+static int get_strarray_len(IN char **strarray)
+{
+    int len = 0;
+
+    if (strarray == NULL)
+        return 0;
+    for (int i = 0; strarray[i] != NULL; i++)
+        len += my_strlen(strarray[i]) + 1;
+    return len;
+}
+
 /**
  * @brief A function to concat the value of a local variable
  *
@@ -134,15 +145,16 @@ char *concat_strarray(IN char **array)
 
     if (array == NULL)
         return NULL;
-    for (int i = 0; array[i] != NULL; i++)
-        len += my_strlen(array[i]) + 1;
+    len = get_strarray_len(array);
     str = malloc(sizeof(char) * (len + 1));
     if (str == NULL)
         return NULL;
     str[0] = '\0';
     for (int i = 0; array[i] != NULL; i++) {
+        if (my_strlen(array[i]) == 0)
+            continue;
         my_strcat(str, array[i]);
-        if (array[i + 1] != NULL)
+        if (array[i + 1] != NULL && my_strlen(array[i + 1]) != 0)
             my_strcat(str, " ");
     }
     return str;

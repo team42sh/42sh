@@ -8,19 +8,33 @@
 #include "core/minishell.h"
 
 /**
- * @brief A function that returns 1 if the value of a
- * local variable is a wordlist and not a word
+ * @brief A function to print a wordlist of a local variable
  *
  * @param str
  * @return int
  */
-static int is_value_wordlist(IN char **str)
+static void print_wordlist(IN char **str, IN var_node_t *var)
 {
+    int count = 0;
+    int is_wordlist = 0;
+
     for (int i = 0; str[i] != NULL; i++) {
-        if (i > 0)
-            return 1;
+        if (my_strlen(str[i]) == 0)
+            continue;
+        if (count > 0) {
+            is_wordlist = 1;
+            break;
+        }
+        count++;
     }
-    return 0;
+    for (int i = 0; var->_value[i] != NULL; i++) {
+        if (my_strlen(var->_value[i]) == 0)
+            continue;
+        my_printf("%.*s%.*s%s%.*s",
+        (i > 0 && my_strlen(var->_value[i - 1]) != 0), " ",
+        (is_wordlist && i == 0), "(",
+        var->_value[i], (is_wordlist && var->_value[i + 1] == NULL), ")");
+    }
 }
 
 /**
@@ -31,20 +45,14 @@ static int is_value_wordlist(IN char **str)
 static int print_variables(IN int is_readonly)
 {
     var_node_t *var = get_shell()->variables;
-    int is_wordlist = 0;
 
     while (var != NULL) {
         if (var->_read_only != is_readonly) {
             var = var->_next;
             continue;
         }
-        is_wordlist = is_value_wordlist(var->_value);
         my_printf("%s\t", var->_key);
-        for (int i = 0; var->_value[i] != NULL; i++) {
-            my_printf("%.*s%.*s%s%.*s", (i > 0), " ",
-            (is_wordlist && i == 0), "(",
-            var->_value[i], (is_wordlist && var->_value[i + 1] == NULL), ")");
-        }
+        print_wordlist(var->_value, var);
         my_printf("\n");
         var = var->_next;
     }
@@ -68,8 +76,6 @@ static char **get_strarray(OUT char **new_value, IN char **argv,
     new_value = realloc(new_value, sizeof(char *) * 2);
     new_value[value_index] = my_strdup(&argv[is_readonly + 1][key_len + 2]);
     new_value[value_index + 1] = NULL;
-    if (new_value[value_index][my_strlen(new_value[value_index]) - 1] == ')')
-        new_value[value_index][my_strlen(new_value[value_index]) - 1] = '\0';
     value_index++;
     for (int i = is_readonly + 2; argv[i] != NULL; i++) {
         new_value = realloc(new_value, sizeof(char *) * (value_index + 2));
@@ -168,6 +174,7 @@ static int add_variable(IN char **argv, IN int is_readonly)
     if (!IS_ALPHA(key[0]) && key[0] != '_') {
         print_err("set: Variable name must begin with a letter.\n");
         free(key);
+        free(new_var);
         return ERROR_OUTPUT;
     }
     new_var->_key = key;
