@@ -105,9 +105,13 @@ string_t *extract_vars_in_array(char **array)
 static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
     OUT string_t *head)
 {
+    char *concatenated = NULL;
+
     if (var_search(&vars_replace->string[1]) != NULL) {
+        concatenated = concat_strarray(var_search(&vars_replace->string[1]));
         *argv = my_strreplace_array(*argv, vars_replace->string,
-            var_search(&vars_replace->string[1]));
+            concatenated);
+        free_null_check(concatenated);
         return OK_OUTPUT;
     }
     if (env_search(&vars_replace->string[1]) != NULL) {
