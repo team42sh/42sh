@@ -345,8 +345,7 @@ static char **process_path_input(char *input)
     char *last_slash = NULL;
     char *dir_path = NULL;
     char *prefix = NULL;
-    
-    printf("Input contains '/': Treating as a path\n");
+
     last_slash = strrchr(input, '/');
     dir_path = my_strdup(input);
     if (last_slash) {

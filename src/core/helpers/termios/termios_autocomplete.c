@@ -18,6 +18,8 @@
 static void print_single_suggestion(IN int index, IN int count,
     IN int column_w, IN char *suggestion)
 {
+    if (suggestion == NULL)
+        return;
     if (index < count) {
         my_printf("%-*s", column_w, suggestion);
     }
@@ -45,6 +47,30 @@ static int get_padding_for_each_suggestions(IN int count,
 }
 
 /**
+ * @brief Print the suggestions rows.
+ *
+ * @param args[5]               The parameters
+ * @param suggestions[]         The array of suggestions
+ */
+static void print_suggestion_row(IN int args[5], IN char *suggestions[])
+{
+    int col = 0;
+    int i = 0;
+    int printed_something = 0;
+
+    while (col < args[1]) {
+        i = col * args[2] + args[0];
+        if (i < args[3]) {
+            print_single_suggestion(i, args[3], args[4], suggestions[i]);
+            printed_something = 1;
+        }
+        col++;
+    }
+    if (printed_something)
+        my_printf("\n");
+}
+
+/**
  * @brief Print all sugestions on the screen. By organized them as well.
  *
  * @param suggestions           The string array of suggestions
@@ -56,19 +82,20 @@ static int print_suggestions(IN char *suggestions[], IN int count)
     int padding = 0;
     int num_columns = 0;
     int num_rows = 0;
-    int i = 0;
+    int args[5] = {0};
 
     if (suggestions == NULL || count <= 0)
         return 0;
     padding = get_padding_for_each_suggestions(count, suggestions);
-    num_columns = (ws.ws_col / padding) > 0 ? (ws.ws_col / padding) : 0;
+    num_columns = (ws.ws_col / padding) > 0 ? (ws.ws_col / padding) : 1;
     num_rows = (count + num_columns - 1) / num_columns;
+    args[1] = num_columns;
+    args[2] = num_rows;
+    args[3] = count;
+    args[4] = padding;
     for (int row = 0; row < num_rows; row++) {
-        for (int col = 0; col < num_columns; col++) {
-            i = col * num_rows + row;
-            print_single_suggestion(i, count, padding, suggestions[i]);
-        }
-        my_printf("\n");
+        args[0] = row;
+        print_suggestion_row(args, suggestions);
     }
     return num_rows;
 }
@@ -157,6 +184,27 @@ static int count_suggestions_elem(char **suggestions)
 }
 
 /**
+ * @brief Modify the buffer of the term info structure. To make the autocomp.
+ *
+ * @param ti            The terminal structure information
+ * @param current_sugg  The suggestion
+ * @param curr_wor      The word when the user press TAB
+ */
+static void modify_buffer_suggestion(IN term_info_t *ti, IN char *current_sugg,
+    OUT char *curr_wor)
+{
+    size_t current_len = my_strlen(current_sugg);
+    char *curr_word_without_slash = get_last_folder_char(curr_wor);
+
+    for (int i = 0; i < my_strlen(curr_word_without_slash) - 1; i++)
+        handle_backspace(ti);
+    for (size_t i = 0; i < current_len; i++)
+        handle_character(ti, current_sugg[i]);
+    set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
+    free(curr_wor);
+}
+
+/**
  * @brief Handle the autocompletion by printing all suggestions on the screen
  *        if there is more than 1 or just strcat the result.
  *
@@ -165,22 +213,16 @@ static int count_suggestions_elem(char **suggestions)
 void handle_autocomplete(OUT term_info_t *ti)
 {
     char *curr_wor = get_word_until_char(ti, ' ');
-    char *curr_word_without_slash = get_last_folder_char(curr_wor);
     char **suggestions = fill_autocomplete(curr_wor);
-    char *current_sugg = NULL;
-    size_t current_len = 0;
 
-    if (ti == NULL || suggestions == NULL)
-        return;
-    if (suggestions[0] != NULL && suggestions[1] == NULL) {
-        current_sugg = suggestions[0];
-        current_len = my_strlen(current_sugg);
-        for (int i = 0; i < my_strlen(curr_word_without_slash) - 1; i++)
-            handle_backspace(ti);
-        for (size_t i = 0; i < current_len; i++)
-            handle_character(ti, current_sugg[i]);
-        set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
+    if (ti == NULL || suggestions == NULL) {
+        free(curr_wor);
         return;
     }
+    if (suggestions[0] != NULL && suggestions[1] == NULL) {
+        modify_buffer_suggestion(ti, suggestions[0], curr_wor);
+        return;
+    }
+    free(curr_wor);
     setup_suggestions(ti, suggestions, count_suggestions_elem(suggestions));
 }
