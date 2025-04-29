@@ -129,42 +129,22 @@ static void setup_suggestions(OUT term_info_t *ti, IN char **suggestions,
  *
  * @return The word to autocomplete.
  */
-static char *get_word_until_char(IN term_info_t *ti, char c)
+static char *get_word_until_char(IN term_info_t *ti, IN char c)
 {
     int len = 0;
-    int index = 0;
     char path[4096] = {0};
 
-    for (int i = (int) ti->_cursor_index; i >= 0; i--) {
+    for (int i = (int) ti->_cursor_index - 1; i >= 0; i--) {
         if (ti->_buffer[i] == c)
             break;
         len++;
     }
-    len--;
-    if (len <= 0)
+    if (len == 0)
         return NULL;
-    for (size_t i = (int) ti->_cursor_index - len; i <
-        ti->_cursor_index; i++) {
-        path[index] = ti->_buffer[i];
-        index++;
-    }
+    for (int i = 0; i < len; i++)
+        path[i] = ti->_buffer[ti->_cursor_index - len + i];
+    path[len] = '\0';
     return my_strdup(path);
-}
-
-/**
- * @brief Get the path until the /
- *
- * @param path           The path
- *
- * @return The path without the / : For example : /bin/path -> path
- */
-static char *get_last_folder_char(IN char *path)
-{
-    int index = my_strlen(path);
-
-    while (index >= 0 && path[index] != '/')
-        index--;
-    return &path[index];
 }
 
 /**
@@ -174,34 +154,13 @@ static char *get_last_folder_char(IN char *path)
  *
  * @return The amount.
  */
-static int count_suggestions_elem(char **suggestions)
+static int count_suggestions_elem(IN char **suggestions)
 {
     int index = 0;
 
     while (suggestions[index] != NULL)
         index++;
     return index;
-}
-
-/**
- * @brief Modify the buffer of the term info structure. To make the autocomp.
- *
- * @param ti            The terminal structure information
- * @param current_sugg  The suggestion
- * @param curr_wor      The word when the user press TAB
- */
-static void modify_buffer_suggestion(IN term_info_t *ti, IN char *current_sugg,
-    OUT char *curr_wor)
-{
-    size_t current_len = my_strlen(current_sugg);
-    char *curr_word_without_slash = get_last_folder_char(curr_wor);
-
-    for (int i = 0; i < my_strlen(curr_word_without_slash) - 1; i++)
-        handle_backspace(ti);
-    for (size_t i = 0; i < current_len; i++)
-        handle_character(ti, current_sugg[i]);
-    set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
-    free(curr_wor);
 }
 
 /**
