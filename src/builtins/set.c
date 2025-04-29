@@ -167,7 +167,7 @@ int is_var_readonly(IN var_node_t *var)
  * @param new_var
  * @param key
  */
-void insert_alphabetically(var_node_t *var, IN var_node_t *new_var,
+void insert_alphabetically(IN var_node_t *var, IN var_node_t *new_var,
     IN char *key)
 {
     var_node_t *current = var;

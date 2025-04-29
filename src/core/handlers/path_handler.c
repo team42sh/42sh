@@ -7,7 +7,7 @@
 
 #include "core/minishell.h"
 
-static void copy_path_to_var(char *path_env, var_node_t *new_var)
+static void copy_path_to_var(IN char *path_env, OUT var_node_t *new_var)
 {
     char *path_elem;
     int path_count = 0;
@@ -30,7 +30,7 @@ static void copy_path_to_var(char *path_env, var_node_t *new_var)
     free_null_check(path_elem);
 }
 
-void add_path_variable(shell_variables_t *vars)
+void add_path_variable(IN shell_variables_t *vars)
 {
     var_node_t *new_var = calloc(1, sizeof(var_node_t));
     char *path_env = vars->path_var;
@@ -42,7 +42,7 @@ void add_path_variable(shell_variables_t *vars)
     insert_alphabetically(get_shell()->variables, new_var, "path");
 }
 
-void update_env_path(char *key, char **value)
+void update_env_path(IN char *key, IN char **value)
 {
     if (my_strcmp(key, "path") != 0)
         return;
@@ -52,7 +52,7 @@ void update_env_path(char *key, char **value)
     return;
 }
 
-static void separate_var_path(char *var_path)
+static void separate_var_path(OUT char *var_path)
 {
     for (int i = 0; var_path[i] != '\0'; i++) {
         if (var_path[i] == ':') {

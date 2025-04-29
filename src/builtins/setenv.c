@@ -42,7 +42,7 @@ static exitcode_t handle_error(IN char **array)
  * @param argv
  * @return exitcode_t
  */
-static exitcode_t handle_incorrect_name(char **argv)
+static exitcode_t handle_incorrect_name(IN char **argv)
 {
     if (!is_letter(argv[1][0]) && argv[1][0] != '_')
         return print_err("setenv: Variable name must begin with a letter.\n");

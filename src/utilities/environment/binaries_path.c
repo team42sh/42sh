@@ -26,7 +26,7 @@ static bool is_binary_existing(char full_path[4096], char *dir, char *command)
 /*
  * Try to find the path of the binary in all PATH env variable.
  */
-static char *find_binary_in_paths(char *path_var, char *command)
+static char *find_binary_in_paths(IN char *path_var, IN char *command)
 {
     char *dir = my_strtok(path_var, ':');
     char *result = NULL;
@@ -52,7 +52,7 @@ static char *find_binary_in_paths(char *path_var, char *command)
  * Starting with : '/' or '.'
  * If the PATH env variable exist then start finding it in the env PATH.
  */
-char *get_binary_path(char *command)
+char *get_binary_path(IN char *command)
 {
     char *path = concat_strarray(var_search("path"), ":");
 
