@@ -7,125 +7,7 @@
 
 #include "core/minishell.h"
 #include "core/parser.h"
-
-/**
- * @brief Count words in a string based on a delimiter
- *
- * @param str
- * @param delimiter
- * @return int
- */
-int count_words(IN char *str, IN char delimiter)
-{
-    int count = 0;
-    int in_word = 0;
-    int i = 0;
-
-    if (str == NULL)
-        return 0;
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] != delimiter && !in_word) {
-            in_word = 1;
-            count++;
-        } 
-        if (str[i] == delimiter) {
-            in_word = 0;
-        }
-    }
-    return count;
-}
-
-/**
- * @brief Extract a word from string and allocate memory for it
- *
- * @param str Source string
- * @param start Start index
- * @param end End index
- * @return char* Extracted word
- */
-static char *extract_word(char *str, int start, int end)
-{
-    int word_len = end - start;
-    
-    return my_strncpy_alloc(&str[start], word_len);
-}
-
-/**
- * @brief Split a string into an array of words based on a delimiter
- *
- * @param str
- * @param delimiter
- * @return char**
- */
-char **my_str_to_word_array(IN char *str, IN char delimiter)
-{
-    char **result = NULL;
-    int word_count = 0;
-    int start = 0;
-    int i = 0;
-    int word_index = 0;
-
-    if (str == NULL)
-        return NULL;
-    word_count = count_words(str, delimiter);
-    result = malloc(sizeof(char *) * (word_count + 1));
-    if (!result)
-        return NULL;
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] == delimiter || str[i + 1] == '\0') {
-            int end = (str[i] == delimiter ? i : i + 1);
-            result[word_index] = extract_word(str, start, end);
-            word_index++;
-            start = i + 1;
-        }
-    }
-    result[word_count] = NULL;
-    return result;
-}
-
-/**
- * @brief Check if a file is executable
- *
- * @param filename
- * @return int
- */
-int is_executable_file(IN char *filename)
-{
-    struct stat file_stat;
-
-    if (filename == NULL)
-        return 0;
-    if (stat(filename, &file_stat) == -1)
-        return 0;
-    return (file_stat.st_mode & S_IXUSR) != 0;
-}
-
-/**
-* @brief Concatenate two strings into a newly allocated string
- *
- * @param str1
- * @param str2
- * @return char*
- */
-char *my_strcat_alloc(IN char *str1, IN char *str2)
-{
-    char *result = NULL;
-    int len1 = 0;
-    int len2 = 0;
-
-    len1 = str1 ? strlen(str1) : 0;
-    len2 = str2 ? strlen(str2) : 0;
-    result = malloc(sizeof(char) * (len1 + len2 + 1));
-    if (!result)
-        return NULL;
-    if (str1)
-        strcpy(result, str1);
-    else
-        result[0] = '\0';
-    if (str2)
-        strcat(result, str2);
-    return result;
-}
+#include "my_printf.h"
 
 /**
  * @brief Format file or directory name based on its type
@@ -134,7 +16,7 @@ char *my_strcat_alloc(IN char *str1, IN char *str2)
  * @param name
  * @return char*
  */
-static char *format_entry(char *path, char *name)
+static char *format_entry(IN char *path, IN char *name)
 {
     struct stat file_stat;
     char full_path[PATH_MAX];
@@ -145,28 +27,14 @@ static char *format_entry(char *path, char *name)
         return my_strdup(name);
     if (S_ISDIR(file_stat.st_mode)) {
         formatted_name = my_strcat_alloc(name, "/");
-    } 
+    }
     if (S_ISLNK(file_stat.st_mode)) {
         formatted_name = my_strcat_alloc(name, "@");
-    } 
+    }
     if (!S_ISDIR(file_stat.st_mode) && !S_ISLNK(file_stat.st_mode)) {
         formatted_name = my_strdup(name);
     }
     return formatted_name;
-}
-
-/**
- * @brief Check if a file should be displayed (exclude hidden files and special entries)
- *
- * @param name
- * @return int
- */
-static int is_visible_file(char *name)
-{
-    if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) {
-        return 0;
-    }
-    return (name[0] != '.');
 }
 
 /**
@@ -176,7 +44,7 @@ static int is_visible_file(char *name)
  * @param str
  * @return char**
  */
-static char **append_to_array(char **array, char *str)
+static char **append_to_array(IN char **array, IN char *str)
 {
     int count = 0;
     char **new_array = NULL;
@@ -188,8 +56,8 @@ static char **append_to_array(char **array, char *str)
     if (!new_array)
         return NULL;
     for (i = 0; i < count; i++)
-        new_array[i] = strdup(array[i]);
-    new_array[count] = strdup(str);
+        new_array[i] = my_strdup(array[i]);
+    new_array[count] = my_strdup(str);
     new_array[count + 1] = NULL;
     if (array)
         free(array);
@@ -204,18 +72,19 @@ static char **append_to_array(char **array, char *str)
  * @param prefix Filter prefix
  * @return char** Array of matching entries
  */
-static char **process_directory_entries(DIR *dir, char *path, char *prefix)
+static char **process_directory_entries(IN DIR *dir, IN char *path,
+    IN char *prefix)
 {
+    struct dirent *entry;
     char **result = NULL;
-    struct dirent *entry = NULL;
     char *formatted_entry = NULL;
     int prefix_len = 0;
 
-    prefix_len = prefix ? strlen(prefix) : 0;
-    while ((entry = readdir(dir)) != NULL) {
+    prefix_len = prefix ? my_strlen(prefix) : 0;
+    for (entry = readdir(dir); entry != NULL; entry = readdir(dir)) {
         if (!is_visible_file(entry->d_name))
             continue;
-        if (prefix && strncmp(entry->d_name, prefix, prefix_len) != 0)
+        if (prefix && my_strncmp(entry->d_name, prefix, prefix_len) != 0)
             continue;
         formatted_entry = format_entry(path, entry->d_name);
         result = append_to_array(result, formatted_entry);
@@ -231,7 +100,7 @@ static char **process_directory_entries(DIR *dir, char *path, char *prefix)
  * @param prefix The prefix to filter files by, or NULL for no filtering
  * @return char**
  */
-static char **list_directory_files(char *path, char *prefix)
+static char **list_directory_files(IN char *path, IN char *prefix)
 {
     char **result = NULL;
     DIR *dir = NULL;
@@ -239,10 +108,8 @@ static char **list_directory_files(char *path, char *prefix)
 
     dir_path = path ? path : ".";
     dir = opendir(dir_path);
-    if (!dir) {
-        printf("Error: Cannot open directory %s\n", dir_path);
+    if (!dir)
         return NULL;
-    }
     result = process_directory_entries(dir, dir_path, prefix);
     closedir(dir);
     return result;
@@ -256,22 +123,24 @@ static char **list_directory_files(char *path, char *prefix)
  * @param binaries Current binaries array
  * @return char** Updated binaries array
  */
-static char **process_binaries_in_dir(char *dir, const char *prefix, char **binaries)
+static char **process_binaries_in_dir(IN char *dir, IN char *prefix,
+    OUT char **binaries)
 {
     DIR *dir_stream = NULL;
-    struct dirent *entry = NULL;
     char full_path[PATH_MAX];
-    int prefix_len = 0;
-    
-    prefix_len = strlen(prefix);
+
+    if (prefix == NULL)
+        return NULL;
     dir_stream = opendir(dir);
     if (dir_stream == NULL)
         return binaries;
-    while ((entry = readdir(dir_stream)) != NULL) {
-        if (strncmp(entry->d_name, prefix, prefix_len) != 0)
+    for (struct dirent *entry = readdir(dir_stream); entry != NULL;
+        entry = readdir(dir_stream)) {
+        if (my_strncmp(entry->d_name, prefix, my_strlen(prefix)) != 0)
             continue;
         snprintf(full_path, PATH_MAX, "%s/%s", dir, entry->d_name);
-        if (is_executable_file(full_path))
+        if (is_executable_file(full_path) &&
+            str_in_tab(binaries, entry->d_name) == 0)
             binaries = append_to_array(binaries, entry->d_name);
     }
     closedir(dir_stream);
@@ -284,17 +153,15 @@ static char **process_binaries_in_dir(char *dir, const char *prefix, char **bina
  * @param prefix The prefix to match against file names
  * @return char** Array of matching binaries, NULL if none found
  */
-static char **list_binaries_with_prefix(const char *prefix)
+static char **list_binaries_with_prefix(IN char *prefix)
 {
     char **binaries = NULL;
-    char *path_env = NULL;
     char *path_copy = NULL;
     char *dir = NULL;
 
-    path_env = getenv("PATH");
-    if (path_env == NULL)
+    if (getenv("PATH") == NULL)
         return NULL;
-    path_copy = strdup(path_env);
+    path_copy = my_strdup(getenv("PATH"));
     dir = strtok(path_copy, ":");
     while (dir != NULL) {
         binaries = process_binaries_in_dir(dir, prefix, binaries);
@@ -316,10 +183,10 @@ static char **list_binaries_with_prefix(const char *prefix)
  * @param binaries Secondary array to add
  * @return char** Combined array
  */
-static char **combine_results(char **result, char **binaries)
+static char **combine_results(OUT char **result, IN char **binaries)
 {
     int i = 0;
-    
+
     if ((!result || result[0] == NULL) && binaries) {
         free(result);
         return binaries;
@@ -339,7 +206,7 @@ static char **combine_results(char **result, char **binaries)
  * @param input Input string with path
  * @return char** Matching files
  */
-static char **process_path_input(char *input)
+static char **process_path_input(IN char *input)
 {
     char **result = NULL;
     char *last_slash = NULL;
@@ -353,7 +220,7 @@ static char **process_path_input(char *input)
         prefix = last_slash + 1;
     }
     result = list_directory_files(dir_path, prefix);
-    free(dir_path);    
+    free(dir_path);
     return result;
 }
 
@@ -363,7 +230,7 @@ static char **process_path_input(char *input)
  * @param input Input string without path
  * @return char** Matching files and binaries
  */
-static char **process_non_path_input(char *input)
+static char **process_non_path_input(IN char *input)
 {
     char **result = NULL;
     char **binaries = NULL;
@@ -379,7 +246,7 @@ static char **process_non_path_input(char *input)
  * @param input Input string to autocomplete
  * @return char** Array of autocomplete suggestions
  */
-char **fill_autocomplete(char *input)
+char **fill_autocomplete(IN char *input)
 {
     char **result = NULL;
 

@@ -162,8 +162,16 @@ typedef struct shell_s {
     bool should_exit;
 } shell_t;
 
-char **fill_autocomplete(IN char *path);
 
+/*
+ * Autocomplete functions
+ */
+char **fill_autocomplete(char *path);
+int is_visible_file(char *name);
+char *my_strcat_alloc(IN char *str1, IN char *str2);
+int str_in_tab(char **tab, char *str);
+int is_executable_file(IN char *filename);
+char **my_str_to_word_array(IN char *str, IN char delimiter);
 
 /*
  * Function used in the main
