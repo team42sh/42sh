@@ -160,7 +160,7 @@ int is_var_readonly(IN var_node_t *var)
 }
 
 /**
- * @brief A function to insert a new lcoal variable
+ * @brief A function to insert a new local variable
  * so the linked list is sorted alphabetically
  *
  * @param var

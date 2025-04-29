@@ -102,6 +102,14 @@ string_t *extract_vars_in_array(char **array)
     return head;
 }
 
+/**
+ * @brief A function to replace a variable in user input
+ *
+ * @param argv
+ * @param vars_replace
+ * @param head
+ * @return int
+ */
 static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
     OUT string_t *head)
 {

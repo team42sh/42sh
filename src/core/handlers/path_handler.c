@@ -7,6 +7,13 @@
 
 #include "core/minishell.h"
 
+/**
+ * @brief A function to copy the path from the
+ * environment variable into local variables
+ *
+ * @param path_env
+ * @param new_var
+ */
 static void copy_path_to_var(IN char *path_env, OUT var_node_t *new_var)
 {
     char *path_elem;
@@ -30,6 +37,12 @@ static void copy_path_to_var(IN char *path_env, OUT var_node_t *new_var)
     free_null_check(path_elem);
 }
 
+/**
+ * @brief A function to initialized the path in local
+ * variables from the environment variable
+ *
+ * @param vars
+ */
 void add_path_variable(IN shell_variables_t *vars)
 {
     var_node_t *new_var = calloc(1, sizeof(var_node_t));
@@ -42,6 +55,12 @@ void add_path_variable(IN shell_variables_t *vars)
     insert_alphabetically(get_shell()->variables, new_var, "path");
 }
 
+/**
+ * @brief A function to update the path in the environment variables
+ *
+ * @param key
+ * @param value
+ */
 void update_env_path(IN char *key, IN char **value)
 {
     if (my_strcmp(key, "path") != 0)
@@ -52,6 +71,11 @@ void update_env_path(IN char *key, IN char **value)
     return;
 }
 
+/**
+ * @brief A function to separate the path by :
+ *
+ * @param var_path
+ */
 static void separate_var_path(OUT char *var_path)
 {
     for (int i = 0; var_path[i] != '\0'; i++) {
@@ -62,6 +86,10 @@ static void separate_var_path(OUT char *var_path)
     }
 }
 
+/**
+ * @brief A function to update the path in the local variables
+ *
+ */
 void update_var_path(void)
 {
     char *var_path = get_shell()->vars->path_var;

@@ -8,7 +8,7 @@
 #include "core/minishell.h"
 
 /**
- * @brief A function to free the value of a lcoal variable
+ * @brief A function to free the value of a local variable
  *
  * @param var
  */
@@ -121,6 +121,12 @@ char **var_search(IN char *key)
     return NULL;
 }
 
+/**
+ * @brief A function to get the len of a strarray
+ *
+ * @param strarray
+ * @return int
+ */
 static int get_strarray_len(IN char **strarray)
 {
     int len = 0;
