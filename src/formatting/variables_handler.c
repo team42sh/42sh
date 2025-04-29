@@ -108,7 +108,8 @@ static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
     char *concatenated = NULL;
 
     if (var_search(&vars_replace->string[1]) != NULL) {
-        concatenated = concat_strarray(var_search(&vars_replace->string[1]));
+        concatenated = concat_strarray(var_search(&vars_replace->string[1]),
+            " ");
         *argv = my_strreplace_array(*argv, vars_replace->string,
             concatenated);
         free_null_check(concatenated);

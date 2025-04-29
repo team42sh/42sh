@@ -138,7 +138,7 @@ static int get_strarray_len(IN char **strarray)
  * @param array
  * @return char*
  */
-char *concat_strarray(IN char **array)
+char *concat_strarray(IN char **array, IN char *separator)
 {
     char *str = NULL;
     int len = 0;
@@ -155,7 +155,7 @@ char *concat_strarray(IN char **array)
             continue;
         my_strcat(str, array[i]);
         if (array[i + 1] != NULL && my_strlen(array[i + 1]) != 0)
-            my_strcat(str, " ");
+            my_strcat(str, separator);
     }
     return str;
 }

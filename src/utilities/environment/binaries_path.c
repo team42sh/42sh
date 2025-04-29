@@ -28,8 +28,7 @@ static bool is_binary_existing(char full_path[4096], char *dir, char *command)
  */
 static char *find_binary_in_paths(char *path_var, char *command)
 {
-    char *path_copy = my_strdup(path_var);
-    char *dir = my_strtok(path_copy, ':');
+    char *dir = my_strtok(path_var, ':');
     char *result = NULL;
     char full_path[4096];
 
@@ -44,7 +43,7 @@ static char *find_binary_in_paths(char *path_var, char *command)
         if (dir == NULL)
             break;
     }
-    free(path_copy);
+    free(path_var);
     return result;
 }
 
@@ -55,7 +54,7 @@ static char *find_binary_in_paths(char *path_var, char *command)
  */
 char *get_binary_path(char *command)
 {
-    char *path = get_shell()->vars->path_var;
+    char *path = concat_strarray(var_search("path"), ":");
 
     if (access(command, X_OK) == 0)
         return my_strdup(command);

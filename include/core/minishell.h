@@ -235,7 +235,16 @@ void clear_var(void);
 int is_var_readonly(var_node_t *var);
 int remove_var(char *key);
 char **var_search(char *key);
-char *concat_strarray(char **array);
+char *concat_strarray(IN char **array, IN char *separator);
+void insert_alphabetically(var_node_t *var, IN var_node_t *new_var,
+    IN char *key);
+
+/*
+ * Path variable
+*/
+void add_path_variable(shell_variables_t *vars);
+void update_env_path(char *key, char **value);
+void update_var_path(void);
 
 /*
  * Termios helping functions

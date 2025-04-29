@@ -167,7 +167,7 @@ int is_var_readonly(IN var_node_t *var)
  * @param new_var
  * @param key
  */
-static void insert_alphabetically(var_node_t *var, IN var_node_t *new_var,
+void insert_alphabetically(var_node_t *var, IN var_node_t *new_var,
     IN char *key)
 {
     var_node_t *current = var;
@@ -232,6 +232,7 @@ static int modify_or_create_var(OUT char *key, IN char **argv,
         free_var_value(var);
         var->_value = get_new_var_value(key, argv, is_readonly);
         var->_read_only = is_readonly;
+        update_env_path(key, var->_value);
         return OK_OUTPUT;
     }
     return add_variable(argv, is_readonly);
