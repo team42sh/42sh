@@ -160,6 +160,33 @@ int is_var_readonly(IN var_node_t *var)
 }
 
 /**
+ * @brief A function to insert a new lcoal variable
+ * so the linked list is sorted alphabetically
+ *
+ * @param var
+ * @param new_var
+ * @param key
+ */
+static void insert_alphabetically(var_node_t *var, IN var_node_t *new_var,
+    IN char *key)
+{
+    var_node_t *current = var;
+    var_node_t *previous = NULL;
+
+    while (current != NULL && my_strcmp(current->_key, key) < 0) {
+        previous = current;
+        current = current->_next;
+    }
+    if (previous == NULL) {
+        new_var->_next = get_shell()->variables;
+        get_shell()->variables = new_var;
+    } else {
+        new_var->_next = current;
+        previous->_next = new_var;
+    }
+}
+
+/**
  * @brief A function to add a local variable if it doesn't exist
  *
  * @param argv
@@ -180,8 +207,7 @@ static int add_variable(IN char **argv, IN int is_readonly)
     new_var->_key = key;
     new_var->_value = get_new_var_value(key, argv, is_readonly);
     new_var->_read_only = is_readonly;
-    new_var->_next = var;
-    get_shell()->variables = new_var;
+    insert_alphabetically(var, new_var, key);
     return OK_OUTPUT;
 }
 
