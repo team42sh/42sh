@@ -14,6 +14,7 @@ static exitcode_t modify_shell_vars(char *key, char *value)
     if (!my_strcmp(key, "PATH")) {
         free_null_check(get_shell()->vars->path_var);
         get_shell()->vars->path_var = my_strdup(value);
+        update_var_path();
     }
     return OK_OUTPUT;
 }

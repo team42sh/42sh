@@ -56,7 +56,7 @@ typedef struct env_node_s {
  */
 typedef struct var_node_s {
     char *_key;
-    char *_value;
+    char **_value;
     int _read_only;
     struct var_node_s *_next;
 } var_node_t;
@@ -230,10 +230,21 @@ void reset_initial_env(void);
 /*
  * Local variables
  */
+void free_var_value(var_node_t *var);
 void clear_var(void);
 int is_var_readonly(var_node_t *var);
 int remove_var(char *key);
-char *var_search(IN char *key);
+char **var_search(char *key);
+char *concat_strarray(char **array, char *separator);
+void insert_alphabetically(var_node_t *var, var_node_t *new_var,
+    char *key);
+
+/*
+ * Path variable
+*/
+void add_path_variable(shell_variables_t *vars);
+void update_env_path(char *key, char **value);
+void update_var_path(void);
 
 /*
  * Termios helping functions
@@ -321,7 +332,7 @@ bool is_alpha_num(char *string);
 int len_to_first_char(char *str);
 
 int char_in_str(char *str, char c);
-int find_char_index_in_tab(IN char **tab, IN char c);
+int find_char_index_in_tab(char **tab, char c);
 
 /*
  * Files functions

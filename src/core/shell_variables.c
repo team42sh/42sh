@@ -25,9 +25,10 @@ shell_variables_t *create_shell_vars(void)
     vars->pwd_var = getcwd(NULL, 0);
     vars->oldpwd_var = NULL;
     if (env_search("PATH") == NULL)
-        vars->path_var = my_strdup("/bin");
+        vars->path_var = my_strdup("/usr/bin:/bin");
     else
         vars->path_var = my_strdup(env_search("PATH"));
+    add_path_variable(vars);
     vars->history_lines_count = count_number_lines_history();
     vars->github_repository = get_github_repository_name();
     return vars;

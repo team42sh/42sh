@@ -7,15 +7,27 @@
 
 #include "core/minishell.h"
 
+/**
+ * @brief A function to free the value of a local variable
+ *
+ * @param var
+ */
+void free_var_value(OUT var_node_t *var)
+{
+    for (int i = 0; var->_value[i] != NULL; i++)
+        free_null_check(var->_value[i]);
+    free_null_check(var->_value);
+}
+
 /*
  * Free a node of the variables.
  */
-static void free_var(IN var_node_t *var)
+static void free_var(OUT var_node_t *var)
 {
     if (var == NULL)
         return;
     free_null_check(var->_key);
-    free_null_check(var->_value);
+    free_var_value(var);
     free_null_check(var);
 }
 
@@ -95,7 +107,7 @@ int remove_var(IN char *key)
  * @param key
  * @return char*
  */
-char *var_search(IN char *key)
+char **var_search(IN char *key)
 {
     var_node_t *var = get_shell()->variables;
 
@@ -107,4 +119,49 @@ char *var_search(IN char *key)
         var = var->_next;
     }
     return NULL;
+}
+
+/**
+ * @brief A function to get the len of a strarray
+ *
+ * @param strarray
+ * @return int
+ */
+static int get_strarray_len(IN char **strarray)
+{
+    int len = 0;
+
+    if (strarray == NULL)
+        return 0;
+    for (int i = 0; strarray[i] != NULL; i++)
+        len += my_strlen(strarray[i]) + 1;
+    return len;
+}
+
+/**
+ * @brief A function to concat the value of a local variable
+ *
+ * @param array
+ * @return char*
+ */
+char *concat_strarray(IN char **array, IN char *separator)
+{
+    char *str = NULL;
+    int len = 0;
+
+    if (array == NULL)
+        return NULL;
+    len = get_strarray_len(array);
+    str = malloc(sizeof(char) * (len + 1));
+    if (str == NULL)
+        return NULL;
+    str[0] = '\0';
+    for (int i = 0; array[i] != NULL; i++) {
+        if (my_strlen(array[i]) == 0)
+            continue;
+        my_strcat(str, array[i]);
+        if (array[i + 1] != NULL && my_strlen(array[i + 1]) != 0)
+            my_strcat(str, separator);
+    }
+    return str;
 }
