@@ -162,6 +162,9 @@ typedef struct shell_s {
     bool should_exit;
 } shell_t;
 
+char **fill_autocomplete(IN char *path);
+
+
 /*
  * Function used in the main
  */
