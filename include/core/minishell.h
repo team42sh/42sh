@@ -168,10 +168,10 @@ typedef struct shell_s {
  */
 char **fill_autocomplete(char *path);
 int is_visible_file(char *name);
-char *my_strcat_alloc(IN char *str1, IN char *str2);
+char *my_strcat_alloc(char *str1, char *str2);
 int str_in_tab(char **tab, char *str);
-int is_executable_file(IN char *filename);
-char **my_str_to_word_array(IN char *str, IN char delimiter);
+int is_executable_file(char *filename);
+char **my_str_to_word_array(char *str, char delimiter);
 
 /*
  * Function used in the main
