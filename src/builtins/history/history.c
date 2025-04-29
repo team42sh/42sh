@@ -71,7 +71,7 @@ static exitcode_t parse_history_line(IN char *line, IN int simple)
  *
  * @param lines The array of lines to free.
  */
-static void free_lines_array(IN char **lines)
+static void free_lines_array(OUT char **lines)
 {
     for (int i = 0; lines[i] != NULL; i++)
         free(lines[i]);
