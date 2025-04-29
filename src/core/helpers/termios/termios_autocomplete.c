@@ -90,8 +90,70 @@ static void setup_suggestions(OUT term_info_t *ti, IN char **suggestions,
     suggestions_lines = print_suggestions(suggestions, len);
     print_shell_prompt();
     ti->_cursor_start_pos[POS_Y] += number_line_buffer + suggestions_lines;
+    ti->_cursor_pos[POS_Y] += number_line_buffer + suggestions_lines;
     if (ti->_cursor_start_pos[POS_Y] >= get_screen_info().ws_row)
         ti->_cursor_start_pos[POS_Y] = get_screen_info().ws_row;
+}
+
+/**
+ * @brief Get the word to make the autocomplete for.
+ *
+ * @param ti            The terminal structure
+ *
+ * @return The word to autocomplete.
+ */
+static char *get_word_until_char(IN term_info_t *ti, char c)
+{
+    int len = 0;
+    int index = 0;
+    char path[4096] = {0};
+
+    for (int i = (int) ti->_cursor_index; i >= 0; i--) {
+        if (ti->_buffer[i] == c)
+            break;
+        len++;
+    }
+    len--;
+    if (len <= 0)
+        return NULL;
+    for (size_t i = (int) ti->_cursor_index - len; i <
+        ti->_cursor_index; i++) {
+        path[index] = ti->_buffer[i];
+        index++;
+    }
+    return my_strdup(path);
+}
+
+/**
+ * @brief Get the path until the /
+ *
+ * @param path           The path
+ *
+ * @return The path without the / : For example : /bin/path -> path
+ */
+static char *get_last_folder_char(IN char *path)
+{
+    int index = my_strlen(path);
+
+    while (index >= 0 && path[index] != '/')
+        index--;
+    return &path[index];
+}
+
+/**
+ * @brief Count the suggestions amount.
+ *
+ * @param suggestions           The suggestions
+ *
+ * @return The amount.
+ */
+static int count_suggestions_elem(char **suggestions)
+{
+    int index = 0;
+
+    while (suggestions[index] != NULL)
+        index++;
+    return index;
 }
 
 /**
@@ -102,21 +164,23 @@ static void setup_suggestions(OUT term_info_t *ti, IN char **suggestions,
  */
 void handle_autocomplete(OUT term_info_t *ti)
 {
-    char **suggestions = NULL;
+    char *curr_wor = get_word_until_char(ti, ' ');
+    char *curr_word_without_slash = get_last_folder_char(curr_wor);
+    char **suggestions = fill_autocomplete(curr_wor);
     char *current_sugg = NULL;
     size_t current_len = 0;
 
-    if (ti == NULL)
-        return;
-    if (suggestions == NULL)
+    if (ti == NULL || suggestions == NULL)
         return;
     if (suggestions[0] != NULL && suggestions[1] == NULL) {
         current_sugg = suggestions[0];
         current_len = my_strlen(current_sugg);
+        for (int i = 0; i < my_strlen(curr_word_without_slash) - 1; i++)
+            handle_backspace(ti);
         for (size_t i = 0; i < current_len; i++)
             handle_character(ti, current_sugg[i]);
         set_cursor_position(ti->_cursor_pos[POS_Y], ti->_cursor_pos[POS_X]);
         return;
     }
-    setup_suggestions(ti, suggestions, 0);
+    setup_suggestions(ti, suggestions, count_suggestions_elem(suggestions));
 }

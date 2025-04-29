@@ -37,7 +37,7 @@
     #include "my_printf.h"
 
     #ifndef _DEBUG_MODE_
-        #define _DEBUG_MODE_ 0
+        #define _DEBUG_MODE_ 1
     #endif /* ifndef _DEBUG_MODE_ */
 
 /*
@@ -264,6 +264,7 @@ void handle_ctrl_y(term_info_t *ti);
 void handle_autocomplete(term_info_t *ti);
 
 void handle_character(term_info_t *ti, char c);
+void handle_backspace(term_info_t *ti);
 void handle_left_arrow(term_info_t *ti);
 void handle_right_arrow(term_info_t *ti);
 void handle_history_up(term_info_t *ti);
