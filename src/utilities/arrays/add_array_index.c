@@ -7,7 +7,6 @@
 */
 
 #include "core/minishell.h"
-#include <unistd.h>
 
 /*
  * Add an element to the array at the given index.
