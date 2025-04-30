@@ -56,7 +56,7 @@ static char **append_to_array(IN char **array, IN char *str)
     if (!new_array)
         return NULL;
     for (i = 0; i < count; i++)
-        new_array[i] = my_strdup(array[i]);
+        new_array[i] = array[i];
     new_array[count] = my_strdup(str);
     new_array[count + 1] = NULL;
     if (array)
