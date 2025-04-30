@@ -26,7 +26,8 @@ format_ast(ast_node_t *ast)
         return;
     if (token->token_type == TOKEN_COMMAND)
         token->data._argv = command_formatter(token->data._argv);
-    if (token->token_type == TOKEN_PIPE) {
+    if (token->token_type == TOKEN_PIPE || token->token_type == TOKEN_AND ||
+        token->token_type == TOKEN_OR) {
         format_ast(ast->right);
         format_ast(ast->left);
     }
