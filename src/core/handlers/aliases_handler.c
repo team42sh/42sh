@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /*
  * Create a node using original string, alias string for the alias.
@@ -63,37 +64,6 @@ static char *make_alias_one_string(IN char **alias_arr)
             my_strcat(result, " ");
     }
     return result;
-}
-
-/*
- * Modify every original string of the aliases in the input.
- * Remove the original string. And append the result of the alias.
- * Don't go over the index 0 for the moment because we don't alias to be
- * replaced for exemple with echo ll.
- * TODO: Handle the ';' and '&&' and '||' because right now the beggining is
- * considered as index 0 only.
- *
- */
-static char **modify_every_words(char **input, alias_t *aliases)
-{
-    size_t len_word_aliases = 0;
-    char **words_aliases = 0;
-    size_t index = 0;
-
-    while (input[index] != NULL) {
-        if (index > 0)
-            break;
-        if (!my_strcmp(input[index], aliases->original_string)) {
-            words_aliases = my_strarray(aliases->alias_string);
-            len_word_aliases = array_count_string(words_aliases);
-            input = array_append_index_string(input, words_aliases, index);
-            input = array_remove_index_string(input, index + len_word_aliases);
-            free_array_string(words_aliases);
-            break;
-        }
-        index++;
-    }
-    return input;
 }
 
 /*
@@ -164,20 +134,4 @@ void clear_aliases(void)
         free_alias(al);
     }
     get_shell()->aliases = NULL;
-}
-
-/*
- * Replace every aliases in the array of words.
- * This need to be done after the my_strarray of course.
- * input need to be NULL terminated.
- */
-char **replaces_all_aliases(char **input)
-{
-    alias_t *aliases = get_shell()->aliases;
-
-    while (aliases != NULL) {
-        input = modify_every_words(input, aliases);
-        aliases = aliases->next;
-    }
-    return input;
 }

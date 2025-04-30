@@ -45,21 +45,27 @@ static exitcode_t show_one_alias(char *alias_name)
     return OK_OUTPUT;
 }
 
-/*
- * ALIAS COMMAND - BUILT-IN
- * No args = Show all aliases
- * 1 arg = Show the alias with the name passed
- * 2 args = Create the alias with the values
- * 3+ args = Error message.
+/**
+ * @brief Alias command builtin
+ *
+ * @param argv  ARGV
+ *
+ * @return The exitcode.
  */
-exitcode_t alias_command(char **argv)
+exitcode_t alias_command(IN char **argv)
 {
+    char *forbidden_alias[] = {"alias", "unalias", NULL};
+
     if (argv == NULL)
         return ERROR_OUTPUT;
     if (argv[1] == NULL)
         return show_aliases();
     if (argv[1] != NULL && argv[2] == NULL)
         return show_one_alias(argv[1]);
+    for (int i = 0; forbidden_alias[i] != NULL; i++) {
+        if (my_strcmp(argv[1], forbidden_alias[i]) == 0)
+            return print_err("%s: Too dangerous to alias that.\n");
+    }
     add_alias(argv[1], &argv[2]);
     return OK_OUTPUT;
 }
