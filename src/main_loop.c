@@ -28,6 +28,7 @@ const builtin_t BUILTINS[] = {
     {"which", &which_function},
     {"history", &history_command},
     {"!", &history_command},
+    {"repeat", &repeat_command},
     {NULL, NULL}
 };
 
