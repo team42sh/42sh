@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include <stddef.h>
 
 /**
  * @brief Check if string starts with prefix
