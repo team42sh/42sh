@@ -316,6 +316,7 @@ void free_strings(string_t *head);
 void print_strings(string_t *head);
 void print_string_index(string_t *head, int index);
 char *get_string_index(string_t *head, int index);
+bool is_in_string(char c, char *string);
 
 void remove_newline(char *str);
 char **command_formatter(char **argv);

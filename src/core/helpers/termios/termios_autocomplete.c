@@ -129,13 +129,13 @@ static void setup_suggestions(OUT term_info_t *ti, IN char **suggestions,
  *
  * @return The word to autocomplete.
  */
-static char *get_word_until_char(IN term_info_t *ti, IN char c)
+static char *get_word_until_chars(IN term_info_t *ti, IN char *c)
 {
     int len = 0;
     char path[4096] = {0};
 
     for (int i = (int) ti->_cursor_index - 1; i >= 0; i--) {
-        if (ti->_buffer[i] == c)
+        if (is_in_str(ti->_buffer[i], c))
             break;
         len++;
     }
@@ -171,7 +171,7 @@ static int count_suggestions_elem(IN char **suggestions)
  */
 void handle_autocomplete(OUT term_info_t *ti)
 {
-    char *curr_wor = get_word_until_char(ti, ' ');
+    char *curr_wor = get_word_until_chars(ti, "; ");
     char **suggestions = fill_autocomplete(curr_wor);
 
     if (ti == NULL || suggestions == NULL) {
