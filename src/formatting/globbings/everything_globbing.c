@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include <stddef.h>
 
 /**
  * @brief Check if string starts with prefix
@@ -89,6 +90,25 @@ char **replace_globbing_with_matches(IN char **argv, IN int globbing_index,
 }
 
 /**
+ * @brief function to count the number of * globbings
+ *
+ * @param tab
+ *
+ * @return
+ */
+static int count_star(char **tab)
+{
+    int count = 0;
+
+    if (tab == NULL)
+        return 0;
+    for (int i = 0; tab[i] != NULL; i++)
+        if (char_in_str(tab[i], '*') != -1)
+            count++;
+    return count;
+}
+
+/**
  * @brief Main function to handle globbing
  *
  * @param argv
@@ -100,10 +120,12 @@ char **change_star_to_list_of_files(IN char **argv)
 
     if (!argv)
         return NULL;
-    globbing_index = find_char_index_in_tab(argv, '*');
-    if (globbing_index == -1)
-        return argv;
-    argv = process_globbing_pattern(argv, globbing_index);
+    for (int i = 0; i < count_star(argv); i++) {
+        globbing_index = find_char_index_in_tab(argv, '*');
+        if (globbing_index == -1)
+            return argv;
+        argv = process_globbing_pattern(argv, globbing_index);
+    }
     if (find_char_index_in_tab(argv, '*') > 0) {
         my_printf("%s: No match.\n", argv[0]);
         free_array_string(argv);
