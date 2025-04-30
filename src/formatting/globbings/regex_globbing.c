@@ -9,7 +9,7 @@
 #include <regex.h>
 
 /**
- * This function is for testing if regex is a banned function, it does nothing.
+ * This function is for testing if regex is a banned function, it does nothing
  */
 void dummy_regex_test(void)
 {

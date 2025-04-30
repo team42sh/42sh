@@ -23,7 +23,7 @@ const char *tokens_name[] = {"COMMAND", "PIPE", "LEFT_REDIRECTION",
 static token_t *
 create_token(token_type_t type)
 {
-    token_t *token = malloc(sizeof(token_t));
+    token_t *token = calloc(1, sizeof(token_t));
 
     if (token == NULL)
         return NULL;

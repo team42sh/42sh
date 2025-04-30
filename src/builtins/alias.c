@@ -16,8 +16,12 @@ static exitcode_t show_aliases(void)
     alias_t *aliases = get_shell()->aliases;
 
     while (aliases != NULL) {
-        my_printf("%s\t(%s)\n", aliases->original_string,
-            aliases->alias_string);
+        if (strstr(aliases->alias_string, " "))
+            my_printf("%s\t(%s)\n", aliases->original_string,
+                aliases->alias_string);
+        else
+            my_printf("%s\t%s\n", aliases->original_string,
+                aliases->alias_string);
         aliases = aliases->next;
     }
     return OK_OUTPUT;

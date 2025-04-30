@@ -18,7 +18,7 @@ static char *get_shrc_path(void)
     char *path = NULL;
 
     if (env_search("HOME") == NULL)
-        return false;
+        return NULL;
     path_len = my_strlen(env_search("HOME")) + my_strlen(file) + 1;
     path = malloc(sizeof(char) * (path_len + 1));
     if (path == NULL)
@@ -67,7 +67,7 @@ int load_myshrc(void)
 
     if (path_shrc == NULL)
         return ERROR_OUTPUT;
-    sh_fd = open(path_shrc, O_RDONLY);
+    sh_fd = open(path_shrc, O_RDONLY | O_CREAT, 0644);
     free(path_shrc);
     if (sh_fd == -1)
         return ERROR_OUTPUT;

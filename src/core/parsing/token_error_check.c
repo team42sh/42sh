@@ -20,6 +20,8 @@ static syntax_ast_error_t check_pipe(IN token_t *token)
         return NO_ERROR;
     if (!token->next || token->next->token_type == TOKEN_PIPE)
         return PIPE_NO_COMMAND;
+    if (token->next && token->next->token_type != TOKEN_COMMAND)
+        return INVALID_COMMAND;
     if (token->next->token_type == TOKEN_COMMAND && token->next->next &&
         (token->next->next->token_type == TOKEN_LEFT_REDIRECTION ||
         token->next->next->token_type == TOKEN_LEFT_APPEND))
@@ -52,19 +54,21 @@ static syntax_ast_error_t check_and_or(IN token_t *token)
  */
 static syntax_ast_error_t check_redirections(IN token_t *token)
 {
-    if (is_redirection(token->token_type) && token->data._file == NULL)
-        return REDIRECT_NO_NAME;
     if (token->token_type != TOKEN_LEFT_APPEND &&
         token->token_type != TOKEN_LEFT_REDIRECTION &&
         token->token_type != TOKEN_RIGHT_APPEND &&
         token->token_type != TOKEN_RIGHT_REDIRECTION)
         return NO_ERROR;
-    if ((token->next && token->next->token_type == TOKEN_LEFT_APPEND) ||
-        (token->next && token->next->token_type == TOKEN_LEFT_REDIRECTION) ||
-        (token->next && token->next->token_type == TOKEN_RIGHT_REDIRECTION) ||
-        (token->next && token->next->token_type == TOKEN_RIGHT_APPEND))
+    if (is_redirection(token->token_type) && token->data._file == NULL)
+        return REDIRECT_NO_NAME;
+    if (is_token_redirection_left(token) &&
+        ((token->next && token->next->token_type == TOKEN_LEFT_APPEND) ||
+        (token->next && token->next->token_type == TOKEN_LEFT_REDIRECTION)))
         return AMBIGUOUS_INPUT;
-    if (token->next && token->next->token_type != TOKEN_SEMI_COLON)
+    if (is_token_redirection_right(token) &&
+        ((token->next && token->next->token_type == TOKEN_RIGHT_APPEND) ||
+        (token->next && token->next->token_type == TOKEN_RIGHT_REDIRECTION) ||
+        (token->next && token->next->token_type == TOKEN_PIPE)))
         return AMBIGUOUS_OUTPUT;
     return NO_ERROR;
 }

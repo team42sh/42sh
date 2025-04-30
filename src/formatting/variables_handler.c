@@ -71,7 +71,7 @@ string_t *extract_vars_in_string(string_t *strings, char *input)
     int len;
     int tmp_result = 0;
 
-    if (strings == NULL || input == NULL)
+    if (input == NULL)
         return NULL;
     len = my_strlen(input);
     while (index < len) {
@@ -102,6 +102,38 @@ string_t *extract_vars_in_array(char **array)
     return head;
 }
 
+/**
+ * @brief A function to replace a variable in user input
+ *
+ * @param argv
+ * @param vars_replace
+ * @param head
+ * @return int
+ */
+static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
+    OUT string_t *head)
+{
+    char *concatenated = NULL;
+
+    if (var_search(&vars_replace->string[1]) != NULL) {
+        concatenated = concat_strarray(var_search(&vars_replace->string[1]),
+            " ");
+        *argv = my_strreplace_array(*argv, vars_replace->string,
+            concatenated);
+        free_null_check(concatenated);
+        return OK_OUTPUT;
+    }
+    if (env_search(&vars_replace->string[1]) != NULL) {
+        *argv = my_strreplace_array(*argv, vars_replace->string,
+            env_search(&vars_replace->string[1]));
+        return OK_OUTPUT;
+    }
+    my_printf("%s: Undefined variable.\n", &vars_replace->string[1]);
+    get_shell()->last_exit_code = 1;
+    free_strings(head);
+    return ERROR_OUTPUT;
+}
+
 /*
  * Replace every variables use can find in the environments.
  * If we find a $PATH then replace array the $PATH by it's value.
@@ -116,14 +148,8 @@ int replace_env_variables(char ***argv)
     vars_replace = extract_vars_in_array(*argv);
     head = vars_replace;
     while (vars_replace != NULL) {
-        if (env_search(&vars_replace->string[1]) == NULL) {
-            my_printf("%s: Undefined variable.\n", &vars_replace->string[1]);
-            get_shell()->last_exit_code = 1;
-            free_strings(head);
+        if (replace_value(argv, vars_replace, head) == ERROR_OUTPUT)
             return ERROR_OUTPUT;
-        }
-        *argv = my_strreplace_array(*argv, vars_replace->string,
-            env_search(&vars_replace->string[1]));
         vars_replace = vars_replace->next;
     }
     free_strings(head);

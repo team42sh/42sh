@@ -5,6 +5,7 @@
 ** main loop function
 */
 
+#include "core/builtins.h"
 #include "core/minishell.h"
 
 /*
@@ -23,6 +24,10 @@ const builtin_t BUILTINS[] = {
     {"alias", &alias_command},
     {"unalias", &unalias_command},
     {"echo", &echo_command},
+    {"where", &where_function},
+    {"which", &which_function},
+    {"history", &history_command},
+    {"!", &history_command},
     {NULL, NULL}
 };
 
@@ -36,11 +41,7 @@ static char *get_user_input(void)
     size_t line_size = 0;
 
     if (isatty(STDIN_FILENO)) {
-        print_shell_prompt();
-        enable_raw_mode(get_shell());
-        HIDE_CURSOR();
         get_shell()->last_input_buffer = termios_get_input();
-        SHOW_CURSOR();
         return get_shell()->last_input_buffer;
     }
     if (getline(&get_shell()->last_input_buffer, &line_size, stdin) == -1)
@@ -61,8 +62,10 @@ int shell_loop(void)
 
     if (get_user_input() == NULL)
         return exit_command(NULL);
-    if (shell->last_input_buffer[0] == '\0')
+    if (shell->last_input_buffer[0] == '\0') {
+        free(shell->last_input_buffer);
         return shell_loop();
+    }
     write_command_history(shell->last_input_buffer);
     e_ret = shell_execute(tokenize_line(shell->last_input_buffer));
     if (e_ret == CURRENTLY_CHILD || shell->should_exit)
@@ -84,10 +87,11 @@ int shell_loop(void)
 int setup_shell(void)
 {
     get_shell();
-    init_termios();
-    if (isatty(STDIN_FILENO))
+    if (isatty(STDIN_FILENO)) {
         if (load_myshrc() == CURRENTLY_CHILD)
             return CURRENTLY_CHILD;
+        init_termios();
+    }
     setup_shell_signals();
     return OK_OUTPUT;
 }

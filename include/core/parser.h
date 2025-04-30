@@ -107,6 +107,8 @@ char *get_string_until_operator(char *line);
 token_type_t get_redirect_token(char start_char, char next_char);
 token_type_t get_operator_token(char start_char, char next_char);
 bool is_redirection(token_type_t type);
+bool is_token_redirection_left(token_t *token);
+bool is_token_redirection_right(token_t *token);
 
 /*
  * AST Utils functions

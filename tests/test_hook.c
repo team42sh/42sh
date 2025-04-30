@@ -18,8 +18,10 @@ ReportHook(POST_ALL)(struct criterion_global_stats *stat)
     double success_percent;
 
     printf("\n");
-    for (struct criterion_suite_stats *suite_stat = stat->suites; i < stat->nb_suites; suite_stat = suite_stat->next) {
+    for (struct criterion_suite_stats *suite_stat = stat->suites; i < stat->nb_suites && suite_stat != NULL; suite_stat = suite_stat->next) {
+
         success_percent = -1;
+
         printf("Actual test suite is \e[1;34m%s\e[0m\n"
             "Description of this suite :\n%s",
             suite_stat->suite->name, suite_stat->suite->data->description);
@@ -36,9 +38,16 @@ ReportHook(POST_ALL)(struct criterion_global_stats *stat)
                 , suite_stat->suite->name, suite_stat->nb_tests,
                 suite_stat->tests_passed,
                 suite_stat->tests_skipped + suite_stat->tests_failed,
-                suite_stat->tests_failed - (suite_stat->tests_crashed + suite_stat->tests_skipped),
+                suite_stat->tests_failed - suite_stat->tests_crashed,
                 suite_stat->tests_crashed, suite_stat->tests_skipped,
-                suite_stat->nb_asserts, suite_stat->asserts_passed, suite_stat->asserts_failed);
+                suite_stat->asserts_passed + suite_stat->asserts_failed, suite_stat->asserts_passed, suite_stat->asserts_failed);
+
+
+            for (struct criterion_test_stats *stat_test = suite_stat->tests; stat_test; stat_test = stat_test->next) {
+                if (stat_test->test_status != CR_STATUS_PASSED)
+                    printf("Test \e[1;35m%s\e[0m of this suite failed...\n", stat_test->test->name);
+            }
+
             if (suite_stat->nb_tests != 0)
                 success_percent = ((double)(suite_stat->tests_passed) / (suite_stat->nb_tests - suite_stat->tests_skipped)) * 100;
             if (success_percent < 0 || success_percent > 100)
@@ -55,10 +64,13 @@ ReportHook(POST_ALL)(struct criterion_global_stats *stat)
             if (success_percent == 100)
                 printf("\e[32mSuccess rate of \e[1;34m%.2f%%\e[0m !\n"
                 "Tests suite find no probleme at all, well done !\e[0m\n", success_percent);
+
             float max_second = 0;
+
             for (struct criterion_test_stats *stat_test = suite_stat->tests; stat_test; stat_test = stat_test->next)
                 if (max_second < stat_test->elapsed_time)
                     max_second = stat_test->elapsed_time;
+
             printf("Suite completed in %.4f second\n\n", max_second);
         i++;
     }

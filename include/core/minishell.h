@@ -18,12 +18,15 @@
     #include <signal.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
+    #include <sys/ioctl.h>
     #include <errno.h>
     #include <fcntl.h>
     #include <sys/types.h>
     #include <dirent.h>
     #include <termios.h>
+    #include <ctype.h>
     #include <string.h>
+    #include <time.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -32,6 +35,10 @@
     #include "core/signals.h"
     #include "core/parser.h"
     #include "my_printf.h"
+
+    #ifndef _DEBUG_MODE_
+        #define _DEBUG_MODE_ 0
+    #endif /* ifndef _DEBUG_MODE_ */
 
 /*
  * Environment structure used in a linked list.
@@ -49,7 +56,7 @@ typedef struct env_node_s {
  */
 typedef struct var_node_s {
     char *_key;
-    char *_value;
+    char **_value;
     int _read_only;
     struct var_node_s *_next;
 } var_node_t;
@@ -121,6 +128,9 @@ typedef struct term_info_s {
     struct termios _original_termios;
     struct termios _current_termios;
     char _buffer[4096];
+    char _yank_buffer[4096];
+    int _cursor_start_pos[2];
+    int _cursor_pos[2];
     size_t _buffer_len;
     size_t _cursor_index;
     bool _sig_buffer_reset;
@@ -151,6 +161,17 @@ typedef struct shell_s {
     bool is_piped_shell;
     bool should_exit;
 } shell_t;
+
+
+/*
+ * Autocomplete functions
+ */
+char **fill_autocomplete(char *path);
+int is_visible_file(char *name);
+char *my_strcat_alloc(char *str1, char *str2);
+int str_in_tab(char **tab, char *str);
+int is_executable_file(char *filename);
+char **my_str_to_word_array(char *str, char delimiter);
 
 /*
  * Function used in the main
@@ -220,9 +241,21 @@ void reset_initial_env(void);
 /*
  * Local variables
  */
+void free_var_value(var_node_t *var);
 void clear_var(void);
 int is_var_readonly(var_node_t *var);
 int remove_var(char *key);
+char **var_search(char *key);
+char *concat_strarray(char **array, char *separator);
+void insert_alphabetically(var_node_t *var, var_node_t *new_var,
+    char *key);
+
+/*
+ * Path variable
+*/
+void add_path_variable(shell_variables_t *vars);
+void update_env_path(char *key, char **value);
+void update_var_path(void);
 
 /*
  * Termios helping functions
@@ -231,11 +264,32 @@ term_info_t *setup_shell_term_info(void);
 void init_termios(void);
 char *termios_get_input(void);
 void reset_buffer_termios(term_info_t *term_info);
-void print_input_termios(term_info_t *term_info, bool show_cursor);
 void enable_raw_mode(shell_t *shell);
+void get_cursor_position(int *row, int *col);
+void print_multiline_buffer(term_info_t *ti);
+size_t get_lines_amount_buffer(term_info_t *ti);
+void set_cursor_position(int y, int x);
+void move_cursor_from_position(int move, term_info_t *ti);
+void setup_new_prompt(term_info_t *ti);
+
+struct winsize get_screen_info(void);
+void print_remaining_stdin(void);
+bool has_remaining_input(void);
 
 void handle_ctrl_e(term_info_t *ti);
 void handle_ctrl_a(term_info_t *ti);
+void handle_ctrl_k(term_info_t *ti);
+void handle_ctrl_y(term_info_t *ti);
+void handle_autocomplete(term_info_t *ti);
+void modify_buffer_suggestion(term_info_t *ti, char *current_sugg,
+    char *curr_word);
+
+void handle_character(term_info_t *ti, char c);
+void handle_backspace(term_info_t *ti);
+void handle_left_arrow(term_info_t *ti);
+void handle_right_arrow(term_info_t *ti);
+void handle_history_up(term_info_t *ti);
+void handle_history_down(term_info_t *ti);
 
 /*
  * Environment transformer functions
@@ -273,11 +327,15 @@ void free_strings(string_t *head);
 void print_strings(string_t *head);
 void print_string_index(string_t *head, int index);
 char *get_string_index(string_t *head, int index);
+bool is_in_string(char c, char *string);
 
 void remove_newline(char *str);
 char **command_formatter(char **argv);
 void format_ast(ast_node_t *ast);
 
+int count_backslash(char *string, int i);
+char **handle_inhibitors_array(char **array);
+char *handle_inhibitors(char *string);
 char *handle_quotes(char *string);
 char **handle_quotes_array(char **array);
 
@@ -289,7 +347,7 @@ bool is_alpha_num(char *string);
 int len_to_first_char(char *str);
 
 int char_in_str(char *str, char c);
-int find_char_index_in_tab(IN char **tab, IN char c);
+int find_char_index_in_tab(char **tab, char c);
 
 /*
  * Files functions
@@ -359,6 +417,7 @@ int load_myshrc(void);
 int open_history_file(void);
 int write_command_history(char *command);
 int count_number_lines_history(void);
+char *get_sh_history_path(void);
 
 /*
  * Environments variables extracting formatting functions

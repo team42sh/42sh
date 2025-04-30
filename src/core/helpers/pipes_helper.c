@@ -74,7 +74,7 @@ execute_simple_stdout(ast_node_t *left_node, int pipes[2], int *pids)
             exec_built_in(argv);
         else
             exec_binary(argv);
-        return CURRENTLY_CHILD;
+        exit(ERROR_OUTPUT);
     }
     close(pipes[PIPE_WRITE]);
     return OK_OUTPUT;
@@ -107,7 +107,7 @@ execute_simple_stdin(ast_node_t *right_node, int pipes[2], int *pids)
         if (pids[RIGHT] == 0) {
             dup_fd_read_write(pipes, false);
             exec_binary(argv);
-            return CURRENTLY_CHILD;
+            exit(ERROR_OUTPUT);
         }
         close(pipes[PIPE_READ]);
     }
@@ -137,7 +137,7 @@ execute_redirection_stdout(ast_node_t *left_node, int pipes[2], int *pids)
         dup2(saved_stdout, STDOUT_FILENO);
         close(saved_stdout);
         close(pipes[PIPE_WRITE]);
-        return CURRENTLY_CHILD;
+        exit(ERROR_OUTPUT);
     }
     close(pipes[PIPE_WRITE]);
     return OK_OUTPUT;
@@ -160,7 +160,7 @@ execute_stdout_part(ast_node_t *left_node, int pipes[2], int *pids)
         if (pids[LEFT] == 0) {
             dup_fd_read_write(pipes, true);
             execute_pipes(left_node);
-            return CURRENTLY_CHILD;
+            exit(ERROR_OUTPUT);
         }
         close(pipes[PIPE_WRITE]);
         return OK_OUTPUT;
