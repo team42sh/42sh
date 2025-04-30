@@ -67,6 +67,18 @@ static exitcode_t parse_history_line(IN char *line, IN int simple)
 }
 
 /**
+ * @brief Free the lines array.
+ *
+ * @param lines The array of lines to free.
+ */
+static void free_lines_array(OUT char **lines)
+{
+    for (int i = 0; lines[i] != NULL; i++)
+        free(lines[i]);
+    free(lines);
+}
+
+/**
  * @brief Display the history file.
  *
  * @param file_path
@@ -93,6 +105,7 @@ static exitcode_t display_history(IN char *file_path,
     else
         for (int i = 0; lines[i] != NULL; i++)
             parse_history_line(lines[i], history_args->simple);
+    free_lines_array(lines);
     return OK_OUTPUT;
 }
 
