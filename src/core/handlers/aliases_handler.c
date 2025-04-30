@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
 
 /*
  * Create a node using original string, alias string for the alias.
