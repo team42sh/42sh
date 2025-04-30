@@ -181,6 +181,7 @@ void handle_autocomplete(OUT term_info_t *ti)
     if (suggestions[0] != NULL && suggestions[1] == NULL) {
         modify_buffer_suggestion(ti, suggestions[0], curr_wor);
         free_array_string(suggestions);
+        write(1, "\a", 1);
         return;
     }
     setup_suggestions(ti, suggestions, count_suggestions_elem(suggestions));

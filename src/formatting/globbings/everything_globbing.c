@@ -100,10 +100,12 @@ char **change_star_to_list_of_files(IN char **argv)
 
     if (!argv)
         return NULL;
-    globbing_index = find_char_index_in_tab(argv, '*');
-    if (globbing_index == -1)
-        return argv;
-    argv = process_globbing_pattern(argv, globbing_index);
+    for (size_t i = 0; i < array_count_string(argv); i++) {
+        globbing_index = find_char_index_in_tab(argv, '*');
+        if (globbing_index == -1)
+            return argv;
+        argv = process_globbing_pattern(argv, globbing_index);
+    }
     if (find_char_index_in_tab(argv, '*') > 0) {
         my_printf("%s: No match.\n", argv[0]);
         free_array_string(argv);
