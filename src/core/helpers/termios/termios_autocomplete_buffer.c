@@ -102,9 +102,13 @@ static void insert_suggestion(OUT term_info_t *ti, IN char *current_sugg,
         for (size_t i = 0; i < len - 1; i++)
             handle_character(ti, clean[i]);
         free(clean);
-    } else
-        for (size_t i = 0; i < len; i++)
-            handle_character(ti, current_sugg[i]);
+        return;
+    }
+    for (size_t i = 0; i < len; i++) {
+        if (current_sugg[i] == ' ')
+            handle_character(ti, '\\');
+        handle_character(ti, current_sugg[i]);
+    }
 }
 
 /**
