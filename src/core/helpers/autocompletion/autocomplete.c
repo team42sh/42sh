@@ -194,6 +194,7 @@ static char **combine_results(OUT char **result, IN char **binaries)
     if (binaries) {
         for (i = 0; binaries[i] != NULL; i++) {
             result = append_to_array(result, binaries[i]);
+            free(binaries[i]);
         }
         free(binaries);
     }
