@@ -162,6 +162,17 @@ typedef struct shell_s {
     bool should_exit;
 } shell_t;
 
+
+/*
+ * Autocomplete functions
+ */
+char **fill_autocomplete(char *path);
+int is_visible_file(char *name);
+char *my_strcat_alloc(char *str1, char *str2);
+int str_in_tab(char **tab, char *str);
+int is_executable_file(char *filename);
+char **my_str_to_word_array(char *str, char delimiter);
+
 /*
  * Function used in the main
  */
@@ -270,8 +281,11 @@ void handle_ctrl_a(term_info_t *ti);
 void handle_ctrl_k(term_info_t *ti);
 void handle_ctrl_y(term_info_t *ti);
 void handle_autocomplete(term_info_t *ti);
+void modify_buffer_suggestion(term_info_t *ti, char *current_sugg,
+    char *curr_word);
 
 void handle_character(term_info_t *ti, char c);
+void handle_backspace(term_info_t *ti);
 void handle_left_arrow(term_info_t *ti);
 void handle_right_arrow(term_info_t *ti);
 void handle_history_up(term_info_t *ti);
@@ -313,6 +327,7 @@ void free_strings(string_t *head);
 void print_strings(string_t *head);
 void print_string_index(string_t *head, int index);
 char *get_string_index(string_t *head, int index);
+bool is_in_string(char c, char *string);
 
 void remove_newline(char *str);
 char **command_formatter(char **argv);

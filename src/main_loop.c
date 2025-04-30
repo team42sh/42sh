@@ -62,8 +62,10 @@ int shell_loop(void)
 
     if (get_user_input() == NULL)
         return exit_command(NULL);
-    if (shell->last_input_buffer[0] == '\0')
+    if (shell->last_input_buffer[0] == '\0') {
+        free(shell->last_input_buffer);
         return shell_loop();
+    }
     write_command_history(shell->last_input_buffer);
     e_ret = shell_execute(tokenize_line(shell->last_input_buffer));
     if (e_ret == CURRENTLY_CHILD || shell->should_exit)

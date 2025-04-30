@@ -70,3 +70,22 @@ char *my_strdup(char const *src)
     my_strcpy(new_str, src);
     return new_str;
 }
+
+/**
+ * @brief Is the character is in a string ?
+ *
+ * @param c             The character
+ * @param string        The string
+ *
+ * @return TRUE or FALSE
+ */
+bool is_in_string(IN char c, IN char *string)
+{
+    int len = my_strlen(string);
+
+    for (int i = 0; i < len; i++) {
+        if (c == string[i])
+            return true;
+    }
+    return false;
+}

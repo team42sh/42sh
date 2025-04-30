@@ -39,35 +39,6 @@ static void debug_termios_info(IN term_info_t *ti)
 }
 
 /**
- * @brief Handles the deletion of a character using backspace.
- *        Moves the cursor one position to the left and removes the character
- *        at that position, shifting the rest of the buffer.
- *
- * @param ti            Term information structure
- */
-static void handle_backspace(OUT term_info_t *ti)
-{
-    struct winsize ws = get_screen_info();
-
-    if (ti == NULL || ti->_cursor_index <= 0)
-        return;
-    (ti->_cursor_index)--;
-    (ti->_buffer_len)--;
-    memmove(&ti->_buffer[ti->_cursor_index],
-        &ti->_buffer[ti->_cursor_index + 1],
-        ti->_buffer_len - ti->_cursor_index + 1);
-    ti->_cursor_pos[POS_X]--;
-    if (ti->_cursor_pos[POS_X] < 1) {
-        ti->_cursor_pos[POS_X] = ws.ws_col - 1;
-        ti->_cursor_pos[POS_Y]--;
-        if (ti->_cursor_pos[POS_Y] < ti->_cursor_start_pos[POS_Y]) {
-            ti->_cursor_pos[POS_Y] = ti->_cursor_start_pos[POS_Y];
-            ti->_cursor_pos[POS_X] = ti->_cursor_start_pos[POS_X];
-        }
-    }
-}
-
-/**
  * @brief Handles the escape key press in the terminal.
  *        This function is called when the escape key (`ESC`) is detected.
  *        It updates the `term_info_t` structure accordingly, potentially
@@ -155,7 +126,7 @@ static bool choose_char_case(IN char c, OUT term_info_t *ti)
 {
     if (ti == NULL)
         return false;
-    if (c == CTRL_D_VALUE) {
+    if (c == CTRL_D_VALUE || c == AUTO_COMPLETE_CHAR) {
         handle_autocomplete(ti);
         return false;
     }
@@ -172,6 +143,35 @@ static bool choose_char_case(IN char c, OUT term_info_t *ti)
     if (c != BACKSPACE_VALUE && isprint(c))
         handle_character(ti, c);
     return false;
+}
+
+/**
+ * @brief Handles the deletion of a character using backspace.
+ *        Moves the cursor one position to the left and removes the character
+ *        at that position, shifting the rest of the buffer.
+ *
+ * @param ti            Term information structure
+ */
+void handle_backspace(OUT term_info_t *ti)
+{
+    struct winsize ws = get_screen_info();
+
+    if (ti == NULL || ti->_cursor_index <= 0)
+        return;
+    (ti->_cursor_index)--;
+    (ti->_buffer_len)--;
+    memmove(&ti->_buffer[ti->_cursor_index],
+        &ti->_buffer[ti->_cursor_index + 1],
+        ti->_buffer_len - ti->_cursor_index + 1);
+    ti->_cursor_pos[POS_X]--;
+    if (ti->_cursor_pos[POS_X] < 1) {
+        ti->_cursor_pos[POS_X] = ws.ws_col - 1;
+        ti->_cursor_pos[POS_Y]--;
+        if (ti->_cursor_pos[POS_Y] < ti->_cursor_start_pos[POS_Y]) {
+            ti->_cursor_pos[POS_Y] = ti->_cursor_start_pos[POS_Y];
+            ti->_cursor_pos[POS_X] = ti->_cursor_start_pos[POS_X];
+        }
+    }
 }
 
 /**

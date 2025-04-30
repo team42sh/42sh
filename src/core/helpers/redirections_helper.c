@@ -133,7 +133,10 @@ redirect_left_append(ast_node_t *node)
     int return_value = 0;
 
     pipe(pipefd);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH,
+        &get_shell()->_term_info->_original_termios);
     write_here_document(pipefd[PIPE_WRITE], node);
+    enable_raw_mode(get_shell());
     close(pipefd[PIPE_WRITE]);
     dup2(pipefd[PIPE_READ], STDIN_FILENO);
     close(pipefd[PIPE_READ]);
