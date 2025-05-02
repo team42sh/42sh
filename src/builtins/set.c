@@ -208,6 +208,7 @@ static int add_variable(IN char **argv, IN int is_readonly)
     new_var->_value = get_new_var_value(key, argv, is_readonly);
     new_var->_read_only = is_readonly;
     insert_alphabetically(var, new_var, key);
+    update_env_path(new_var->_key, new_var->_value);
     return OK_OUTPUT;
 }
 
