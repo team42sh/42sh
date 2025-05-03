@@ -52,6 +52,7 @@ static int check_head_token(IN token_list_t *tokens)
     if (tokens != NULL && tokens->head != NULL &&
         tokens->head->token_type != TOKEN_COMMAND &&
         tokens->head->token_type != TOKEN_SEMI_COLON &&
+        tokens->head->token_type != TOKEN_AND &&
         !is_redirection(tokens->head->token_type)) {
         show_error_parsing(INVALID_COMMAND);
         free_token_list(tokens);
@@ -69,9 +70,10 @@ static int check_head_token(IN token_list_t *tokens)
  */
 static int is_valid_next_semi_colon(IN token_t *token)
 {
-    if ((token->token_type == TOKEN_SEMI_COLON && token->next != NULL &&
+    if (token->token_type == TOKEN_SEMI_COLON && token->next != NULL &&
         token->next->token_type != TOKEN_SEMI_COLON &&
-        token->next->token_type != TOKEN_COMMAND))
+        token->next->token_type != TOKEN_COMMAND &&
+        token->next->token_type != TOKEN_AND)
         return 0;
     return 1;
 }
@@ -114,6 +116,7 @@ bool find_token_error(IN token_list_t *tokens)
             break;
         if (!is_valid_next_semi_colon(token)) {
             error = INVALID_COMMAND;
+            show_error_parsing(error);
             break;
         }
     }
