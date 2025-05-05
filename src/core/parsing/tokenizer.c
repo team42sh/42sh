@@ -116,7 +116,7 @@ create_redirect_token(char *line, int *i)
         (*i) += 2;
     if (is_token_redirection_simple(token))
         (*i)++;
-    while (line[*i] && is_input_delimiter(line[*i]))
+    while (line[*i] && is_input_delimiter(line[*i], *i > 0 ? line[*i - 1] : 0))
         (*i)++;
     file_name = get_string_until_operator(&line[*i]);
     rest_of_line = my_strarray(file_name);
@@ -178,7 +178,7 @@ tokenize_line(char *line)
             add_token(list, create_operator_token(line[i], line[i + 1], &i));
             continue;
         }
-        if (is_input_delimiter(line[i])) {
+        if (is_input_delimiter(line[i], i > 0 ? line[i - 1] : 0)) {
             i++;
             continue;
         }
