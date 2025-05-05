@@ -46,5 +46,6 @@
     #define IS_LOWER(x) ((x >= 97 && x <= 122) ? 1 : 0)
     #define IS_UPPER(x) ((x >= 65 && x <= 90) ? 1 : 0)
     #define IS_ALPHA(x) ((IS_LOWER(x) || IS_UPPER(x)) ? 1 : 0)
+    #define IS_ALPHA_NUM(x) ((IS_ALPHA(x) || IS_NUMBER(x)) ? 1 : 0)
 
 #endif /* ifndef MISC_MACROS_H_ */
