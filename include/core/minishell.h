@@ -320,7 +320,7 @@ char **my_strreplace_array(char **array, char *to_replace, char *replace_str);
 char *my_strreplace_full(char *string, char *from, char *to);
 char **my_strreplace_array_full(char **array, char *to_replace, char *replace);
 char *my_strcat_list(char *dest, ...);
-int is_input_delimiter(IN char c, IN char prev_c);
+int is_input_delimiter(char c, char prev_c);
 int is_quote_delimiter(char c, char prev_c);
 string_t *add_string(string_t *head, char *string);
 void free_strings(string_t *head);
