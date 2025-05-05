@@ -60,7 +60,7 @@ exitcode_t setenv_command(char **argv)
         value = my_strdup("");
     else
         value = my_strdup(argv[2]);
-    modify_shell_vars(key, value);
     add_env(key, value);
+    modify_shell_vars(key, value);
     return OK_OUTPUT;
 }
