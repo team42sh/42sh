@@ -17,8 +17,7 @@
  *
  * @return ERROR_OUTPUT.
  */
-static int
-show_file_open_error(char *file_name)
+static int show_file_open_error(IN char *file_name)
 {
     get_shell()->last_exit_code = ERROR_OUTPUT;
     switch (errno) {
@@ -26,6 +25,8 @@ show_file_open_error(char *file_name)
             return print_err("%s: No such file or directory.\n", file_name);
         case EACCES:
             return print_err("%s: Permission denied.\n", file_name);
+        case EISDIR:
+            return print_err("%s: Is a directory.\n", file_name);
     }
     return ERROR_OUTPUT;
 }
