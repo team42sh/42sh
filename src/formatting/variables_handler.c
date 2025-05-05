@@ -195,9 +195,11 @@ static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
     free_null_check(concatenated);
     if (return_value == OK_OUTPUT) {
         *argv = my_strreplace_array(*argv, vars_replace->string, value);
+        free_null_check(value);
         free_null_check(query);
         return return_value;
     }
+    free_null_check(value);
     my_printf("%s: Undefined variable.\n", query);
     free_null_check(query);
     get_shell()->last_exit_code = 1;
