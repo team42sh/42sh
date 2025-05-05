@@ -19,17 +19,17 @@
 static void is_counted_as_new_word(IN char const *string, OUT bool *in_quotes,
     OUT int *amount, IN int *i)
 {
-    if (is_quote_delimiter(string[*i], *i > 0 ? string[*i - 1] : 0)) {
+    if (is_quote_delimiter(string[*i], *i - 1, string)) {
         *in_quotes = !(*in_quotes);
         if (*in_quotes && is_input_delimiter(*i > 0 ? string[*i - 1] : ' ',
-            *i > 1 ? string[*i - 2] : 0))
+            *i - 2, string))
             (*amount)++;
         return;
     }
     if (!(*in_quotes) && !is_input_delimiter(string[*i],
-        *i > 0 ? string[*i - 1] : 0) &&
+        *i - 1, string) &&
         (*i == 0 || is_input_delimiter(string[*i - 1],
-            *i > 1 ? string[*i - 2] : 0)))
+            *i - 2, string)))
         (*amount)++;
 }
 
@@ -68,7 +68,7 @@ static int get_word_length(IN const char *str)
     if (!str)
         return 0;
     while (str[len] && (!is_input_delimiter(str[len],
-        len > 0 ? str[len - 1] : 0) || in_quote)
+        len - 1, str) || in_quote)
     && len < MAX_WORD_LEN) {
         if (str[len] == '"')
             in_quote = !in_quote;
@@ -100,7 +100,7 @@ static char *extract_word(IN char const *src, IN int len)
 static int skip_delimiters(IN const char *str, IN int index)
 {
     while (str[index] && is_input_delimiter(str[index],
-        index > 0 ? str[index - 1] : 0))
+        index - 1, str))
         index++;
     return index;
 }
@@ -138,9 +138,10 @@ static char **populate_word_array(IN char const *str,
  * - ' '
  * - '\t'
  */
-int is_input_delimiter(IN char c, IN char prev_c)
+int is_input_delimiter(IN char c, IN int i, IN const char *str)
 {
-    return ((c == ' ' || c == '\t') && prev_c != '\\');
+    return ((c == ' ' || c == '\t') &&
+    (count_backslash((char *)str, i) % 2 == 0));
 }
 
 /*
@@ -148,9 +149,9 @@ int is_input_delimiter(IN char c, IN char prev_c)
  * closing a quote.
  * This need to be placed without a \ in the previous character.
  */
-int is_quote_delimiter(IN char c, IN char prev_c)
+int is_quote_delimiter(IN char c, IN int i, IN const char *str)
 {
-    return (c == '"' && prev_c != '\\');
+    return (c == '"' && (count_backslash((char *)str, i) % 2 == 0));
 }
 
 /*

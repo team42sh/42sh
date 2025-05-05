@@ -41,7 +41,7 @@ get_string_until_operator(char *line)
     if (line == NULL)
         return NULL;
     while (line[len] != '\0') {
-        if (is_quote_delimiter(line[len], len > 0 ? line[len - 1] : 0))
+        if (is_quote_delimiter(line[len], len - 1, line))
             in_quotes = !in_quotes;
         if (is_operator(line[len]) && in_quotes == 0)
             break;
