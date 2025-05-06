@@ -22,7 +22,8 @@ static char *get_var_name(char *string)
         return NULL;
     if (string[0] == '$')
         string++;
-    while (string[index] != '\0' && !is_input_delimiter(string[index])
+    while (string[index] != '\0' && !is_input_delimiter(string[index],
+        index - 1, string)
         && string[index] != '$')
         index++;
     if (index == 0)
@@ -47,7 +48,8 @@ static int extract_var(char *input, int *index, string_t **strings)
     char *tmp = NULL;
 
     if (input[*index] == '$' && input[*index + 1] != '\0'
-        && !is_input_delimiter(input[*index + 1])) {
+        && !is_input_delimiter(input[*index + 1],
+            *index, input)) {
         tmp = get_var_name(&input[*index]);
         if (tmp == NULL) {
             free_strings(*strings);
