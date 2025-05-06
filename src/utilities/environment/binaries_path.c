@@ -47,6 +47,23 @@ static char *find_binary_in_paths(IN char *path_var, IN char *command)
     return result;
 }
 
+/**
+ * @brief A function to count the slashes in a path to not execute
+ *
+ * @param path
+ * @return int
+ */
+static int count_slash_in_command(IN char *command)
+{
+    int count = 0;
+
+    for (int i = 0; command[i] != '\0'; i++) {
+        if (command[i] == '/')
+            count++;
+    }
+    return count;
+}
+
 /*
  * First check if it's a relative path or absolute path.
  * Starting with : '/' or '.'
@@ -54,12 +71,13 @@ static char *find_binary_in_paths(IN char *path_var, IN char *command)
  */
 char *get_binary_path(IN char *command)
 {
-    char *path = concat_strarray(var_search("path"), ":");
+    char *path;
 
-    if (command != NULL && access(command, X_OK) == 0) {
-        free_null_check(path);
+    if (count_slash_in_command(command) > 0)
+        return NULL;
+    path = concat_strarray(var_search("path"), ":");
+    if (command != NULL && access(command, X_OK) == 0)
         return my_strdup(command);
-    }
     if (!path)
         return NULL;
     return find_binary_in_paths(path, command);
