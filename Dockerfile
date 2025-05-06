@@ -13,7 +13,8 @@ WORKDIR /build
 
 COPY . .
 
-RUN make -j
+RUN ./scripts/build/1-prepare-docker.sh
+RUN ./scripts/build/2-build.sh
 
 # -------- Stage 2: Final Image ------------
 FROM ubuntu:22.04

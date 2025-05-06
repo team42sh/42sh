@@ -37,7 +37,15 @@ SRCS_NO_MAIN := $(shell find src -name "*.c" ! -name "main.c")
 TEST_TARGET = unit_tests
 COV_CFLAGS = --coverage
 
-all: $(TARGET)
+all: prepare_then_target
+skip_preprare_build: $(TARGET)
+
+prepare_build:
+	@echo "$(PREIX)$(BLUE)Preparing build$(RESET)"
+	@./scripts/build/1-prepare-dev.sh
+
+prepare_then_target: prepare_build
+	$(MAKE) $(TARGET)
 
 $(TARGET): $(OBJS)
 	@make -C lib/my_printf --no-print-directory
