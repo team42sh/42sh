@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
 
 /**
  * @brief Print a single suggestion with his padding.
