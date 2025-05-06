@@ -169,7 +169,7 @@ static int replace_var_or_env(IN char *query, OUT char **value)
         return_value = OK_OUTPUT;
     }
     if (env_search(query) != NULL) {
-        *value = env_search(query);
+        *value = my_strdup(env_search(query));
         return_value = OK_OUTPUT;
     }
     return return_value;
