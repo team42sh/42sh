@@ -56,8 +56,7 @@ char *get_binary_path(IN char *command)
 {
     char *path = concat_strarray(var_search("path"), ":");
 
-    if (command && (command[0] == '.' || command[0] == '/') &&
-        access(command, X_OK) == 0)
+    if (command != NULL && access(command, X_OK) == 0)
         return my_strdup(command);
     if (!path)
         return NULL;
