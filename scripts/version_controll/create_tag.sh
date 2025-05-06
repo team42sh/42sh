@@ -18,7 +18,7 @@ git checkout -b "$TEMP_BRANCH"
 
 # Create .version
 echo "$TAG" > .version
-git add .version
+git add -f .version
 git commit -m "Add .version for $TAG"
 
 # Tag it
