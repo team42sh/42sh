@@ -321,7 +321,7 @@ char *my_strreplace_full(char *string, char *from, char *to);
 char **my_strreplace_array_full(char **array, char *to_replace, char *replace);
 char *my_strcat_list(char *dest, ...);
 int is_input_delimiter(char c, int i, const char *str);
-int is_quote_delimiter(IN char c, IN int i, IN const char *str);
+int is_quote_delimiter(char c, int i, const char *str);
 string_t *add_string(string_t *head, char *string);
 void free_strings(string_t *head);
 void print_strings(string_t *head);
