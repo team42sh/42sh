@@ -283,6 +283,7 @@ void handle_ctrl_y(term_info_t *ti);
 void handle_autocomplete(term_info_t *ti);
 void modify_buffer_suggestion(term_info_t *ti, char *current_sugg,
     char *curr_word);
+void modify_buffer_single(term_info_t *ti, char *current_sugg);
 
 void handle_character(term_info_t *ti, char c);
 void handle_backspace(term_info_t *ti);

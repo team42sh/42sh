@@ -111,6 +111,15 @@ static void insert_suggestion(OUT term_info_t *ti, IN char *current_sugg,
     }
 }
 
+void modify_buffer_single(IN term_info_t *ti, IN char *current_sugg)
+{
+    int len = my_strlen(current_sugg);
+
+    for (int i = 0; i < len; i++) {
+        handle_character(ti, current_sugg[i]);
+    }
+}
+
 /**
  * @brief Modify the buffer by replacing the current word with the
  *        selected suggestion.

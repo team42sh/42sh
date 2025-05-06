@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /**
  * @brief Print a single suggestion with his padding.
@@ -171,20 +172,23 @@ static int count_suggestions_elem(IN char **suggestions)
  */
 void handle_autocomplete(OUT term_info_t *ti)
 {
-    char *curr_wor = get_word_until_chars(ti, "; ");
-    char **suggestions = fill_autocomplete(curr_wor);
+    char *curr_word = get_word_until_chars(ti, "; ");
+    char **suggestions = fill_autocomplete(curr_word);
 
     if (ti == NULL || suggestions == NULL) {
-        free(curr_wor);
+        free(curr_word);
         return;
     }
     if (suggestions[0] != NULL && suggestions[1] == NULL) {
-        modify_buffer_suggestion(ti, suggestions[0], curr_wor);
+        if (curr_word == NULL || curr_word[0] == '\0')
+            modify_buffer_single(ti, suggestions[0]);
+        else
+            modify_buffer_suggestion(ti, suggestions[0], curr_word);
         free_array_string(suggestions);
         write(1, "\a", 1);
         return;
     }
     setup_suggestions(ti, suggestions, count_suggestions_elem(suggestions));
     free_array_string(suggestions);
-    free(curr_wor);
+    free(curr_word);
 }
