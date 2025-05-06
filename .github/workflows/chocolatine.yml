@@ -9,8 +9,6 @@ on:
     - "ga-ignore-*"
 
 env:
-  MIRROR_REPO: "EpitechPGEPromo2029/B-PSU-200-MLH-2-1-42sh-antoine.malgat"
-  MIRROR_URL: "git@github.com:EpitechPGEPromo2029/B-PSU-200-MLH-2-1-42sh-antoine.malgat.git"
   EXECUTABLES: "42sh"
 
 # Block concurent runs (Example, quick pushes)
@@ -123,20 +121,3 @@ jobs:
           else
             echo "::notice title=Good Coverage::Branch coverage is ${BRANCH_COV}%"
           fi
-
-  push_to_mirror:
-    if: ${{ !contains(github.repository, 'EpitechPGEPromo2029/B-PSU-200-MLH-2-1-42sh-antoine.malgat') && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
-    needs: [run_tests]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url:
-            ${{ env.MIRROR_URL }}
-          ssh_private_key:
-            ${{ secrets.GIT_SSH_PRIVATE_KEY }}

@@ -1,8 +1,9 @@
 name: Release Create & Build
+
 on:
   push:
     tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v*'
 
 jobs:
   create-release:
@@ -49,10 +50,13 @@ jobs:
           apt-get update
           apt-get install -y build-essential
 
+      - name: Prepare for build
+        run: ./scripts/build/1-prepare-release.sh
+
       - name: Build
         run: |
           echo "Building for ${{ matrix.distro }} ${{ matrix.version }}"
-          make -j
+          ./scripts/build/2-build.sh
 
       - name: Rename Build Output
         run: |
@@ -74,10 +78,13 @@ jobs:
         run: |
           brew install make
 
+      - name: Prepare for build
+        run: ./scripts/build/1-prepare-release.sh
+
       - name: Build
         run: |
           echo "Building for macOS ARM64"
-          make -j
+          ./scripts/build/2-build.sh
 
       - name: Rename Build Output
         run: |
@@ -99,10 +106,13 @@ jobs:
         run: |
           brew install make
 
+      - name: Prepare for build
+        run: ./scripts/build/1-prepare-release.sh
+
       - name: Build
         run: |
           echo "Building for macOS x86_64"
-          make -j
+          ./scripts/build/2-build.sh
 
       - name: Rename Build Output
         run: |
