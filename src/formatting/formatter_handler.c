@@ -57,9 +57,9 @@ char **command_formatter(char **argv)
 {
     if (argv == NULL)
         return NULL;
-    if (handle_inhibitors_array(argv) == NULL ||
-        replace_variables(&argv) == ERROR_OUTPUT ||
-        handle_quotes_array(argv) == NULL) {
+    if (replace_variables(&argv) == ERROR_OUTPUT ||
+        handle_quotes_array(argv) == NULL ||
+        handle_inhibitors_array(argv) == NULL) {
         free_array_string(argv);
         return NULL;
     }
