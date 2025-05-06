@@ -78,7 +78,6 @@ char *get_binary_path(IN char *command)
     path = concat_strarray(var_search("path"), ":");
     if (command != NULL && access(command, X_OK) == 0)
         return my_strdup(command);
-    }
     if (!path)
         return NULL;
     return find_binary_in_paths(path, command);
