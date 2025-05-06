@@ -53,7 +53,7 @@ static char *find_binary_in_paths(IN char *path_var, IN char *command)
  * @param path
  * @return int
  */
-static int count_slash_in_command(char *command)
+static int count_slash_in_command(IN char *command)
 {
     int count = 0;
 
