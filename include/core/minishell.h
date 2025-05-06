@@ -283,6 +283,7 @@ void handle_ctrl_y(term_info_t *ti);
 void handle_autocomplete(term_info_t *ti);
 void modify_buffer_suggestion(term_info_t *ti, char *current_sugg,
     char *curr_word);
+void modify_buffer_single(term_info_t *ti, char *current_sugg);
 
 void handle_character(term_info_t *ti, char c);
 void handle_backspace(term_info_t *ti);
@@ -320,8 +321,8 @@ char **my_strreplace_array(char **array, char *to_replace, char *replace_str);
 char *my_strreplace_full(char *string, char *from, char *to);
 char **my_strreplace_array_full(char **array, char *to_replace, char *replace);
 char *my_strcat_list(char *dest, ...);
-int is_input_delimiter(char c);
-int is_quote_delimiter(char c, char prev_c);
+int is_input_delimiter(char c, int i, const char *str);
+int is_quote_delimiter(char c, int i, const char *str);
 string_t *add_string(string_t *head, char *string);
 void free_strings(string_t *head);
 void print_strings(string_t *head);

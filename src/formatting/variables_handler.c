@@ -8,10 +8,34 @@
 #include "core/minishell.h"
 #include "core/types.h"
 
+/**
+ * @brief A function to get the variable name between brackets
+ *
+ * @param string
+ * @return char*
+ */
+static char *get_var_name_brackets(IN char *string)
+{
+    char *value = NULL;
+    int len = 0;
+
+    for (; string[len + 1] != '\0' && string[len + 1] != '}'; len++);
+    if (string[len + 1] != '}') {
+        print_err("Missing '}'.\n");
+        return NULL;
+    }
+    value = malloc(sizeof(char) * (len + 4));
+    value[0] = '$';
+    value[1] = '{';
+    for (int i = 2; i < len + 2; i++)
+        value[i] = string[i - 1];
+    value[len + 2] = '}';
+    value[len + 3] = '\0';
+    return value;
+}
+
 /*
  * Extract the content after the $
- *
- * TODO: Extract when brackets.
  */
 static char *get_var_name(char *string)
 {
@@ -22,7 +46,8 @@ static char *get_var_name(char *string)
         return NULL;
     if (string[0] == '$')
         string++;
-    while (string[index] != '\0' && !is_input_delimiter(string[index])
+    while (string[index] != '\0' && (IS_ALPHA_NUM(string[index]) ||
+        string[index] == '_' || string[index] == '{' || string[index] == '}')
         && string[index] != '$')
         index++;
     if (index == 0)
@@ -47,8 +72,13 @@ static int extract_var(char *input, int *index, string_t **strings)
     char *tmp = NULL;
 
     if (input[*index] == '$' && input[*index + 1] != '\0'
-        && !is_input_delimiter(input[*index + 1])) {
-        tmp = get_var_name(&input[*index]);
+        && (IS_ALPHA(input[*index + 1]) || IS_NUMBER(input[*index + 1]) ||
+        input[*index + 1] == '_' || input[*index + 1] == '{' ||
+        input[*index + 1] == '}')) {
+        if (input[*index + 1] == '{')
+            tmp = get_var_name_brackets(&input[*index + 1]);
+        else
+            tmp = get_var_name(&input[*index]);
         if (tmp == NULL) {
             free_strings(*strings);
             return 2;
@@ -103,6 +133,49 @@ string_t *extract_vars_in_array(char **array)
 }
 
 /**
+ * @brief Get the query objectA function to
+ * get the name of the variable to replace
+ *
+ * @param var_string
+ * @return char*
+ */
+static char *get_query(IN char *var_string)
+{
+    char *query;
+
+    if (var_string[0] == '$' && var_string[1] != '{')
+        query = my_strdup(&var_string[1]);
+    if (var_string[0] == '$' && var_string[1] == '{') {
+        query = my_strdup(&var_string[2]);
+        query[my_strlen(query) - 1] = '\0';
+    }
+    return query;
+}
+
+/**
+ * @brief A function to replace a local or environment variable in the argv
+ *
+ * @param query The name of the variable to replace
+ * @param value The value to replace it with
+ * @return int
+ */
+static int replace_var_or_env(IN char *query, OUT char **value)
+{
+    int return_value = ERROR_OUTPUT;
+
+    if (var_search(query) != NULL) {
+        *value = concat_strarray(var_search(query),
+            " ");
+        return_value = OK_OUTPUT;
+    }
+    if (env_search(query) != NULL) {
+        *value = my_strdup(env_search(query));
+        return_value = OK_OUTPUT;
+    }
+    return return_value;
+}
+
+/**
  * @brief A function to replace a variable in user input
  *
  * @param argv
@@ -113,25 +186,25 @@ string_t *extract_vars_in_array(char **array)
 static int replace_value(OUT char ***argv, OUT string_t *vars_replace,
     OUT string_t *head)
 {
+    int return_value = ERROR_OUTPUT;
+    char *query = get_query(vars_replace->string);
+    char *value = NULL;
     char *concatenated = NULL;
 
-    if (var_search(&vars_replace->string[1]) != NULL) {
-        concatenated = concat_strarray(var_search(&vars_replace->string[1]),
-            " ");
-        *argv = my_strreplace_array(*argv, vars_replace->string,
-            concatenated);
-        free_null_check(concatenated);
-        return OK_OUTPUT;
+    return_value = replace_var_or_env(query, &value);
+    free_null_check(concatenated);
+    if (return_value == OK_OUTPUT) {
+        *argv = my_strreplace_array(*argv, vars_replace->string, value);
+        free_null_check(value);
+        free_null_check(query);
+        return return_value;
     }
-    if (env_search(&vars_replace->string[1]) != NULL) {
-        *argv = my_strreplace_array(*argv, vars_replace->string,
-            env_search(&vars_replace->string[1]));
-        return OK_OUTPUT;
-    }
-    my_printf("%s: Undefined variable.\n", &vars_replace->string[1]);
+    free_null_check(value);
+    my_printf("%s: Undefined variable.\n", query);
+    free_null_check(query);
     get_shell()->last_exit_code = 1;
     free_strings(head);
-    return ERROR_OUTPUT;
+    return return_value;
 }
 
 /*

@@ -1,0 +1,124 @@
+name: Release Create & Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    if: ${{ !contains(github.repository, 'EpitechPGEPromo2029/B-PSU-200-MLH-2-1-42sh-antoine.malgat') }}
+    runs-on: ubuntu-latest
+    name: Create Release
+    steps:
+      - name: Create GitHub Release
+        id: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: true
+          generate_release_notes: true
+          body: |
+            Files included in this release are:
+            * `42sh.$DISTRO.$DISTROVERSION.$ARCH` for Linux builds e.g. `42sh.debian.11.x86_64` for Debian 11 (x86_64)
+            * `42sh.macos.$ARCH` for macOS builds e.g. `42sh.macos.arm64` for arm (Apple Silicon)
+
+  x86_64-matrix:
+    runs-on: ubuntu-22.04
+    needs: create-release
+    strategy:
+      matrix:
+        include:
+          - distro: debian
+            version: 11
+          - distro: debian
+            version: 12
+          - distro: ubuntu
+            version: 22.04
+          - distro: ubuntu
+            version: 24.04
+    container:
+      image: ${{ matrix.distro }}:${{ matrix.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          apt-get update
+          apt-get install -y build-essential
+
+      - name: Prepare for build
+        run: ./scripts/build/1-prepare-release.sh
+
+      - name: Build
+        run: |
+          echo "Building for ${{ matrix.distro }} ${{ matrix.version }}"
+          ./scripts/build/2-build.sh
+
+      - name: Rename Build Output
+        run: |
+          mv ./42sh ./42sh.${{ matrix.distro }}.${{ matrix.version }}.x86_64
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./42sh.${{ matrix.distro }}.${{ matrix.version }}.x86_64
+
+  macos-arm64-build:
+    runs-on: macos-latest  # macOS latest runs on Apple Silicon by default
+    needs: create-release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          brew install make
+
+      - name: Prepare for build
+        run: ./scripts/build/1-prepare-release.sh
+
+      - name: Build
+        run: |
+          echo "Building for macOS ARM64"
+          ./scripts/build/2-build.sh
+
+      - name: Rename Build Output
+        run: |
+          mv ./42sh ./42sh.macos.arm64
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./42sh.macos.arm64
+
+  macos-x86_64-build:
+    runs-on: macos-13  # macOS 13 runs on Apple x86_64 by default
+    needs: create-release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          brew install make
+
+      - name: Prepare for build
+        run: ./scripts/build/1-prepare-release.sh
+
+      - name: Build
+        run: |
+          echo "Building for macOS x86_64"
+          ./scripts/build/2-build.sh
+
+      - name: Rename Build Output
+        run: |
+          mv ./42sh ./42sh.macos.x86_64
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./42sh.macos.x86_64

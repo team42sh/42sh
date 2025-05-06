@@ -14,8 +14,7 @@
  * @param asts                  ASTs
  * @param list                  The token list
  */
-static void
-free_tokens_ast(ast_command_t *asts, token_list_t *list)
+static void free_tokens_ast(OUT ast_command_t *asts, OUT token_list_t *list)
 {
     if (asts != NULL)
         free_asts(asts);
@@ -31,7 +30,8 @@ free_tokens_ast(ast_command_t *asts, token_list_t *list)
  *
  * @return The final exit code of all ASTs. The last command.
  */
-static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
+static exitcode_t execute_each_ast(OUT ast_command_t *asts,
+    OUT token_list_t *list)
 {
     exitcode_t exec_command_return = 0;
 
@@ -55,8 +55,7 @@ static exitcode_t execute_each_ast(ast_command_t *asts, token_list_t *list)
  *
  * @return The final exitcode.
  */
-exitcode_t
-execute_ast_node(ast_node_t *node)
+exitcode_t execute_ast_node(IN ast_node_t *node)
 {
     if (node == NULL)
         return ERROR_OUTPUT;
@@ -86,8 +85,7 @@ execute_ast_node(ast_node_t *node)
  *
  * @param argv   The ARGV
  */
-exitcode_t
-exec_binary(char **argv)
+exitcode_t exec_binary(IN char **argv)
 {
     char *path;
     char **env_array_child;
@@ -96,7 +94,7 @@ exec_binary(char **argv)
         return CURRENTLY_CHILD;
     path = get_binary_path(argv[0]);
     if (path == NULL)
-        path = my_strdup(argv[0]);
+        exit(print_err("%s: Command not found.\n", argv[0]));
     env_array_child = env_node_to_array(get_shell()->env);
     execve(path, argv, env_array_child);
     show_error_execve(errno, argv);
@@ -113,8 +111,7 @@ exec_binary(char **argv)
  *
  * @return The exit code of the builtin.
  */
-exitcode_t
-exec_built_in(char **argv)
+exitcode_t exec_built_in(IN char **argv)
 {
     int builtin_i = 0;
 
@@ -137,8 +134,7 @@ exec_built_in(char **argv)
  *
  * @return The exit code resulted by the last command executed.
  */
-exitcode_t
-shell_execute(token_list_t *list_tokens)
+exitcode_t shell_execute(OUT token_list_t *list_tokens)
 {
     ast_command_t *asts = NULL;
 
