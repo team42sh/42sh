@@ -111,6 +111,12 @@ static void insert_suggestion(OUT term_info_t *ti, IN char *current_sugg,
     }
 }
 
+/**
+ * @brief A function to modify a single buffer
+ *
+ * @param ti
+ * @param current_sugg
+ */
 void modify_buffer_single(IN term_info_t *ti, IN char *current_sugg)
 {
     int len = my_strlen(current_sugg);
