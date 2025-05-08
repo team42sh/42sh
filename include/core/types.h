@@ -44,6 +44,9 @@
     #define COMMENT_CHAR '#'
     #define NOT_INHIBITED "\"*|<>()=[]"
 
+    #define REGEX_SPECIAL_CHARS "./^$+()[]{}"
+    #define GLOBBING_CHARS "*?"
+
 /*
  * Types used in the shell to facilitize the comprenssion of the code.
  */

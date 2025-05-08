@@ -27,6 +27,7 @@
     #include <ctype.h>
     #include <string.h>
     #include <time.h>
+    #include <regex.h>
 
     #include "builtins.h"
     #include "macros/math_macros.h"
@@ -162,6 +163,54 @@ typedef struct shell_s {
     bool should_exit;
 } shell_t;
 
+/*
+ * Structure to hold globbing process state
+ */
+typedef struct glob_state {
+    char **result;
+    int result_index;
+    int argc;
+    char **argv;
+} glob_state_t;
+
+/*
+ * Structure for directory processing state
+ */
+typedef struct dir_process_state {
+    char *base_dir;
+    char **args;
+    int index;
+    char **matches;
+    int *match_count;
+    int *capacity;
+} dir_process_state_t;
+
+/*
+ * regex_globbing
+ */
+char **regex_globbing(char **argv);
+char *pattern_to_regex(char *pattern);
+int has_globbing_chars(char *str);
+char *create_path(char *base_dir, char *component);
+char **split_path(char *path);
+char *get_dir_path(char *path);
+int dir_exists(char *path);
+int is_valid_directory(char *path);
+char *init_regex(char *pattern, regex_t *regex_ptr);
+char **init_matches(void);
+int should_skip_entry(struct dirent *entry, char *regex_pattern);
+void process_with_next(dir_process_state_t *state, char *new_path);
+void process_match(dir_process_state_t *state, struct dirent *entry);
+char **process_dir_entries(DIR *dir, char *regex_pattern, regex_t *regex,
+    dir_process_state_t *state);
+void add_to_matches(dir_process_state_t *state, char *new_path);
+void add_submatches(dir_process_state_t *state, char **sub_matches);
+char **expand_pattern_recursive(char *base_dir, char **components, int index);
+char **process_glob_matches(glob_state_t *state, char **matches);
+char **handle_no_matches(glob_state_t *state, char **matches, int i);
+void sort_paths(char **paths);
+char **reallocate_result_array(glob_state_t *state, char **matches,
+    int new_size);
 
 /*
  * Autocomplete functions
