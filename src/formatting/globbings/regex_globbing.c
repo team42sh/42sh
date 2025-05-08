@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdlib.h>
 
 /**
  * @brief Create terminal result (when no more args)
@@ -208,7 +209,6 @@ char **process_argument(OUT glob_state_t *state, IN int i)
 char **process_globbing(IN char **argv)
 {
     glob_state_t state;
-    int i = 0;
 
     state.result_index = 0;
     state.argv = argv;
@@ -218,11 +218,11 @@ char **process_globbing(IN char **argv)
     state.result = malloc(sizeof(char *) * (state.argc + 1));
     if (!state.result)
         return NULL;
-    while (i < state.argc) {
-        state.result = process_argument(&state, i);
-        if (!state.result)
+    for (int i = 0; i < state.argc; i++) {
+        if (!process_argument(&state, i)) {
+            free_array_string(state.result);
             return NULL;
-        i++;
+        }
     }
     state.result[state.result_index] = NULL;
     return state.result;
@@ -241,5 +241,6 @@ char **regex_globbing(IN char **argv)
     if (!argv || !argv[0])
         return NULL;
     result = process_globbing(argv);
+    free_array_string(argv);
     return result;
 }

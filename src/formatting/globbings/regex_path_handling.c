@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdlib.h>
 
 /**
  * @brief Counts the number of arguments in a path
@@ -39,9 +40,11 @@ static int tokenize_path(IN char **args, IN char *path_copy)
     char *token = NULL;
     int i = 0;
 
-    token = my_strtok(path_copy, '/');
+    if (path_copy)
+        token = my_strtok(path_copy, '/');
     while (token != NULL) {
         args[i] = my_strdup(token);
+        free(token);
         token = my_strtok(NULL, '/');
         i++;
     }
@@ -69,7 +72,7 @@ char **split_path(IN char *path)
         return NULL;
     path_copy = my_strdup(path);
     if (!path_copy) {
-        free(args);
+        free_array_string(args);
         return NULL;
     }
     tokenize_path(args, path_copy);
