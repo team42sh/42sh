@@ -25,8 +25,8 @@ char *get_latest_release(void)
         return strdup("UNKWN");
     if (fgets(buffer, sizeof(buffer), fp) != NULL) {
         len = strlen(buffer);
-        if (len > 0 && buffer[len-1] == '\n')
-            buffer[len-1] = '\0';
+        if (len > 0 && buffer[len - 1] == '\n')
+            buffer[len - 1] = '\0';
         version = strdup(buffer);
     } else
         version = strdup("UNKWN");
@@ -62,10 +62,10 @@ int compare_versions(char *version1, char *version2)
     sscanf(version1, "v%d.%d.%d", &major1, &minor1, &patch1);
     sscanf(version2, "v%d.%d.%d", &major2, &minor2, &patch2);
     if (major1 != major2)
-        return (major1 > major2) ? 1 : -1;
+        return (major1 > major2) ? 1 : 2;
     if (minor1 != minor2)
-        return (minor1 > minor2) ? 1 : -1;
+        return (minor1 > minor2) ? 1 : 2;
     if (patch1 != patch2)
-        return (patch1 > patch2) ? 1 : -1;
+        return (patch1 > patch2) ? 1 : 2;
     return 0;
 }

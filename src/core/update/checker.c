@@ -18,7 +18,7 @@ void check_for_updates(void)
         fprintf(stderr, "Failed to fetch the latest version information.\n");
         return;
     }
-    if (compare_versions(VERSION, latest_version) == 1) {
+    if (compare_versions(VERSION, latest_version) == 2) {
         printf("A new version of 42sh is available: %s\n", latest_version);
     } else {
         printf("You are using the latest version of 42sh: %s\n", current_ver);
