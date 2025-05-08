@@ -55,6 +55,19 @@ int char_in_str(IN char *str, IN char c)
 }
 
 /**
+ * @brief Function to remove exeeding ./ of path
+ *
+ * @param path Path to remove ./ from
+ * @return char* New string without ./
+ */
+char *remove_dot_slash(char *path)
+{
+    if (path && path[0] == '.' && path[1] == '/')
+        return my_strdup(path + 2);
+    return my_strdup(path);
+}
+
+/**
  * @brief Reallocate result array when needed for globbing expansion
  *
  * @param state Globbing state information

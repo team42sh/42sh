@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include <stdlib.h>
 
 /**
  * @brief Resize matches array if needed
@@ -109,9 +110,16 @@ char **process_glob_matches(OUT glob_state_t *state, IN char **matches)
  */
 char **handle_no_matches(OUT glob_state_t *state, IN char **matches, IN int i)
 {
-    if (i == 0 || my_strcmp(state->argv[0], "ls") == 0) {
+    if (!state && !matches)
+        return NULL;
+    if (matches && !state) {
+        free_array_string(matches);
+        return NULL;
+    }
+    if (i == 0 && state) {
         my_printf("%s: No match.\n", state->argv[0]);
-        free_array_string(state->result);
+        if (state != NULL && state->result != NULL)
+            free_array_string(state->result);
         if (matches)
             free(matches);
         return NULL;

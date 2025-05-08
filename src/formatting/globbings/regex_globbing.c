@@ -218,6 +218,8 @@ char **process_globbing(IN char **argv)
     state.result = malloc(sizeof(char *) * (state.argc + 1));
     if (!state.result)
         return NULL;
+    for (int i = 0; i <= state.argc; i++)
+        state.result[i] = NULL;
     for (int i = 0; i < state.argc; i++) {
         if (!process_argument(&state, i)) {
             free_array_string(state.result);
@@ -237,10 +239,16 @@ char **process_globbing(IN char **argv)
 char **regex_globbing(IN char **argv)
 {
     char **result = NULL;
+    char *new_path = NULL;
 
     if (!argv || !argv[0])
         return NULL;
     result = process_globbing(argv);
+    for (int i = 0; result && result[i]; i++) {
+        new_path = remove_dot_slash(result[i]);
+        free(result[i]);
+        result[i] = new_path;
+    }
     free_array_string(argv);
     return result;
 }

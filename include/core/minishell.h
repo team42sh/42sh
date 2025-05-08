@@ -277,6 +277,7 @@ int starts_with(char *str, char *prefix, int prefix_len);
 int ends_with(char *str, char *suffix, int str_len, int suffix_len);
 char **replace_globbing_with_matches(char **argv, int globbing_index,
     char **matches);
+char *remove_dot_slash(char *path);
 
 /*
  * Environment handling functions
