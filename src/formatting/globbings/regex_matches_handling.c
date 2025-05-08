@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include <stdlib.h>
 
 /**
  * @brief Resize matches array if needed

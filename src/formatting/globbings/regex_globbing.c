@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include <stdlib.h>
 
 /**
  * @brief Create terminal result (when no more args)

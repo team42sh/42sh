@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include <stdlib.h>
 
 /**
  * @brief Counts the number of arguments in a path
