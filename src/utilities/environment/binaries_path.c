@@ -73,7 +73,7 @@ char *get_binary_path(IN char *command)
 {
     char *path;
 
-    if (count_slash_in_command(command) > 0)
+    if (command != NULL && count_slash_in_command(command) > 0)
         return NULL;
     path = concat_strarray(var_search("path"), ":");
     if (command != NULL && access(command, X_OK) == 0)
