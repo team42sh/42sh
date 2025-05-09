@@ -17,7 +17,7 @@
  */
 static char *download_version(IN char *version)
 {
-    char local_path[512];
+    char local_path[256];
     char download_url[512];
     char download_cmd[1024];
     int cmd_ret = 0;
