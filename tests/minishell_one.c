@@ -33,7 +33,7 @@ TestSuite(minishell_one, .description="\e[32mThis test suite goal is to do the s
 
 Test(minishell_one, empty_input)
 {
-    const char *input = "";
+    const char input[] = "";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -50,7 +50,7 @@ Test(minishell_one, empty_input)
 
 Test(minishell_one, simple_ls)
 {
-    const char *input = "cd .github\nls";
+    const char input[] = "cd .github\nls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -67,7 +67,7 @@ Test(minishell_one, simple_ls)
 
 Test(minishell_one, command_with_tabs)
 {
-    const char *input = "\t\t\t\tcd\t\t\t\t.github\t\t\t\t\n\t\t\tls\t\t\t\t";
+    const char input[] = "\t\t\t\tcd\t\t\t\t.github\t\t\t\t\n\t\t\tls\t\t\t\t";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -84,7 +84,7 @@ Test(minishell_one, command_with_tabs)
 
 Test(minishell_one, command_with_space)
 {
-    const char *input = "                           cd                .github                      \n                            ls                                ";
+    const char input[] = "                           cd                .github                      \n                            ls                                ";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -101,7 +101,7 @@ Test(minishell_one, command_with_space)
 
 Test(minishell_one, command_tabs_and_space)
 {
-    const char *input = "\t\t\t     \t    \tcd  \t\t\t     \t.github    \t \t \t\n            \t\t\tls  \t\t     \t\t  \t \t     ";
+    const char input[] = "\t\t\t     \t    \tcd  \t\t\t     \t.github    \t \t \t\n            \t\t\tls  \t\t     \t\t  \t \t     ";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -118,7 +118,7 @@ Test(minishell_one, command_tabs_and_space)
 
 Test(minishell_one, command_with_newline)
 {
-    const char *input = "\n    \n\t\n\n\n\n\n\t\ncd .github\n\t\t\nls\n\n";
+    const char input[] = "\n    \n\t\n\n\n\n\n\t\ncd .github\n\t\t\nls\n\n";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -135,7 +135,7 @@ Test(minishell_one, command_with_newline)
 
 Test(minishell_one, wrong_command)
 {
-    const char *input = "aaaa\nbbbb";
+    const char input[] = "aaaa\nbbbb";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -152,7 +152,7 @@ Test(minishell_one, wrong_command)
 
 Test(minishell_one, wrong_builtin)
 {
-    const char *input = "cd oo\nenv";
+    const char input[] = "cd oo\nenv";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -169,7 +169,7 @@ Test(minishell_one, wrong_builtin)
 
 Test(minishell_one, wrong_command_with_builtin)
 {
-    const char *input = "aaaaaa\ncd oo\nenv";
+    const char input[] = "aaaaaa\ncd oo\nenv";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -186,7 +186,7 @@ Test(minishell_one, wrong_command_with_builtin)
 
 Test(minishell_one, empty_env)
 {
-    const char *input = "env";
+    const char input[] = "env";
     int pipes[2];
 
     clearenv();
@@ -204,7 +204,7 @@ Test(minishell_one, empty_env)
 
 Test(minishell_one, set_env_basic)
 {
-    const char *input = "setenv yes\nsetenv ok oui\nsetenv vouis 194\nsetenv okidoki pourquoi\nenv";
+    const char input[] = "setenv yes\nsetenv ok oui\nsetenv vouis 194\nsetenv okidoki pourquoi\nenv";
     int pipes[2];
 
     clearenv();
@@ -222,7 +222,7 @@ Test(minishell_one, set_env_basic)
 
 Test(minishell_one, unsetenv_basic)
 {
-    const char *input = "setenv yes ; env ; unsetenv yes; env";
+    const char input[] = "setenv yes ; env ; unsetenv yes; env";
     int pipes[2];
 
     clearenv();
@@ -240,7 +240,7 @@ Test(minishell_one, unsetenv_basic)
 
 Test(minishell_one, unsetenv_error)
 {
-    const char *input = "unsetenv yes yes hello whynot that is a lot of variable; unsetenv; cd .github\nls";
+    const char input[] = "unsetenv yes yes hello whynot that is a lot of variable; unsetenv; cd .github\nls";
     int pipes[2];
 
     clearenv();
@@ -258,7 +258,7 @@ Test(minishell_one, unsetenv_error)
 
 Test(minishell_one, unsetenv_mutliple)
 {
-    const char *input = "setenv hello; setenv you; setenv not_me; unsetenv hello you; env";
+    const char input[] = "setenv hello; setenv you; setenv not_me; unsetenv hello you; env";
     int pipes[2];
 
     clearenv();
@@ -276,7 +276,7 @@ Test(minishell_one, unsetenv_mutliple)
 
 Test(minishell_one, set_env_advanced, .description = "require ';' to work")
 {
-    const char *input = "setenv 152;setenv _ ok ;setenv zd zd dz;setenv ok {};setenv oui $$;setenv";
+    const char input[] = "setenv 152;setenv _ ok ;setenv zd zd dz;setenv ok {};setenv oui $$;setenv";
     int pipes[2];
 
     clearenv();
@@ -294,7 +294,7 @@ Test(minishell_one, set_env_advanced, .description = "require ';' to work")
 
 Test(minishell_one, set_env_advanced_2)
 {
-    const char *input = "setenv a% d; cd .github\nls";
+    const char input[] = "setenv a% d; cd .github\nls";
     int pipes[2];
 
     clearenv();
@@ -312,7 +312,7 @@ Test(minishell_one, set_env_advanced_2)
 
 Test(minishell_one, cd_error)
 {
-    const char *input = "cd; cd ~; cd /thisisnotafile; cd ./Makefile; cd -; cd dz dz; cd /tmp/no_access; setenv HOME /tmp/no_access; cd ~; cd";
+    const char input[] = "cd; cd ~; cd /thisisnotafile; cd ./Makefile; cd -; cd dz dz; cd /tmp/no_access; setenv HOME /tmp/no_access; cd ~; cd";
     int pipes[2];
     struct stat st = {0};
 
@@ -337,7 +337,7 @@ Test(minishell_one, cd_error)
 
 Test(minishell_one, edge_case_home_cd)
 {
-    const char *input = "setenv HOME /tmp/access; unsetenv HOME; cd; /bin/ls";
+    const char input[] = "setenv HOME /tmp/access; unsetenv HOME; cd; /bin/ls";
     int pipes[2];
     struct stat st = {0};
 
@@ -362,7 +362,7 @@ Test(minishell_one, edge_case_home_cd)
 
 Test(minishell_one, cd_home_user)
 {
-    const char *input = "cd ~mail/../../tmp/access; ls";
+    const char input[] = "cd ~mail/../../tmp/access; ls";
     int pipes[2];
     struct stat st = {0};
 
@@ -386,7 +386,7 @@ Test(minishell_one, cd_home_user)
 
 Test(minishell_one, segv_prog)
 {
-    const char *input = "./tests/binary_test/segv_e";
+    const char input[] = "./tests/binary_test/segv_e";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -405,7 +405,7 @@ Test(minishell_one, segv_prog)
 
 Test(minishell_one, floating_point_error)
 {
-    const char *input = "./tests/binary_test/float_e";
+    const char input[] = "./tests/binary_test/float_e";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -424,7 +424,7 @@ Test(minishell_one, floating_point_error)
 
 Test(minishell_one, no_elf)
 {
-    const char *input = "./tests/binary_test/no_elf";
+    const char input[] = "./tests/binary_test/no_elf";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -443,7 +443,7 @@ Test(minishell_one, no_elf)
 
 Test(minishell_one, no_elf_no_env)
 {
-    const char *input = "./tests/binary_test/no_elf";
+    const char input[] = "./tests/binary_test/no_elf";
     int pipes[2];
 
     clearenv();
@@ -463,7 +463,7 @@ Test(minishell_one, no_elf_no_env)
 
 Test(minishell_one, no_perm)
 {
-    const char *input = "./tests/binary_test/no_exe";
+    const char input[] = "./tests/binary_test/no_exe";
     int pipes[2];
 
     clearenv();
