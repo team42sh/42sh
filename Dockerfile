@@ -13,7 +13,7 @@ WORKDIR /build
 
 COPY . .
 
-RUN ./scripts/build/1-prepare-docker.sh
+RUN ./scripts/build/1-prepare-docker.sh ubuntu.22.04.x86_64
 RUN ./scripts/build/2-build.sh
 
 # -------- Stage 2: Final Image ------------

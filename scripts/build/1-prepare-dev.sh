@@ -8,6 +8,7 @@ SHOW_UPDATES=0 # Don't show new releases (0) or show updates (1)
 
 # Determine Version
 VERSION="UNKWN"
+OS_VER="UNKWN"
 
 # Check for Header File
 if [ ! -f "$HEADER_FILE" ]; then
@@ -22,6 +23,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         -e "s/^    #define VERSION \".*\"/    #define VERSION \"$VERSION\"/" \
         -e "s/^    #define ALLOW_AUTO_UPDATE [01]/    #define ALLOW_AUTO_UPDATE $ALLOW_AUTO_UPDATE/" \
         -e "s/^    #define SHOW_UPDATES [01]/    #define SHOW_UPDATES $SHOW_UPDATES/" \
+        -e "s/^    #define OS_VER \".*\"/    #define OS_VER \"$OS_VER\"/" \
         "$HEADER_FILE"
 else
     # Linux and others
@@ -29,6 +31,7 @@ else
         -e "s/^    #define VERSION \".*\"/    #define VERSION \"$VERSION\"/" \
         -e "s/^    #define ALLOW_AUTO_UPDATE [01]/    #define ALLOW_AUTO_UPDATE $ALLOW_AUTO_UPDATE/" \
         -e "s/^    #define SHOW_UPDATES [01]/    #define SHOW_UPDATES $SHOW_UPDATES/" \
+        -e "s/^    #define OS_VER \".*\"/    #define OS_VER \"$OS_VER\"/" \
         "$HEADER_FILE"
 fi
 
@@ -36,3 +39,4 @@ echo "Updated $HEADER_FILE:"
 echo "  - VERSION = $VERSION"
 echo "  - ALLOW_AUTO_UPDATE = $ALLOW_AUTO_UPDATE"
 echo "  - SHOW_UPDATES = $SHOW_UPDATES"
+echo "  - OS_VER = $OS_VER"

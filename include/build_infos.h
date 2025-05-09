@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** 42sh-ci
+** 42sh
 ** File description:
 ** build_infos
 */
@@ -11,5 +11,6 @@
     #define VERSION "UNKWN"
     #define ALLOW_AUTO_UPDATE 0
     #define SHOW_UPDATES 0
+    #define OS_VER "UNKWN"
 
 #endif /* !BUILD_INFOS_H_ */
