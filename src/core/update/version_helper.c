@@ -5,8 +5,8 @@
 ** version_helper
 */
 
+#include "core/minishell.h"
 #include "core/update.h"
-#include <regex.h>
 
 const char *semver_regex = "^v[0-9]+\\.[0-9]+\\.[0-9]+(-alpha|-beta)?$";
 

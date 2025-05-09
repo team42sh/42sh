@@ -11,7 +11,6 @@
     #include "core/minishell.h"
     #include "update_infos.h"
 
-
 // checker.c
 void check_for_updates(char *prg_path);
 
@@ -22,5 +21,8 @@ int compare_versions(char *version1, char *version2);
 
 // update_manager.c
 void ask_for_update(char *prg_path, char *latest_version);
+
+// prg_path.c
+char *get_prg_full_path(char **argv);
 
 #endif /* !UPDATE_H_ */
