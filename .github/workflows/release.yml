@@ -51,7 +51,7 @@ jobs:
           apt-get install -y build-essential
 
       - name: Prepare for build
-        run: ./scripts/build/1-prepare-release.sh
+        run: ./scripts/build/1-prepare-release.sh ${{ matrix.distro }}.${{ matrix.version }}.x86_64
 
       - name: Build
         run: |
@@ -79,7 +79,7 @@ jobs:
           brew install make
 
       - name: Prepare for build
-        run: ./scripts/build/1-prepare-release.sh
+        run: ./scripts/build/1-prepare-release.sh macos.arm64
 
       - name: Build
         run: |
@@ -107,7 +107,7 @@ jobs:
           brew install make
 
       - name: Prepare for build
-        run: ./scripts/build/1-prepare-release.sh
+        run: ./scripts/build/1-prepare-release.sh macos.x86_64
 
       - name: Build
         run: |
