@@ -27,7 +27,7 @@ static int false_main(void)
 }
 
 TestSuite(history, .description="\e[32mThis test suite test the history builtin\e[0m",
-    .disabled = true, .timeout = 10., .init = redirect_all_std);
+    .disabled = false, .timeout = 10., .init = redirect_all_std);
 
 Test(history, basic_test)
 {

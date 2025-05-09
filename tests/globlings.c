@@ -79,3 +79,20 @@ Test(globlings, no_match)
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("ls: No match.\n");
 }
+
+Test(globlings, test_space_files)
+{
+    const char input[] = "ls ./tests/binary_test/*pace*";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 0);
+
+    cr_assert_stdout_eq_str("./tests/binary_test/file space:\ntest space.txt\n\n./tests/binary_test/space_two:\nnothing%&*yes\n");
+    cr_assert_stderr_eq_str("");
+}
