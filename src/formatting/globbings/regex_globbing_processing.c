@@ -6,6 +6,7 @@
 */
 
 #include "core/minishell.h"
+#include "my_printf.h"
 
 /**
  * @brief Process directory entries with regex
@@ -27,7 +28,7 @@ char **process_dir_entries(IN DIR *dir, IN char *regex_pattern,
     state->match_count = &match_count;
     state->capacity = &capacity;
     rewinddir(dir);
-    for (entry = readdir(dir); entry != NULL; entry = readdir(dir)) {
+    for (entry = readdir(dir); state && entry != NULL; entry = readdir(dir)) {
         if (should_skip_entry(entry, regex_pattern))
             continue;
         if (regexec(regex, entry->d_name, 0, NULL, 0) == 0 && state->matches)

@@ -37,7 +37,7 @@ char **init_matches(void)
 {
     char **matches = NULL;
 
-    matches = malloc(sizeof(char *) * 10);
+    matches = malloc(sizeof(char *) * 11);
     if (!matches)
         return NULL;
     return matches;
