@@ -9,7 +9,13 @@
 
 #include "core/update.h"
 
-static char *download_version(char *version)
+/**
+ * @brief Download the specified version of the shell.
+ *
+ * @param version The version to download.
+ * @return The path to the downloaded file, or NULL on failure.
+ */
+static char *download_version(IN char *version)
 {
     char local_path[512];
     char download_url[512];
@@ -29,7 +35,14 @@ static char *download_version(char *version)
     return strdup(local_path);
 }
 
-static int replace_42sh_with_update(char *prg_path, char *version_path)
+/**
+ * @brief Replace the current shell with the downloaded version.
+ *
+ * @param prg_path The path to the current shell executable.
+ * @param version_path The path to the downloaded version.
+ * @return 0 on success, -1 on failure.
+ */
+static int replace_42sh_with_update(IN char *prg_path, IN char *version_path)
 {
     char command[512];
     int cmd_ret = 0;
@@ -45,7 +58,13 @@ static int replace_42sh_with_update(char *prg_path, char *version_path)
     return 0;
 }
 
-static void run_update(char *prg_path, char *latest_version)
+/**
+ * @brief Run the update process.
+ *
+ * @param prg_path The path to the current shell executable.
+ * @param latest_version The latest version to update to.
+ */
+static void run_update(IN char *prg_path, IN char *latest_version)
 {
     char *version_path = NULL;
     char *launch_cmd[] = {prg_path, NULL};
@@ -60,6 +79,11 @@ static void run_update(char *prg_path, char *latest_version)
     execv(launch_cmd[0], launch_cmd);
 }
 
+/**
+ * @brief Ask the user if they want to update the shell.
+ *
+ * @return 1 if the user wants to update, 0 otherwise.
+ */
 static int ask_for_update_prompt(void)
 {
     char buffer[10];
@@ -78,7 +102,13 @@ static int ask_for_update_prompt(void)
     return do_update;
 }
 
-void ask_for_update(char *prg_path, char *latest_version)
+/**
+ * @brief Ask the user if they want to update the shell and perform the update.
+ *
+ * @param prg_path The path to the current shell executable.
+ * @param latest_version The latest version to update to.
+ */
+void ask_for_update(IN char *prg_path, IN char *latest_version)
 {
     int do_update = 0;
 

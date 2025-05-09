@@ -9,7 +9,12 @@
 
 #include "core/update.h"
 
-void check_for_updates(char *prg_path)
+/**
+ * @brief Check for updates of the shell.
+ *
+ * @param prg_path The path to the shell executable.
+ */
+void check_for_updates(IN char *prg_path)
 {
     char *latest_version = get_latest_release();
     char *current_ver = VERSION;

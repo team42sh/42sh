@@ -10,6 +10,11 @@
 
 const char *semver_regex = "^v[0-9]+\\.[0-9]+\\.[0-9]+(-alpha|-beta)?$";
 
+/**
+ * @brief Get the latest release object
+ *
+ * @return The latest release object
+ */
 char *get_latest_release(void)
 {
     FILE *fp;
@@ -34,7 +39,13 @@ char *get_latest_release(void)
     return version;
 }
 
-int is_valid_version(char *version)
+/**
+ * @brief Check if the version string is valid
+ *
+ * @param version The version string to check
+ * @return 1 if valid, 0 otherwise
+ */
+int is_valid_version(IN char *version)
 {
     regex_t regex;
     int result;
@@ -48,7 +59,14 @@ int is_valid_version(char *version)
     return (result == 0) ? 1 : 0;
 }
 
-int compare_versions(char *version1, char *version2)
+/**
+ * @brief Compare two version strings
+ *
+ * @param version1 The first version string
+ * @param version2 The second version string
+ * @return 0 if equal, 1 if version1 > version2, 2 if version1 < version2
+ */
+int compare_versions(IN char *version1, IN char *version2)
 {
     int major1;
     int minor1;
