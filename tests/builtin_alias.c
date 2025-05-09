@@ -112,3 +112,37 @@ Test(alias, alias_more_arg)
     cr_assert_stdout_eq_str("help\t(ls -r)\nworkflows\nCODEOWNERS\n");
     cr_assert_stderr_eq_str("");
 }
+
+Test(alias, alias_loop)
+{
+    const char input[] = "alias a b; alias b a; a";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 1);
+
+    cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str("Alias loop.\n");
+}
+
+Test(alias, alias_loop_advanced)
+{
+    const char input[] = "alias a b; alias b c; alias c d; alias d e; alias e f; alias f g; alias g a; a";
+    int pipes[2];
+
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 1);
+
+    cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str("Alias loop.\n");
+}
