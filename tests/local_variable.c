@@ -244,3 +244,39 @@ Test(local_variable, illegal_name_two)
     cr_assert_stdout_eq_str("");
     cr_assert_stderr_eq_str("set: Variable name must contain alphanumeric characters.\n");
 }
+
+Test(local_variable, not_defined)
+{
+    const char input[] = "echo &{aaa}; echo &ppp";
+    int pipes[2];
+
+    clearenv();
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 1);
+
+    cr_assert_stdout_eq_str("");
+    cr_assert_stderr_eq_str("aaa: Undefined variable.\nppp: Undefined variable.\n");
+}
+
+Test(local_variable, env_var)
+{
+    const char input[] = "setenv PATH \"hehe haha\"; echo $PATH";
+    int pipes[2];
+
+    clearenv();
+    cr_assert(pipe(pipes) == 0);
+    dprintf(pipes[1], "%s", input);
+    close(pipes[1]);
+    dup2(pipes[0], 0);
+    close(pipes[0]);
+
+    cr_assert(false_main() == 0);
+
+    cr_assert_stdout_eq_str("hehe haha\n");
+    cr_assert_stderr_eq_str("");
+}
