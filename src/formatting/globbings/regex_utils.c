@@ -7,6 +7,13 @@
 
 #include "core/minishell.h"
 
+/**
+ * @brief Sort matching paths alphabetically
+ *
+ * @param Paths Array of paths to sort
+ * @param Temp Temporary string stored for comparaison
+ * @param j Actual index of the comparaison
+ */
 static void compare_and_sort(OUT char *temp, OUT char **paths, IN int j)
 {
     if (my_strcmp(paths[j], paths[j + 1]) > 0) {

@@ -256,5 +256,6 @@ char **fill_autocomplete(IN char *input)
     } else {
         result = process_path_input(input);
     }
+    sort_paths(result);
     return result;
 }
