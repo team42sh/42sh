@@ -94,7 +94,7 @@ exitcode_t exec_binary(IN char **argv)
         return CURRENTLY_CHILD;
     path = get_binary_path(argv[0]);
     if (path == NULL)
-        exit(print_err("%s: Command not found.\n", argv[0]));
+        path = my_strdup(argv[0]);
     env_array_child = env_node_to_array(get_shell()->env);
     execve(path, argv, env_array_child);
     show_error_execve(errno, argv);

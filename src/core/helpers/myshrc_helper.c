@@ -2,18 +2,19 @@
 ** EPITECH PROJECT, 2025
 ** src/core/helpers/myshrc_helper
 ** File description:
-** This file contains function for handling the myshrc file
+** This file contains function for handling the 42shrc file
 */
 
 #include "core/minishell.h"
-#include <sys/fcntl.h>
 
-/*
- * Get the home env path and return the path of the myshrc, where it should be.
+/**
+ * @brief Get the path of the shrc.
+ *
+ * @return The string of the path.
  */
 static char *get_shrc_path(void)
 {
-    char *file = ".myshrc";
+    char *file = ".42shrc";
     size_t path_len = 0;
     char *path = NULL;
 
@@ -28,11 +29,14 @@ static char *get_shrc_path(void)
     return path;
 }
 
-/*
- * Execute every lines in the myshrc file.
- * Pass the lines starting with '#' which is identified of comments.
+/**
+ * @brief Execute each lines of the shrc.
+ *
+ * @param sh_fd         The FD of the file.
+ *
+ * @return Exit code.
  */
-static int execute_lines_shrc(int sh_fd)
+static int execute_lines_shrc(IN int sh_fd)
 {
     char buffer[1024];
     size_t buffer_len = 1024;
@@ -55,10 +59,10 @@ static int execute_lines_shrc(int sh_fd)
     return OK_OUTPUT;
 }
 
-/*
- * Load the file myshrc.
- * The file needs to be in the home folder in the ENV variable.
- * TODO: Use getuid to know the starter and check in passwd. (Banned function)
+/**
+ * @brief Load the 42shrc.
+ *
+ * @return The exit code.
  */
 int load_myshrc(void)
 {
