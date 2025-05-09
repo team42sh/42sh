@@ -38,8 +38,11 @@ int should_skip_entry(struct dirent *entry, IN char *regex_pattern)
     int is_dotdot = 0;
     int is_dot_pattern = 0;
 
+    for (int i = 1; regex_pattern[i] != '\0'; i++) {
+        if (regex_pattern[2] == '.')
+            return 0;
+    }
     is_dot = (my_strncmp(entry->d_name, ".", 1) == 0);
-    is_dotdot = (my_strcmp(entry->d_name, "..") == 0);
     if (!is_dot && !is_dotdot)
         return 0;
     is_dot_pattern = (my_strcmp(regex_pattern, "^\\.$") == 0);
