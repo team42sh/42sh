@@ -6,7 +6,6 @@
 */
 
 #include "core/minishell.h"
-#include "my_printf.h"
 
 /**
  * @brief Process directory entries with regex
