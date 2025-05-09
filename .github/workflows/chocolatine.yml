@@ -9,6 +9,8 @@ on:
     - "ga-ignore-*"
 
 env:
+  MIRROR_REPO: "EpitechPGEPromo2029/B-PSU-200-MLH-2-1-42sh-antoine.malgat"
+  MIRROR_URL: "git@github.com:EpitechPGEPromo2029/B-PSU-200-MLH-2-1-42sh-antoine.malgat.git"
   EXECUTABLES: "42sh"
 
 # Block concurent runs (Example, quick pushes)
