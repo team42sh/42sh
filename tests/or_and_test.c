@@ -26,7 +26,7 @@ TestSuite(and_or_tests, .description="\e[32mThis test suite goal is to test the 
 
 Test(and_or_tests, basic_and)
 {
-    const char *input = "cd .github ; true && ls";
+    const char input[] = "cd .github ; true && ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -43,7 +43,7 @@ Test(and_or_tests, basic_and)
 
 Test(and_or_tests, basic_and_two)
 {
-    const char *input = "cd .github ; false && ls && ls";
+    const char input[] = "cd .github ; false && ls && ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -60,7 +60,7 @@ Test(and_or_tests, basic_and_two)
 
 Test(and_or_tests, basic_and_failed)
 {
-    const char *input = "cd .github ; false && ls";
+    const char input[] = "cd .github ; false && ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -77,7 +77,7 @@ Test(and_or_tests, basic_and_failed)
 
 Test(and_or_tests, basic_or)
 {
-    const char *input = "cd .github ; false || ls";
+    const char input[] = "cd .github ; false || ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -94,7 +94,7 @@ Test(and_or_tests, basic_or)
 
 Test(and_or_tests, basic_or_two)
 {
-    const char *input = "cd .github ; true || ls || ls";
+    const char input[] = "cd .github ; true || ls || ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -111,7 +111,7 @@ Test(and_or_tests, basic_or_two)
 
 Test(and_or_tests, basic_or_failed)
 {
-    const char *input = "cd .github ; false || cd .github";
+    const char input[] = "cd .github ; false || cd .github";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -128,7 +128,7 @@ Test(and_or_tests, basic_or_failed)
 
 Test(and_or_tests, and_no_first_arg)
 {
-    const char *input = "cd .github ; && ls";
+    const char input[] = "cd .github ; && ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -145,7 +145,7 @@ Test(and_or_tests, and_no_first_arg)
 
 Test(and_or_tests, and_no_second_arg)
 {
-    const char *input = "cd .github ; ls &&";
+    const char input[] = "cd .github ; ls &&";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -162,7 +162,7 @@ Test(and_or_tests, and_no_second_arg)
 
 Test(and_or_tests, and_no_arg)
 {
-    const char *input = "&&";
+    const char input[] = "&&";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -179,7 +179,7 @@ Test(and_or_tests, and_no_arg)
 
 Test(and_or_tests, and_lot_of_no_arg)
 {
-    const char *input = "&&&&&&&&&&&&&&&&&&&&&&&&&&&";
+    const char input[] = "&&&&&&&&&&&&&&&&&&&&&&&&&&&";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -196,7 +196,7 @@ Test(and_or_tests, and_lot_of_no_arg)
 
 Test(and_or_tests, or_no_first_arg)
 {
-    const char *input = "cd .github ; || ls";
+    const char input[] = "cd .github ; || ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -213,7 +213,7 @@ Test(and_or_tests, or_no_first_arg)
 
 Test(and_or_tests, or_no_second_arg)
 {
-    const char *input = "cd .github ; ls ||";
+    const char input[] = "cd .github ; ls ||";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -230,7 +230,7 @@ Test(and_or_tests, or_no_second_arg)
 
 Test(and_or_tests, or_no_arg)
 {
-    const char *input = "&&";
+    const char input[] = "&&";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -247,7 +247,7 @@ Test(and_or_tests, or_no_arg)
 
 Test(and_or_tests, or_lot_of_no_arg)
 {
-    const char *input = "|||||||||";
+    const char input[] = "|||||||||";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -264,7 +264,7 @@ Test(and_or_tests, or_lot_of_no_arg)
 
 Test(and_or_tests, priority_test)
 {
-    const char *input = "cd .github ; ls || pwd && pwd && ls || pwd || pwd";
+    const char input[] = "cd .github ; ls || pwd && pwd && ls || pwd || pwd";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
@@ -281,7 +281,7 @@ Test(and_or_tests, priority_test)
 
 Test(and_or_tests, priority_test_two)
 {
-    const char *input = "cd .github ; ls && false || false && ls && true || ls && ls";
+    const char input[] = "cd .github ; ls && false || false && ls && true || ls && ls";
     int pipes[2];
 
     cr_assert(pipe(pipes) == 0);
